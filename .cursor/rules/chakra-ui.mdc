@@ -1,0 +1,404 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Chakra UI & Framer Motion Rules for Specter Frontend Test
+
+## Project Overview
+This is a React Router project using Chakra UI v2.10.7 with a custom theme and Framer Motion for animations. The project uses Bun as the runtime and includes TypeScript, React Query, and comprehensive animation support.
+
+## Core Chakra UI Rules
+
+### 1. Theme Usage
+- **Always use the custom theme**: Import and use the theme from `app/theme.ts`
+- **Use semantic colours**: Prefer semantic colour tokens like `brand.500`, `gray.500`, `success`, `warning` over hardcoded hex values
+- **Custom colours available**: `brand`, `brandDark`, `success`, `warning`, plus standard Chakra colours
+
+### 2. Component Import Rules
+```typescript
+// ✅ Correct - Import from @chakra-ui/react
+import { Box, Button, Text, Heading } from "@chakra-ui/react";
+
+// ❌ Avoid - Don't import from individual packages
+import Box from "@chakra-ui/box";
+```
+
+### 3. Layout Components
+- **Use Box for containers**: Primary layout component for divs
+- **Use Flex for flexbox layouts**: When you need flexbox properties
+- **Use Grid for CSS Grid**: When you need grid layouts
+- **Use Center for centering**: Quick centering utility component
+
+### 4. Typography
+- **Use Heading for titles**: With appropriate `as` prop (h1, h2, h3, etc.)
+- **Use Text for body text**: With semantic colour tokens
+- **Font family**: Inter is configured as the default font
+
+### 5. Button Guidelines
+- **Default size**: Buttons default to `sm` size
+- **Available variants**: `outline`, `dashed` (custom), plus standard Chakra variants
+- **Use with React Router**: Combine with `as={Link}` for navigation
+
+### 6. Responsive Design
+- **Use responsive arrays**: `[base, md, lg]` for responsive values
+- **Mobile-first approach**: Start with mobile styles, then add breakpoint overrides
+
+### 7. Spacing and Sizing
+- **Use theme spacing**: `p={4}`, `m={2}`, `gap={3}` etc.
+- **Use viewport units**: `100dvh` for full viewport height
+
+### 8. Styling Patterns
+- **Use style props**: Prefer Chakra's style props over CSS classes
+- **Use pseudo selectors**: `_hover`, `_focus`, `_dark` for state styles
+- **Use sx prop**: For complex custom styles that can't be expressed with style props
+
+## Framer Motion Integration
+
+### 9. Animation Guidelines
+- **Use Framer Motion**: Already configured, use `motion` components
+- **Combine with Chakra**: Use `as={motion.div}` pattern
+- **Performance**: Use `transform` and `opacity` for smooth animations
+
+### 10. Motion Component Patterns
+
+#### Basic Motion Integration:
+```typescript
+import { motion } from "framer-motion";
+import { Box, Button, Text } from "@chakra-ui/react";
+
+// ✅ Correct - Use as prop pattern
+<Box
+  as={motion.div}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+>
+  Content
+</Box>
+
+// ✅ Correct - Motion button with hover effects
+<Button
+  as={motion.button}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ duration: 0.2 }}
+>
+  Click me
+</Button>
+```
+
+### 11. Transition Prop Conflicts
+
+#### Problem:
+When using `as={motion.div}` with Chakra components that have their own `transition` prop, TypeScript conflicts occur between Chakra UI's transition type and Framer Motion's transition type.
+
+#### Solutions (Ranked by Preference):
+
+##### 1. Box Wrapper Pattern (Most Recommended):
+```typescript
+// ✅ Best - Use Box wrapper to avoid conflicts entirely
+<Box
+  as={motion.div}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: index * 0.1, duration: 0.3 }}
+>
+  <Card variant="outline" _hover={{ shadow: "lg" }}>
+    <CardBody>
+      Card content
+    </CardBody>
+  </Card>
+</Box>
+```
+
+##### 2. Variants Pattern (Recommended for Complex Animations):
+```typescript
+// ✅ Clean - Use variants to avoid inline transition props
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { delay: index * 0.1, duration: 0.3 }
+  }
+};
+
+<Box
+  as={motion.div}
+  variants={cardVariants}
+  initial="hidden"
+  animate="visible"
+>
+  <Card variant="outline" _hover={{ shadow: "lg" }}>
+    Content
+  </Card>
+</Box>
+```
+
+##### 3. Create Motion Components (Best for Reusability):
+```typescript
+// ✅ Best Practice - Create reusable motion components
+import { motion } from "framer-motion";
+import { Box, Card, CardBody } from "@chakra-ui/react";
+
+const MotionBox = motion(Box);
+const MotionCard = motion(Card);
+
+// Usage
+<MotionBox
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: index * 0.1, duration: 0.3 }}
+>
+  <Card variant="outline" _hover={{ shadow: "lg" }}>
+    Content
+  </Card>
+</MotionBox>
+```
+
+#### ❌ Avoid These Patterns:
+```typescript
+// ❌ Bad - Direct motion on complex components without type handling
+<Card
+  as={motion.div}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: index * 0.1, duration: 0.3 }} // TypeScript error
+>
+  Content
+</Card>
+
+// ❌ Bad - Mixing Chakra and Framer Motion transitions
+<Box
+  as={motion.div}
+  transition="all 0.2s" // Chakra transition
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.3 }} // Framer Motion transition - conflicts!
+>
+  Content
+</Box>
+```
+
+### 12. Animation Best Practices
+
+#### Performance Optimizations:
+```typescript
+// ✅ Good - Use transform and opacity with Box wrapper
+<Box
+  as={motion.div}
+  initial={{ opacity: 0, transform: "translateY(20px)" }}
+  animate={{ opacity: 1, transform: "translateY(0px)" }}
+  transition={{ duration: 0.3 }}
+>
+  Content
+</Box>
+
+// ❌ Avoid - Animating layout properties
+<Box
+  as={motion.div}
+  initial={{ height: 0 }}
+  animate={{ height: "auto" }}
+  transition={{ duration: 0.3 }}
+>
+  Content
+</Box>
+```
+
+#### Consistent Animation Timing:
+```typescript
+// Use consistent timing across the app
+const animationConfig = {
+  fast: { duration: 0.15, ease: "easeOut" },
+  normal: { duration: 0.3, ease: "easeOut" },
+  slow: { duration: 0.5, ease: "easeOut" }
+};
+
+<Box
+  as={motion.div}
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={animationConfig.normal}
+>
+  Content
+</Box>
+```
+
+### 13. Interactive Animations
+
+#### Hover and Focus States:
+```typescript
+<Box
+  as={motion.div}
+  whileHover={{
+    y: -4,
+    transition: { duration: 0.2 }
+  }}
+  whileTap={{
+    scale: 0.98,
+    transition: { duration: 0.1 }
+  }}
+>
+  <Card cursor="pointer">
+    <CardBody>
+      Interactive card content
+    </CardBody>
+  </Card>
+</Box>
+```
+
+### 14. Form Components
+- **Use FormControl**: Wrap form inputs for proper accessibility
+- **Use Input, Select, Textarea**: Chakra form components
+- **Use FormLabel**: For accessible labels
+- **Use FormErrorMessage**: For validation errors
+
+### 15. Navigation and Links
+- **Use Chakra Link**: For internal styling consistency
+- **Combine with React Router**: `as={Link}` for navigation
+
+### 16. Dark Mode
+- **Light mode default**: Project defaults to light mode
+- **Dark mode styles**: Use `_dark` pseudo selector for dark mode styles
+
+### 17. Accessibility
+- **Semantic HTML**: Use appropriate `as` props for semantic markup
+- **ARIA attributes**: Use Chakra's built-in accessibility features
+- **Colour contrast**: Use theme colours which are designed for good contrast
+- **Motion preferences**: Respect user's motion preferences
+
+## Code Examples
+
+### Basic Layout with Animation
+```typescript
+import { Box, Heading, Text, Button } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { Link } from "react-router";
+
+export default function MyComponent() {
+  return (
+    <Box
+      as={motion.div}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      p={6}
+      bg="white"
+      borderRadius="lg"
+      shadow="md"
+    >
+      <Heading size="lg" mb={4} color="brand.600">
+        Title
+      </Heading>
+      <Text color="gray.600" mb={6}>
+        Description text
+      </Text>
+      <Button
+        as={motion.button}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        as={Link}
+        to="/path"
+        colorScheme="brand"
+      >
+        Action
+      </Button>
+    </Box>
+  );
+}
+```
+
+### List Animation with Stagger
+```typescript
+import { VStack, Box } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+export function AnimatedList({ items }: { items: string[] }) {
+  return (
+    <VStack
+      as={motion.div}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      spacing={4}
+    >
+      {items.map((item, index) => (
+        <Box
+          key={index}
+          as={motion.div}
+          variants={itemVariants}
+          p={4}
+          bg="gray.50"
+          borderRadius="md"
+          w="full"
+        >
+          {item}
+        </Box>
+      ))}
+    </VStack>
+  );
+}
+```
+
+### Interactive Card Component
+```typescript
+import { Card, CardBody, CardHeader, Heading, Text } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+export function InteractiveCard({ title, description }: { title: string; description: string }) {
+  return (
+    <Box
+      as={motion.div}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{
+        y: -4,
+        transition: { duration: 0.2 }
+      }}
+      whileTap={{
+        scale: 0.98,
+        transition: { duration: 0.1 }
+      }}
+    >
+      <Card cursor="pointer" variant="outline" _hover={{ shadow: "lg" }}>
+        <CardHeader>
+          <Heading size="md">{title}</Heading>
+        </CardHeader>
+        <CardBody>
+          <Text>{description}</Text>
+        </CardBody>
+      </Card>
+    </Box>
+  );
+}
+```
+
+## Common Patterns to Follow
+1. **Consistent spacing**: Use theme spacing tokens
+2. **Semantic colours**: Use brand and semantic colour tokens
+3. **Responsive design**: Always consider mobile-first approach
+4. **Accessibility**: Use semantic HTML and ARIA attributes
+5. **Animation consistency**: Use consistent timing and easing
+6. **Motion preferences**: Respect user's reduced motion preferences
+
+## Avoid These Patterns
+1. **Hardcoded colours**: Don't use hex values directly
+2. **CSS classes**: Prefer Chakra style props
+3. **Inline styles**: Use Chakra's style system
+4. **Layout animations**: Avoid animating height, width, or layout properties
+5. **Excessive animations**: Don't over-animate, keep it subtle and purposeful

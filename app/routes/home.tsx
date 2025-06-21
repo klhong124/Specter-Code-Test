@@ -59,6 +59,15 @@ export default function Home() {
         >
           Get Started
         </Button>
+        <Button
+          variant="outline"
+          rightIcon={<HiArrowRight />}
+          as={Link}
+          to="/companies"
+          ml={2}
+        >
+          View Companies
+        </Button>
       </Box>
     </Center>
   );

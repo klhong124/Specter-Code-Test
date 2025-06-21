@@ -1,0 +1,280 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## Folder Structure Rules
+
+### 1. Entity-Based Organization
+Organize files by business entities (e.g., companies) rather than technical concerns.
+
+```
+app/
+├── routes/
+│   ├── companies/
+│   │   ├── components/
+│   │   │   ├── company.card.tsx
+│   │   │   ├── company.list.tsx
+│   │   │   ├── company.filters.tsx
+│   │   │   └── company.pagination.tsx
+│   │   ├── api/
+│   │   │   ├── companies.fetch.ts
+│   │   │   └── company.fetch.ts
+│   │   ├── hooks/
+│   │   │   ├── useCompanies.ts
+│   │   │   ├── useCompany.ts
+│   │   │   └── useCompanyMutations.ts
+│   │   ├── utils/
+│   │   │   ├── company.helpers.ts
+│   │   │   └── company.validation.ts
+│   │   ├── types/
+│   │   │   ├── company.type.ts
+│   │   │   └── company.api.type.ts
+│   │   └── tests/
+│   │       ├── company.card.test.tsx
+│   │       ├── company.list.test.tsx
+│   │       └── company.helpers.test.ts
+├── theme.ts
+├── root.tsx
+└── app.css
+```
+
+### 2. Entity Folder Structure Rules
+
+#### Each Entity Should Contain:
+- **`components/`**: Entity-specific UI components
+- **`api/`**: Server-side API logic and data fetching
+- **`hooks/`**: Custom React hooks for entity operations
+- **`utils/`**: Entity-specific utility functions
+- **`types/`**: TypeScript interfaces and types (organized by domain)
+- **`tests/`**: Test files for the entity
+
+#### Naming Conventions:
+```
+✅ Good:
+- company.card.tsx
+- useCompanies.ts
+- companies.fetch.ts
+- company.helpers.ts
+
+❌ Avoid:
+- Card.tsx (too generic)
+- companies.ts (unclear purpose)
+- helpers.ts (unclear scope)
+```
+
+### 3. Component Organization Rules
+
+#### Entity Components:
+- **Single Responsibility**: Each component should have one clear purpose
+- **Co-location**: Keep related components close together
+- **Index Files**: Use `index.ts` for clean imports
+
+```typescript
+// routes/companies/components/index.ts
+export { CompanyCard } from './company.card';
+export { CompanyList } from './company.list';
+export { CompanyFilters } from './company.filters';
+```
+
+#### Shared Components:
+- **UI Components**: Reusable, presentational components
+- **Layout Components**: Page structure components
+- **Form Components**: Reusable form elements
+
+### 4. API Organization Rules
+
+#### Server-Side API:
+```typescript
+// routes/companies/api/companies.fetch.ts
+export async function getCompanies() { ... }
+export async function getCompany(id: string) { ... }
+export async function createCompany(data: CreateCompanyData) { ... }
+export async function updateCompany(id: string, data: UpdateCompanyData) { ... }
+export async function deleteCompany(id: string) { ... }
+```
+
+#### Route API Handlers:
+```typescript
+// routes/api/companies/index.ts
+import { getCompanies, createCompany } from '../../../routes/companies/api/companies.fetch';
+
+export async function loader() {
+  return getCompanies();
+}
+
+export async function action({ request }: { request: Request }) {
+  return createCompany(await request.json());
+}
+```
+
+### 5. Hook Organization Rules
+
+#### Entity Hooks:
+```typescript
+// routes/companies/hooks/useCompanies.ts
+export function useCompanies() {
+  return useQuery({
+    queryKey: ['companies'],
+    queryFn: () => fetch('/api/companies').then(res => res.json())
+  });
+}
+```
+
+#### Shared Hooks:
+- Keep generic, reusable hooks in `shared/hooks/`
+- Entity-specific logic should stay in entity folders
+
+### 6. Testing Organization Rules
+
+#### Test File Structure:
+```
+routes/companies/tests/
+├── components/
+│   ├── company.card.test.tsx
+│   └── company.list.test.tsx
+├── hooks/
+│   └── useCompanies.test.ts
+├── utils/
+│   └── company.helpers.test.ts
+└── api/
+    └── companies.fetch.test.ts
+```
+
+#### Test Naming:
+- **Component Tests**: `component-name.test.tsx`
+- **Hook Tests**: `hook-name.test.ts`
+- **Utility Tests**: `utility-name.test.ts`
+
+### 7. Import/Export Rules
+
+#### Barrel Exports:
+```typescript
+// routes/companies/index.ts
+export * from './components';
+export * from './hooks';
+export * from './api';
+export * from './types';
+```
+
+#### Clean Imports:
+```typescript
+// ✅ Good - Import from entity root
+import { CompanyCard, useCompanies } from '@/routes/companies';
+import type { Company, CreateCompanyData } from '@/routes/companies/types';
+
+// ✅ Good - Import specific types
+import type { Company } from '@/routes/companies/types/company.type';
+import type { CreateCompanyData } from '@/routes/companies/types/company.api.type';
+
+// ❌ Avoid - Deep imports
+import { CompanyCard } from '@/routes/companies/components/company.card';
+import { useCompanies } from '@/routes/companies/hooks/useCompanies';
+import type { Company } from '@/routes/companies/types.ts';
+```
+
+### 8. Type Organization Rules
+
+#### Entity Types:
+```typescript
+// routes/companies/types/company.type.ts
+export interface Company {
+  id: string;
+  name: string;
+  domain: string;
+  rank: number;
+  description: string;
+  growth_stage: string | null;
+  last_funding_type: string | null;
+  last_funding_amount: bigint | null;
+  customer_focus: string | null;
+  createdAt: Date | null;
+}
+
+// routes/companies/types/company.api.type.ts
+export interface CreateCompanyData {
+  name: string;
+  domain: string;
+  description: string;
+  // ... other properties
+}
+
+export interface UpdateCompanyData extends Partial<CreateCompanyData> {
+  id: string;
+}
+
+export interface CompanyFilters {
+  search?: string;
+  growth_stage?: string;
+  customer_focus?: string;
+  last_funding_type?: string;
+}
+```
+
+#### Type Organization Guidelines:
+- **Domain-specific types**: Group related types in separate files (e.g., `company.type.ts`, `company.api.type.ts`)
+- **Clear naming**: Use descriptive file names that indicate the domain
+- **Separation of concerns**: Keep API types separate from domain types
+
+#### Type File Naming Conventions:
+```
+✅ Good:
+- company.type.ts (domain entities)
+- company.api.type.ts (API request/response types)
+- company.filter.type.ts (filter and query types)
+- company.form.type.ts (form data types)
+
+❌ Avoid:
+- types.ts (too generic)
+- company.ts (unclear purpose)
+- api.ts (unclear scope)
+```
+
+#### Import Patterns:
+```typescript
+// ✅ Good - Import from types folder
+import type { Company } from '../types/company.type';
+import type { CreateCompanyData, UpdateCompanyData } from '../types/company.api.type';
+
+// ❌ Avoid - Import from individual files without clear organization
+import type { Company } from '../types.ts';
+```
+
+### 9. File Naming Conventions
+
+#### Components:
+- **kebab-case**: `company.card.tsx`, `user.profile.tsx`
+- **Descriptive**: `company.card.with.actions.tsx` not `card.tsx`
+
+#### Utilities:
+- **kebab-case**: `company.helpers.ts`, `user.validation.ts`
+- **Descriptive**: `format.company.data.ts` not `helpers.ts`
+
+#### API Files:
+- **Entity Name + .fetch.ts**: `companies.fetch.ts`, `users.fetch.ts`
+- **Clear Purpose**: `company.queries.fetch.ts`, `user.mutations.fetch.ts`
+
+### 10. Migration Strategy
+
+#### Phase 1: Create Entity Structure
+1. Create `routes/` folder
+2. Move existing company-related files
+3. Update imports
+
+#### Phase 2: Refactor Components
+1. Break down large components
+2. Create entity-specific hooks
+3. Extract utility functions
+
+#### Phase 3: Add Tests
+1. Create test structure
+2. Write component tests
+3. Add integration tests
+
+### 11. Benefits of This Structure
+
+- **Scalability**: Easy to add new entities into routes folder
+- **Maintainability**: Related code is co-located
+- **Team Collaboration**: Clear ownership boundaries
+- **Testing**: Easy to find and write tests
+- **Code Reuse**: Clear separation between shared and entity-specific code
