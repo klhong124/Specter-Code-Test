@@ -5,18 +5,46 @@ export async function loader({ request }: { request: Request }): Promise<Respons
     try {
         const url = new URL(request.url);
         const page = parseInt(url.searchParams.get('page') || '1');
-        const limit = parseInt(url.searchParams.get('limit') || '10');
+        const limit = parseInt(url.searchParams.get('limit') || '20');
+        const search = url.searchParams.get('search') || '';
+        const growthStage = url.searchParams.getAll('growthStage');
+        const customerFocus = url.searchParams.getAll('customerFocus');
+        const fundingType = url.searchParams.getAll('fundingType');
 
         // Validate pagination parameters
         const validPage = Math.max(1, page);
         const validLimit = Math.min(Math.max(1, limit), 100); // Cap at 100 items per page
         const skip = (validPage - 1) * validLimit;
 
-        // Get total count for pagination metadata
-        const totalCount = await prisma.company.count();
+        // Build where clause for filtering
+        const where: any = {};
 
-        // Fetch paginated companies
+        if (search) {
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { domain: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } }
+            ];
+        }
+
+        if (growthStage.length > 0) {
+            where.growth_stage = { in: growthStage };
+        }
+
+        if (customerFocus.length > 0) {
+            where.customer_focus = { in: customerFocus };
+        }
+
+        if (fundingType.length > 0) {
+            where.last_funding_type = { in: fundingType };
+        }
+
+        // Get total count for pagination metadata
+        const totalCount = await prisma.company.count({ where });
+
+        // Fetch paginated and filtered companies
         const companies = await prisma.company.findMany({
+            where,
             orderBy: {
                 rank: 'asc'
             },
@@ -71,12 +99,4 @@ export async function loader({ request }: { request: Request }): Promise<Respons
             headers: { 'Content-Type': 'application/json' }
         });
     }
-}
-
-export async function fetchCompanies(): Promise<{ companies: Company[] }> {
-    const response = await fetch('/api/companies');
-    if (!response.ok) {
-        throw new Error('Failed to fetch companies');
-    }
-    return response.json();
 }

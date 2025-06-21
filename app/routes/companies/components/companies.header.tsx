@@ -5,9 +5,22 @@ interface CompaniesHeaderProps {
     hasActiveFilters: boolean;
     filteredCount: number;
     totalCount: number;
+    currentPage?: number;
+    totalPages?: number;
+    pageSize?: number;
 }
 
-export function CompaniesHeader({ hasActiveFilters, filteredCount, totalCount }: CompaniesHeaderProps) {
+export function CompaniesHeader({
+    hasActiveFilters,
+    filteredCount,
+    totalCount,
+    currentPage,
+    totalPages,
+    pageSize
+}: CompaniesHeaderProps) {
+    const startItem = currentPage && pageSize ? (currentPage - 1) * pageSize + 1 : 1;
+    const endItem = currentPage && pageSize ? Math.min(currentPage * pageSize, filteredCount) : filteredCount;
+
     return (
         <Box textAlign="center">
             <Heading
@@ -33,7 +46,13 @@ export function CompaniesHeader({ hasActiveFilters, filteredCount, totalCount }:
             </Text>
             {hasActiveFilters && (
                 <Text fontSize="sm" color="gray.500">
-                    Showing {filteredCount} of {totalCount} companies
+                    Showing {startItem} to {endItem} of {filteredCount} companies
+                    {totalCount !== filteredCount && ` (filtered from ${totalCount} total)`}
+                </Text>
+            )}
+            {!hasActiveFilters && totalPages && totalPages > 1 && (
+                <Text fontSize="sm" color="gray.500">
+                    Showing {startItem} to {endItem} of {totalCount} companies
                 </Text>
             )}
         </Box>
