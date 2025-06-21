@@ -1,18 +1,19 @@
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, Button, VStack } from "@chakra-ui/react";
+import { useCompaniesContext } from "../context/companies.context";
 
-interface CompaniesEmptyStateProps {
-    onClearFilters: () => void;
-}
+export function CompaniesEmptyState() {
+    const { clearFilters } = useCompaniesContext();
 
-export function CompaniesEmptyState({ onClearFilters }: CompaniesEmptyStateProps) {
     return (
         <Box textAlign="center" py={12}>
-            <Text fontSize="lg" color="gray.500">
-                No companies match your filters
-            </Text>
-            <Button onClick={onClearFilters} mt={4} variant="outline">
-                Clear Filters
-            </Button>
+            <VStack spacing={4}>
+                <Text fontSize="lg" color="gray.600">
+                    No companies found matching your criteria.
+                </Text>
+                <Button onClick={clearFilters} colorScheme="blue">
+                    Clear Filters
+                </Button>
+            </VStack>
         </Box>
     );
 }

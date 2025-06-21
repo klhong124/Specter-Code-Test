@@ -7,34 +7,23 @@ import {
     DrawerCloseButton,
 } from "@chakra-ui/react";
 import { CompanyFilters } from "./company.filters";
-import type { Filters } from "./company.filters";
+import { useCompaniesContext } from "../context/companies.context";
 
 interface CompaniesMobileDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    filters: Filters;
-    setFilters: (filters: Filters) => void;
-    filterOptions: {
-        growthStages: string[];
-        customerFocuses: string[];
-        fundingTypes: string[];
-    };
 }
 
-export function CompaniesMobileDrawer({
-    isOpen,
-    onClose,
-    filters,
-    setFilters,
-    filterOptions
-}: CompaniesMobileDrawerProps) {
+export function CompaniesMobileDrawer({ isOpen, onClose }: CompaniesMobileDrawerProps) {
+    const { filters, setFilters, filterOptions } = useCompaniesContext();
+
     return (
-        <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="sm">
+        <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="full">
             <DrawerOverlay />
             <DrawerContent>
                 <DrawerCloseButton />
-                <DrawerHeader borderBottomWidth="1px">Filters</DrawerHeader>
-                <DrawerBody p={6}>
+                <DrawerHeader>Filters</DrawerHeader>
+                <DrawerBody>
                     <CompanyFilters
                         filters={filters}
                         setFilters={setFilters}

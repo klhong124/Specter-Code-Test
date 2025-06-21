@@ -1,18 +1,10 @@
 import { Box } from "@chakra-ui/react";
 import { CompanyFilters } from "./company.filters";
-import type { Filters } from "./company.filters";
+import { useCompaniesContext } from "../context/companies.context";
 
-interface CompaniesSidebarProps {
-    filters: Filters;
-    setFilters: (filters: Filters) => void;
-    filterOptions: {
-        growthStages: string[];
-        customerFocuses: string[];
-        fundingTypes: string[];
-    };
-}
+export function CompaniesSidebar() {
+    const { filters, setFilters, filterOptions } = useCompaniesContext();
 
-export function CompaniesSidebar({ filters, setFilters, filterOptions }: CompaniesSidebarProps) {
     return (
         <Box
             display={{ base: "none", lg: "block" }}

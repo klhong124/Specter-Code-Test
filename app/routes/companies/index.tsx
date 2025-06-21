@@ -7,7 +7,6 @@ import {
     SimpleGrid,
     useDisclosure,
 } from "@chakra-ui/react";
-import { useCompanies } from "./hooks";
 import { CompanyCard } from './components/company.card';
 import { CompaniesHeader } from './components/companies.header';
 import { CompaniesSidebar } from './components/companies.sidebar';
@@ -17,8 +16,9 @@ import { CompaniesLoadingState } from './components/companies.loading.state';
 import { CompaniesErrorState } from './components/companies.error.state';
 import { CompaniesMobileDrawer } from './components/companies.mobile.drawer';
 import { CompaniesPagination } from './components/companies.pagination';
+import { CompaniesProvider, useCompaniesContext } from './context/companies.context';
 
-export default function CompaniesPage() {
+function CompaniesPageContent() {
     const {
         companies,
         isLoading,
@@ -28,14 +28,13 @@ export default function CompaniesPage() {
         filterOptions,
         clearFilters,
         hasActiveFilters,
-        // Pagination
         currentPage,
         totalPages,
         pageSize,
         totalItems,
         handlePageChange,
         handlePageSizeChange,
-    } = useCompanies();
+    } = useCompaniesContext();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -68,11 +67,7 @@ export default function CompaniesPage() {
             <Container maxW="container.xl" py={8}>
                 <HStack spacing={6} align="start">
                     {/* Desktop Side Panel */}
-                    <CompaniesSidebar
-                        filters={filters}
-                        setFilters={setFilters}
-                        filterOptions={filterOptions}
-                    />
+                    <CompaniesSidebar />
 
                     {/* Mobile Filter Button */}
                     <CompaniesMobileFilter onOpen={onOpen} />
@@ -80,14 +75,7 @@ export default function CompaniesPage() {
                     {/* Main Content */}
                     <Box flex={1}>
                         <VStack spacing={8} align="stretch">
-                            <CompaniesHeader
-                                hasActiveFilters={hasActiveFilters}
-                                filteredCount={totalItems}
-                                totalCount={totalItems}
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                pageSize={pageSize}
-                            />
+                            <CompaniesHeader />
 
                             <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
                                 {companies.map((company, index) => (
@@ -100,19 +88,12 @@ export default function CompaniesPage() {
                             </SimpleGrid>
 
                             {companies.length === 0 && (
-                                <CompaniesEmptyState onClearFilters={clearFilters} />
+                                <CompaniesEmptyState />
                             )}
 
                             {/* Pagination */}
                             {companies.length > 0 && totalPages > 1 && (
-                                <CompaniesPagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    pageSize={pageSize}
-                                    totalItems={totalItems}
-                                    onPageChange={handlePageChange}
-                                    onPageSizeChange={handlePageSizeChange}
-                                />
+                                <CompaniesPagination />
                             )}
                         </VStack>
                     </Box>
@@ -120,13 +101,15 @@ export default function CompaniesPage() {
             </Container>
 
             {/* Mobile Drawer */}
-            <CompaniesMobileDrawer
-                isOpen={isOpen}
-                onClose={onClose}
-                filters={filters}
-                setFilters={setFilters}
-                filterOptions={filterOptions}
-            />
+            <CompaniesMobileDrawer isOpen={isOpen} onClose={onClose} />
         </Center>
+    );
+}
+
+export default function CompaniesPage() {
+    return (
+        <CompaniesProvider>
+            <CompaniesPageContent />
+        </CompaniesProvider>
     );
 }
