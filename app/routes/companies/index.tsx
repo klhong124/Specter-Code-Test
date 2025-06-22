@@ -60,12 +60,13 @@ function CompaniesPageContent() {
     }
 
     return (
-        <Center
+        <Box
             minH="100dvh"
             bgImage="url(bg.png)"
             bgSize="contain"
             bgPosition="top"
             bgRepeat="no-repeat"
+            bgAttachment="fixed"
             pos="relative"
             zIndex={0}
             _before={{
@@ -136,7 +137,7 @@ function CompaniesPageContent() {
 
             {/* Mobile Drawer */}
             <CompaniesMobileDrawer isOpen={isOpen} onClose={onClose} />
-        </Center>
+        </Box>
     );
 }
 

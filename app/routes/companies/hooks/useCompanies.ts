@@ -1,7 +1,12 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useCallback } from "react";
 import type { Filters } from "../components/company.filters";
 import type { Company } from "../types/company.type";
+import {
+    CUSTOMER_FOCUSES,
+    FUNDING_TYPES,
+    GROWTH_STAGES,
+} from "../utils/company.constant";
 
 interface FilterOptions {
     growthStages: string[];
@@ -62,27 +67,6 @@ async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
     return response.json();
 }
 
-async function fetchFilterOptions(): Promise<FilterOptions> {
-    // For now, we'll extract filter options from the first page of companies
-    // This is a simple approach that avoids creating a separate API endpoint
-    const response = await fetch('/api/companies?limit=1000');
-    if (!response.ok) {
-        throw new Error('Failed to fetch filter options');
-    }
-    const data = await response.json();
-
-    const companies = data.companies || [];
-    const growthStages = [...new Set(companies.map((c: Company) => c.growth_stage).filter(Boolean))] as string[];
-    const customerFocuses = [...new Set(companies.map((c: Company) => c.customer_focus).filter(Boolean))] as string[];
-    const fundingTypes = [...new Set(companies.map((c: Company) => c.last_funding_type).filter(Boolean))] as string[];
-
-    return {
-        growthStages: growthStages.sort(),
-        customerFocuses: customerFocuses.sort(),
-        fundingTypes: fundingTypes.sort()
-    };
-}
-
 export function useCompanies() {
     const [filters, setFiltersState] = useState<Filters>({
         search: '',
@@ -121,21 +105,12 @@ export function useCompanies() {
         initialPageParam: 1,
     });
 
-    // Fetch filter options
-    const { data: filterOptionsData } = useQuery({
-        queryKey: ['filterOptions'],
-        queryFn: fetchFilterOptions,
-        staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    });
-
-    // Extract filter options
-    const filterOptions: FilterOptions = useMemo(() => {
-        return {
-            growthStages: filterOptionsData?.growthStages || [],
-            customerFocuses: filterOptionsData?.customerFocuses || [],
-            fundingTypes: filterOptionsData?.fundingTypes || [],
-        };
-    }, [filterOptionsData]);
+    // Filter options are now from constants
+    const filterOptions: FilterOptions = {
+        growthStages: GROWTH_STAGES,
+        customerFocuses: CUSTOMER_FOCUSES,
+        fundingTypes: FUNDING_TYPES,
+    };
 
     // Flatten all pages into a single array of companies
     const companies = useMemo(() => {
