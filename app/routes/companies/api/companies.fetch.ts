@@ -1,141 +1,128 @@
-import { prisma } from "../../../utils/prisma.server";
-import type { Company } from "../types/company.type";
+import { prisma } from "@/utils/prisma.server";
+import type { Company } from "@companies/types/company.type";
+import type { CompanyQueryFilters } from "@companies/types/companies.filters.type";
+import { safeParseInt } from "@companies/utils/company.helpers";
+
+const buildWhereClause = (filters: CompanyQueryFilters) => {
+    const where: any = {};
+    if (filters.search) {
+        where.OR = [
+            { name: { contains: filters.search, mode: 'insensitive' } },
+            { domain: { contains: filters.search, mode: 'insensitive' } },
+            { description: { contains: filters.search, mode: 'insensitive' } },
+        ];
+    }
+    if (filters.growthStage && filters.growthStage.length > 0) {
+        where.growth_stage = { in: filters.growthStage };
+    }
+    if (filters.customerFocus && filters.customerFocus.length > 0) {
+        where.customer_focus = { in: filters.customerFocus };
+    }
+    if (filters.fundingType && filters.fundingType.length > 0) {
+        where.last_funding_type = { in: filters.fundingType };
+    }
+    if (filters.minRank !== undefined) {
+        where.rank = { ...where.rank, gte: filters.minRank };
+    }
+    if (filters.maxRank !== undefined) {
+        where.rank = { ...where.rank, lte: filters.maxRank };
+    }
+    if (filters.minFunding !== undefined) {
+        where.last_funding_amount = { ...where.last_funding_amount, gte: filters.minFunding };
+    }
+    if (filters.maxFunding !== undefined) {
+        where.last_funding_amount = { ...where.last_funding_amount, lte: filters.maxFunding };
+    }
+    return where;
+};
+
+const buildOrderByClause = (sortBy: string, sortOrder: 'asc' | 'desc') => {
+    const orderBy: any = {};
+    switch (sortBy) {
+        case 'name':
+            orderBy.name = sortOrder;
+            break;
+        case 'rank':
+        default:
+            orderBy.rank = sortOrder;
+            break;
+    }
+    return orderBy;
+};
 
 export async function loader({ request }: { request: Request }): Promise<Response> {
     try {
         const url = new URL(request.url);
-        const page = parseInt(url.searchParams.get('page') || '1');
-        const limit = parseInt(url.searchParams.get('limit') || '20');
-        const search = url.searchParams.get('search') || '';
-        const growthStage = url.searchParams.getAll('growthStage');
-        const customerFocus = url.searchParams.getAll('customerFocus');
-        const fundingType = url.searchParams.getAll('fundingType');
-        const sortBy = url.searchParams.get('sortBy') || 'rank';
-        const sortOrder = url.searchParams.get('sortOrder') || 'asc';
-        const minRankParam = url.searchParams.get('minRank');
-        const maxRankParam = url.searchParams.get('maxRank');
-        const minFundingParam = url.searchParams.get('minFunding');
-        const maxFundingParam = url.searchParams.get('maxFunding');
+        const params = url.searchParams;
 
-        // Validate pagination parameters
-        const validPage = Math.max(1, page);
-        const validLimit = Math.min(Math.max(1, limit), 100); // Cap at 100 items per page
-        const skip = (validPage - 1) * validLimit;
+        // 1. Extract and Validate Parameters
+        const page = Math.max(1, safeParseInt(params.get('page')) || 1);
+        const limit = Math.min(Math.max(1, safeParseInt(params.get('limit')) || 20), 100);
+        const skip = (page - 1) * limit;
 
-        // Validate sorting parameters
+        const sortBy = params.get('sortBy') || 'rank';
+        const sortOrder = params.get('sortOrder') || 'asc';
         const validSortBy = ['name', 'rank'].includes(sortBy) ? sortBy : 'rank';
-        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'asc';
+        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? (sortOrder as 'asc' | 'desc') : 'asc';
 
-        // Build where clause for filtering
-        const where: any = {};
+        const filters: CompanyQueryFilters = {
+            search: params.get('search') || undefined,
+            growthStage: params.getAll('growthStage'),
+            customerFocus: params.getAll('customerFocus'),
+            fundingType: params.getAll('fundingType'),
+            minRank: safeParseInt(params.get('minRank')),
+            maxRank: safeParseInt(params.get('maxRank')),
+            minFunding: safeParseInt(params.get('minFunding')),
+            maxFunding: safeParseInt(params.get('maxFunding')),
+        };
 
-        if (search) {
-            where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { domain: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } }
-            ];
-        }
+        // 2. Build Prisma Clauses
+        const where = buildWhereClause(filters);
+        const orderBy = buildOrderByClause(validSortBy, validSortOrder);
 
-        if (growthStage.length > 0) {
-            where.growth_stage = { in: growthStage };
-        }
+        // 3. Fetch Data Concurrently
+        const [totalCount, companies] = await prisma.$transaction([
+            prisma.company.count({ where }),
+            prisma.company.findMany({
+                where,
+                orderBy,
+                select: {
+                    id: true, name: true, domain: true, rank: true, description: true,
+                    growth_stage: true, last_funding_type: true, last_funding_amount: true,
+                    customer_focus: true, createdAt: true,
+                },
+                skip,
+                take: limit,
+            }),
+        ]);
 
-        if (customerFocus.length > 0) {
-            where.customer_focus = { in: customerFocus };
-        }
-
-        if (fundingType.length > 0) {
-            where.last_funding_type = { in: fundingType };
-        }
-
-        if (minRankParam) {
-            const minRank = parseInt(minRankParam, 10);
-            if (!isNaN(minRank)) {
-                where.rank = { ...where.rank, gte: minRank };
-            }
-        }
-        if (maxRankParam) {
-            const maxRank = parseInt(maxRankParam, 10);
-            if (!isNaN(maxRank)) {
-                where.rank = { ...where.rank, lte: maxRank };
-            }
-        }
-        if (minFundingParam) {
-            try {
-                where.last_funding_amount = { ...where.last_funding_amount, gte: BigInt(minFundingParam) };
-            } catch (e) { /* ignore invalid bigint */ }
-        }
-        if (maxFundingParam) {
-            try {
-                where.last_funding_amount = { ...where.last_funding_amount, lte: BigInt(maxFundingParam) };
-            } catch (e) { /* ignore invalid bigint */ }
-        }
-
-        // Build orderBy clause for sorting
-        const orderBy: any = {};
-        if (validSortBy === 'name') {
-            orderBy.name = validSortOrder;
-        } else {
-            orderBy.rank = validSortOrder;
-        }
-
-        // Get total count for pagination metadata
-        const totalCount = await prisma.company.count({ where });
-
-        // Fetch paginated and filtered companies
-        const companies = await prisma.company.findMany({
-            where,
-            orderBy,
-            select: {
-                id: true,
-                name: true,
-                domain: true,
-                rank: true,
-                description: true,
-                growth_stage: true,
-                last_funding_type: true,
-                last_funding_amount: true,
-                customer_focus: true,
-                createdAt: true
-            },
-            skip,
-            take: validLimit
-        });
-
-        // Convert BigInt values to strings for JSON serialization
-        const serializedCompanies = companies.map(company => ({
-            ...company,
-            last_funding_amount: company.last_funding_amount ? company.last_funding_amount.toString() : null
-        }));
-
-        // Calculate pagination metadata
-        const totalPages = Math.ceil(totalCount / validLimit);
-        const hasNextPage = validPage < totalPages;
-        const hasPreviousPage = validPage > 1;
+        // 4. Serialize and Prepare Response
+        const serializedCompanies = companies.map(c => ({ ...c, last_funding_amount: c.last_funding_amount?.toString() ?? null }));
+        const totalPages = Math.ceil(totalCount / limit);
 
         const response = {
             companies: serializedCompanies,
             pagination: {
-                page: validPage,
-                limit: validLimit,
+                page,
+                limit,
                 totalCount,
                 totalPages,
-                hasNextPage,
-                hasPreviousPage,
-                nextPage: hasNextPage ? validPage + 1 : null,
-                previousPage: hasPreviousPage ? validPage - 1 : null
-            }
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+                nextPage: page < totalPages ? page + 1 : null,
+                previousPage: page > 1 ? page - 1 : null,
+            },
         };
 
         return new Response(JSON.stringify(response), {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         });
+
     } catch (error) {
         console.error('Error fetching companies:', error);
         return new Response(JSON.stringify({ error: 'Failed to fetch companies' }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         });
     }
 }

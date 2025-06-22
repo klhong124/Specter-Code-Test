@@ -11,13 +11,13 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useCallback } from "react";
-import { CompanyCard } from './components/company.card';
-import { CompaniesHeader } from './components/companies.header';
-import { CompaniesSidebar } from './components/companies.sidebar';
-import { CompaniesEmptyState } from './components/companies.empty.state';
-import { CompaniesErrorState } from './components/companies.error.state';
-import { CompaniesMobileDrawer } from './components/companies.mobile.drawer';
-import { CompaniesProvider, useCompaniesContext } from './context/companies.context';
+import { CompanyCard } from '@companies/components/company.card';
+import { CompaniesHeader } from '@companies/components/companies.header';
+import { CompaniesSidebar } from '@companies/components/companies.sidebar';
+import { CompaniesEmptyState } from '@companies/components/companies.empty.state';
+import { CompaniesErrorState } from '@companies/components/companies.error.state';
+import { CompaniesMobileDrawer } from '@companies/components/companies.mobile.drawer';
+import { CompaniesProvider, useCompaniesContext } from '@companies/context/companies.context';
 
 function CompaniesPageContent() {
     const {

@@ -21,8 +21,8 @@ import {
 import { motion, easeOut } from "framer-motion";
 import { useState } from "react";
 import { FiExternalLink, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons/fi";
-import type { Company } from "../types/company.type";
-import { formatFundingAmount } from "../utils/company.helpers";
+import type { Company } from "@companies/types/company.type";
+import { formatFundingAmount } from "@companies/utils/company.helpers";
 
 interface CompanyCardProps {
     company: Company;

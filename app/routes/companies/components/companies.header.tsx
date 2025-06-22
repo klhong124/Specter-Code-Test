@@ -4,7 +4,6 @@ import {
     HStack,
     VStack,
     Badge,
-    Progress,
     Button,
     useColorModeValue,
     Wrap,
@@ -13,7 +12,10 @@ import {
     TagLabel,
     TagCloseButton,
 } from "@chakra-ui/react";
-import { useCompaniesContext } from "../context/companies.context";
+import { useCompaniesContext } from "@companies/context/companies.context";
+import { useAutoHidingHeader } from "@companies/hooks/useAutoHidingHeader";
+import { motion } from "framer-motion";
+import { CompaniesSorting } from "@companies/components/companies.sorting";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
@@ -21,56 +23,50 @@ interface CompaniesHeaderProps {
 
 export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
     const {
-        companies,
-        totalItems,
-        loadedPages,
         hasActiveFilters,
         filters,
-        isLoading,
-        isFetchingNextPage,
         removeFilter,
         clearFilters,
     } = useCompaniesContext();
+    // const { isHidden } = useAutoHidingHeader();
 
-    const headerBg = useColorModeValue("white", "gray.800");
-    const headerBorder = useColorModeValue("gray.200", "gray.700");
+    const headerBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(28, 30, 33, 0.6)");
     const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
     const subtleTextColor = useColorModeValue("gray.600", "whiteAlpha.700");
 
-    const loadedCount = companies.length;
-    const totalCount = totalItems;
-    const progressPercentage = totalCount > 0 ? (loadedCount / totalCount) * 100 : 0;
-
-    // Calculate active filter count
-    const activeFilterCount = [
-        filters.search,
-        filters.growthStage.length,
-        filters.customerFocus.length,
-        filters.fundingType.length,
-        filters.minRank,
-        filters.maxRank,
-        filters.minFunding,
-        filters.maxFunding,
-    ].filter(v => v !== undefined && v !== 0 && (Array.isArray(v) ? v.length > 0 : true)).length;
-
     return (
         <Box
+            as="header"
             position="sticky"
-            top={4}
+            top={0}
             zIndex={10}
             bg={headerBg}
-            border="1px solid"
-            borderColor={headerBorder}
-            boxShadow="md"
-            borderRadius="xl"
-            mx={4}
+            backdropFilter="blur(12px)"
             py={3}
             px={4}
+            w="full"
+            // This creates the fade-out effect at the bottom
+            _after={{
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '40px',
+                background: 'linear-gradient(to top, transparent, var(--chakra-colors-chakra-body-bg))',
+                maskImage: 'linear-gradient(to top, black 0%, transparent 100%)',
+                pointerEvents: 'none',
+            }}
         >
             <VStack spacing={3} align="stretch">
                 {/* Main Header */}
                 <HStack justify="space-between" align="center">
-                    <Box>
+                    <Box
+                        as={motion.div}
+                        // animate={{ height: isHidden ? 0 : 'auto', opacity: isHidden ? 0 : 1 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' } as any}
+                        overflow="hidden"
+                    >
                         <Text fontSize="2xl" fontWeight="bold" color={textColor}>
                             Companies
                         </Text>
@@ -81,69 +77,16 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         )}
                     </Box>
 
-                    <Button
-                        variant="outline"
-                        onClick={onOpen}
-                        display={{ base: "flex", lg: "none" }}
-                    >
-                        Filters
-                    </Button>
-                </HStack>
-
-                {/* Status and Progress */}
-                <HStack justify="space-between" align="center" spacing={4}>
-                    {/* Left side - Status info */}
-                    <VStack align="start" spacing={1} flex={1}>
-                        <HStack spacing={3} align="center">
-                            <Badge
-                                colorScheme={hasActiveFilters ? "orange" : "blue"}
-                                variant="subtle"
-                                fontSize="xs"
-                            >
-                                {hasActiveFilters ? `${activeFilterCount} filters active` : "All companies"}
-                            </Badge>
-                            {loadedPages > 1 && (
-                                <Badge
-                                    colorScheme="green"
-                                    variant="subtle"
-                                    fontSize="xs"
-                                >
-                                    {loadedPages} pages loaded
-                                </Badge>
-                            )}
-                        </HStack>
-
-                        <HStack spacing={2} align="center">
-                            <Text fontSize="xs" color={subtleTextColor}>
-                                {loadedCount} of {totalCount} companies loaded
-                            </Text>
-                            {isFetchingNextPage && (
-                                <Text fontSize="xs" color="blue.500" fontWeight="medium">
-                                    Loading more...
-                                </Text>
-                            )}
-                        </HStack>
-                    </VStack>
-
-                    {/* Right side - Progress bar */}
-                    <VStack align="end" spacing={1} minW="200px">
-                        <HStack spacing={2} align="center">
-                            <Text fontSize="xs" color={subtleTextColor}>
-                                Progress
-                            </Text>
-                            <Text fontSize="xs" fontWeight="medium" color={textColor}>
-                                {Math.round(progressPercentage)}%
-                            </Text>
-                        </HStack>
-                        <Progress
-                            value={progressPercentage}
-                            size="sm"
-                            colorScheme="blue"
-                            borderRadius="full"
-                            w="200px"
-                            bg={useColorModeValue("gray.100", "gray.700")}
-                        />
-                    </VStack>
+                    <HStack spacing={4}>
+                        <CompaniesSorting />
+                        <Button
+                            variant="outline"
+                            onClick={onOpen}
+                            display={{ base: "flex", lg: "none" }}
+                        >
+                            Filters
+                        </Button>
+                    </HStack>
                 </HStack>
 
                 {/* Active Filters */}
@@ -229,18 +172,6 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                     </Box>
                 )}
             </VStack>
-
-            {/* Loading indicator */}
-            {isLoading && (
-                <Box mt={2}>
-                    <Progress
-                        size="xs"
-                        isIndeterminate
-                        colorScheme="blue"
-                        borderRadius="full"
-                    />
-                </Box>
-            )}
         </Box>
     );
 }

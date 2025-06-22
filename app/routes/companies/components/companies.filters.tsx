@@ -30,24 +30,18 @@ import {
 import { motion } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import type { Filters } from "../types/companies.filters.type";
-import { useCompaniesContext } from "../context/companies.context";
-import { formatFundingAmount } from "../utils/company.helpers";
-import { GROWTH_STAGE_OPTIONS } from "../utils/company.constant";
-
-interface FilterOptions {
-    customerFocuses: string[];
-    fundingTypes: string[];
-}
+import type { Filters } from "@companies/types/companies.filters.type";
+import { useCompaniesContext } from "@companies/context/companies.context";
+import { formatFundingAmount } from "@companies/utils/company.helpers";
+import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
 
 export interface CompanyFiltersProps {
-    filters: Filters;
-    setFilters: (filters: Filters) => void;
-    filterOptions: FilterOptions;
+    // No props needed now
 }
 
 // Search Filter Component
-function SearchFilter({ filters, setFilters }: { filters: Filters; setFilters: (filters: Filters) => void }) {
+function SearchFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     const [inputValue, setInputValue] = useState(filters.search);
 
     useEffect(() => {
@@ -69,6 +63,7 @@ function SearchFilter({ filters, setFilters }: { filters: Filters; setFilters: (
         }
     }, [filters.search]);
 
+
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Search</FormLabel>
@@ -82,37 +77,9 @@ function SearchFilter({ filters, setFilters }: { filters: Filters; setFilters: (
     );
 }
 
-// Sort Filter Component
-function SortFilter({ filters, setFilters }: { filters: Filters; setFilters: (filters: Filters) => void }) {
-    return (
-        <FormControl>
-            <FormLabel fontSize="sm" fontWeight="medium">Sort By</FormLabel>
-            <HStack spacing={3}>
-                <Select
-                    value={filters.sortBy}
-                    onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as 'name' | 'rank' })}
-                    size="sm"
-                    flex={1}
-                >
-                    <option value="rank">Rank</option>
-                    <option value="name">Name</option>
-                </Select>
-                <Select
-                    value={filters.sortOrder}
-                    onChange={(e) => setFilters({ ...filters, sortOrder: e.target.value as 'asc' | 'desc' })}
-                    size="sm"
-                    w="100px"
-                >
-                    <option value="asc">↑</option>
-                    <option value="desc">↓</option>
-                </Select>
-            </HStack>
-        </FormControl>
-    );
-}
-
 // Rank Filter Component
-function RankFilter({ filters, setFilters }: { filters: Filters; setFilters: (filters: Filters) => void }) {
+function RankFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Rank</FormLabel>
@@ -139,7 +106,8 @@ function RankFilter({ filters, setFilters }: { filters: Filters; setFilters: (fi
 }
 
 // Funding Amount Filter Component
-function FundingAmountFilter({ filters, setFilters }: { filters: Filters; setFilters: (filters: Filters) => void }) {
+function FundingAmountFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     const [fundingRange, setFundingRange] = useState([0, 100000000]);
     const thumbBg = useColorModeValue("brand.200", "brand.800");
 
@@ -189,7 +157,8 @@ function FundingAmountFilter({ filters, setFilters }: { filters: Filters; setFil
 }
 
 // Growth Stage Filter Component
-function GrowthStageFilter({ filters, setFilters }: { filters: Filters; setFilters: (filters: Filters) => void }) {
+function GrowthStageFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     const handleGrowthStageClick = (clickedValue: string) => {
         const newGrowthStage = filters.growthStage.includes(clickedValue)
             ? filters.growthStage.filter((v) => v !== clickedValue)
@@ -207,7 +176,7 @@ function GrowthStageFilter({ filters, setFilters }: { filters: Filters; setFilte
                     const isLast = index === GROWTH_STAGE_OPTIONS.length - 1;
 
                     // Selected styles (soft)
-                    const selectedBg = useColorModeValue(`${option.colorScheme}.50`, `${option.colorScheme}.800`);
+                    const selectedBg = useColorModeValue(`${option.colorScheme}.50`, ``);
                     const selectedColor = useColorModeValue(`${option.colorScheme}.700`, `${option.colorScheme}.200`);
                     const selectedBottomBorderColor = useColorModeValue(`${option.colorScheme}.500`, `${option.colorScheme}.400`);
 
@@ -256,7 +225,8 @@ function GrowthStageFilter({ filters, setFilters }: { filters: Filters; setFilte
 }
 
 // Customer Focus Filter Component
-function CustomerFocusFilter({ filters, setFilters, filterOptions }: { filters: Filters; setFilters: (filters: Filters) => void; filterOptions: FilterOptions }) {
+function CustomerFocusFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
@@ -265,7 +235,7 @@ function CustomerFocusFilter({ filters, setFilters, filterOptions }: { filters: 
                 onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
             >
                 <Wrap spacing={2}>
-                    {filterOptions.customerFocuses.map((focus) => (
+                    {CUSTOMER_FOCUSES.map((focus) => (
                         <WrapItem key={focus}>
                             <Checkbox value={focus} size="sm" colorScheme="blue">
                                 <Text fontSize="sm">{focus}</Text>
@@ -279,7 +249,8 @@ function CustomerFocusFilter({ filters, setFilters, filterOptions }: { filters: 
 }
 
 // Funding Type Filter Component
-function FundingTypeFilter({ filters, setFilters, filterOptions }: { filters: Filters; setFilters: (filters: Filters) => void; filterOptions: FilterOptions }) {
+function FundingTypeFilter() {
+    const { filters, setFilters } = useCompaniesContext();
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Funding Type</FormLabel>
@@ -288,7 +259,7 @@ function FundingTypeFilter({ filters, setFilters, filterOptions }: { filters: Fi
                 onChange={(value) => setFilters({ ...filters, fundingType: value as string[] })}
             >
                 <Wrap spacing={2}>
-                    {filterOptions.fundingTypes.map((type) => (
+                    {FUNDING_TYPES.map((type) => (
                         <WrapItem key={type}>
                             <Checkbox value={type} size="sm" colorScheme="blue">
                                 <Text fontSize="sm">{type}</Text>
@@ -302,11 +273,8 @@ function FundingTypeFilter({ filters, setFilters, filterOptions }: { filters: Fi
 }
 
 // Active Filters Component (Mobile)
-function ActiveFiltersMobile({ filters, removeFilter, clearFilters }: {
-    filters: Filters;
-    removeFilter: (key: keyof Filters, value?: any) => void;
-    clearFilters: () => void;
-}) {
+function ActiveFiltersMobile() {
+    const { filters, removeFilter, clearFilters } = useCompaniesContext();
     return (
         <Box>
             <HStack justify="space-between" my={2}>
@@ -391,8 +359,8 @@ function ActiveFiltersMobile({ filters, removeFilter, clearFilters }: {
     );
 }
 
-export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFiltersProps) {
-    const { removeFilter, clearFilters, hasActiveFilters } = useCompaniesContext();
+export function CompanyFilters({ }: CompanyFiltersProps) {
+    const { hasActiveFilters } = useCompaniesContext();
     const isMobile = useBreakpointValue({ base: true, lg: false });
 
     return (
@@ -402,32 +370,21 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
             </Box>
 
             {isMobile && hasActiveFilters && (
-                <ActiveFiltersMobile
-                    filters={filters}
-                    removeFilter={removeFilter}
-                    clearFilters={clearFilters}
-                />
+                <ActiveFiltersMobile />
             )}
 
             <VStack align="stretch" spacing={6} overflowY="auto" mr={-3} pr={4} h="calc(100vh - 10rem)">
-                <SearchFilter filters={filters} setFilters={setFilters} />
+                <SearchFilter />
                 <Divider />
-                <SortFilter filters={filters} setFilters={setFilters} />
-
-                <Box>
-                    <VStack spacing={6} align="stretch">
-                        <Divider />
-                        <RankFilter filters={filters} setFilters={setFilters} />
-                        <Divider />
-                        <FundingAmountFilter filters={filters} setFilters={setFilters} />
-                        <Divider />
-                        <GrowthStageFilter filters={filters} setFilters={setFilters} />
-                        <Divider />
-                        <CustomerFocusFilter filters={filters} setFilters={setFilters} filterOptions={filterOptions} />
-                        <Divider />
-                        <FundingTypeFilter filters={filters} setFilters={setFilters} filterOptions={filterOptions} />
-                    </VStack>
-                </Box>
+                <RankFilter />
+                <Divider />
+                <FundingAmountFilter />
+                <Divider />
+                <GrowthStageFilter />
+                <Divider />
+                <CustomerFocusFilter />
+                <Divider />
+                <FundingTypeFilter />
             </VStack>
         </VStack>
     );

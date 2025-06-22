@@ -1,13 +1,11 @@
 import { Box, Button, Flex, Image, useColorModeValue, useColorMode } from "@chakra-ui/react";
 import { Link } from "react-router";
 import { CompanyFilters } from "./companies.filters";
-import { useCompaniesContext } from "../context/companies.context";
 import { HiArrowLeft } from "react-icons/hi";
 import { FiMoon, FiSun } from "react-icons/fi";
 
 export function CompaniesSidebar() {
     const { colorMode, toggleColorMode } = useColorMode();
-    const { filters, setFilters, filterOptions } = useCompaniesContext();
 
     const glassBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(26, 32, 44, 0.6)");
     const glassBorder = useColorModeValue("rgba(255, 255, 255, 0.3)", "rgba(255, 255, 255, 0.1)");
@@ -29,7 +27,7 @@ export function CompaniesSidebar() {
                     _hover={{
                         bg: "transparent",
                     }}
-                    p={0}
+                    p={4}
                 >
                     <Image src="/specter.svg" alt="Specter" h={8} filter={logoFilter} />
                 </Button>
@@ -53,11 +51,7 @@ export function CompaniesSidebar() {
                 flex={1}
                 minH={0}
             >
-                <CompanyFilters
-                    filters={filters}
-                    setFilters={setFilters}
-                    filterOptions={filterOptions}
-                />
+                <CompanyFilters />
             </Box>
         </Flex>
 

@@ -1,5 +1,5 @@
 import { Box, Text, Button, VStack } from "@chakra-ui/react";
-import { useCompaniesContext } from "../context/companies.context";
+import { useCompaniesContext } from "@companies/context/companies.context";
 
 export function CompaniesEmptyState() {
     const { clearFilters } = useCompaniesContext();

@@ -1,21 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useCallback } from "react";
-import type { Filters } from "../types/companies.filters.type";
-import type { Company } from "../types/company.type";
-import {
-    CUSTOMER_FOCUSES,
-    FUNDING_TYPES,
-    GROWTH_STAGE_OPTIONS,
-} from "../utils/company.constant";
-
-interface FilterOptions {
-    customerFocuses: string[];
-    fundingTypes: string[];
-    minRank?: number;
-    maxRank?: number;
-    minFunding?: number;
-    maxFunding?: number;
-}
+import type { Filters } from "@companies/types/companies.filters.type";
+import type { Company } from "@companies/types/company.type";
 
 interface FetchCompaniesParams {
     page?: number;
@@ -30,11 +16,6 @@ interface FetchCompaniesParams {
     maxRank?: number;
     minFunding?: number;
     maxFunding?: number;
-}
-
-interface CompanyWithPage extends Company {
-    _pageNumber: number;
-    _pageIndex: number; // Index within the page (0-19 for page size 20)
 }
 
 async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
@@ -79,7 +60,7 @@ async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
 }
 
 export function useCompanies() {
-    const [filters, setFiltersState] = useState<Filters>({
+    const [filters, setFilters] = useState<Filters>({
         search: '',
         growthStage: [],
         customerFocus: [],
@@ -124,12 +105,6 @@ export function useCompanies() {
         initialPageParam: 1,
     });
 
-    // Filter options are now from constants
-    const filterOptions: FilterOptions = {
-        customerFocuses: CUSTOMER_FOCUSES,
-        fundingTypes: FUNDING_TYPES,
-    };
-
     // Flatten all pages into a single array of companies
     const companies = useMemo(() => {
         if (!infiniteData?.pages) return [];
@@ -142,13 +117,13 @@ export function useCompanies() {
     const loadedPages = infiniteData?.pages.length || 0;
 
     // Wrapper for setFilters that triggers refetch
-    const setFilters = useCallback((newFilters: Filters) => {
-        setFiltersState(newFilters);
+    const setFiltersState = useCallback((newFilters: Filters) => {
+        setFilters(newFilters);
         // The infinite query will automatically refetch when the queryKey changes
     }, []);
 
     const clearFilters = useCallback(() => {
-        setFiltersState({
+        setFilters({
             search: '',
             growthStage: [],
             customerFocus: [],
@@ -173,8 +148,8 @@ export function useCompanies() {
             (newFilters as any)[filterKey] = undefined;
         }
 
-        setFilters(newFilters);
-    }, [filters, setFilters]);
+        setFiltersState(newFilters);
+    }, [filters, setFiltersState]);
 
     const hasActiveFilters = Boolean(
         filters.search ||
@@ -198,7 +173,6 @@ export function useCompanies() {
         error,
         filters,
         setFilters,
-        filterOptions,
         clearFilters,
         removeFilter,
         hasActiveFilters,

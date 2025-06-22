@@ -10,3 +10,5 @@ export interface Filters {
     minFunding?: number;
     maxFunding?: number;
 }
+
+export type CompanyQueryFilters = Omit<Partial<Filters>, "sortBy" | "sortOrder">;

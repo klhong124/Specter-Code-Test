@@ -7,7 +7,6 @@ import {
     DrawerCloseButton,
 } from "@chakra-ui/react";
 import { CompanyFilters } from "./companies.filters";
-import { useCompaniesContext } from "../context/companies.context";
 
 interface CompaniesMobileDrawerProps {
     isOpen: boolean;
@@ -15,8 +14,6 @@ interface CompaniesMobileDrawerProps {
 }
 
 export function CompaniesMobileDrawer({ isOpen, onClose }: CompaniesMobileDrawerProps) {
-    const { filters, setFilters, filterOptions } = useCompaniesContext();
-
     return (
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="full">
             <DrawerOverlay />
@@ -24,11 +21,7 @@ export function CompaniesMobileDrawer({ isOpen, onClose }: CompaniesMobileDrawer
                 <DrawerCloseButton />
                 <DrawerHeader>Filters</DrawerHeader>
                 <DrawerBody>
-                    <CompanyFilters
-                        filters={filters}
-                        setFilters={setFilters}
-                        filterOptions={filterOptions}
-                    />
+                    <CompanyFilters />
                 </DrawerBody>
             </DrawerContent>
         </Drawer>

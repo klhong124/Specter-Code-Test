@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
-import { useCompanies } from "../hooks/useCompanies";
-import type { Filters } from "../types/companies.filters.type";
+import { useCompanies } from "@companies/hooks/useCompanies";
+import type { Filters } from "@companies/types/companies.filters.type";
 
 interface CompaniesContextType {
     // Data
@@ -12,11 +12,6 @@ interface CompaniesContextType {
     // Filters
     filters: Filters;
     setFilters: (filters: Filters) => void;
-    filterOptions: {
-        growthStages: string[];
-        customerFocuses: string[];
-        fundingTypes: string[];
-    };
     clearFilters: () => void;
     removeFilter: (filterKey: keyof Filters, valueToRemove?: any) => void;
     hasActiveFilters: boolean;
