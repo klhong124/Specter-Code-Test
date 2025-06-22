@@ -1,12 +1,10 @@
 import {
   Box,
   Container,
-  Flex,
   Heading,
   Image,
   Link,
   ListItem,
-  Spacer,
   Tag,
   Text,
   UnorderedList,

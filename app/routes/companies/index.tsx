@@ -6,7 +6,11 @@ import {
     Center,
     SimpleGrid,
     useDisclosure,
+    Spinner,
+    Text,
 } from "@chakra-ui/react";
+import { useEffect, useRef, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import { CompanyCard } from './components/company.card';
 import { CompaniesHeader } from './components/companies.header';
 import { CompaniesSidebar } from './components/companies.sidebar';
@@ -15,7 +19,6 @@ import { CompaniesEmptyState } from './components/companies.empty.state';
 import { CompaniesLoadingState } from './components/companies.loading.state';
 import { CompaniesErrorState } from './components/companies.error.state';
 import { CompaniesMobileDrawer } from './components/companies.mobile.drawer';
-import { CompaniesPagination } from './components/companies.pagination';
 import { CompaniesProvider, useCompaniesContext } from './context/companies.context';
 
 function CompaniesPageContent() {
@@ -28,15 +31,39 @@ function CompaniesPageContent() {
         filterOptions,
         clearFilters,
         hasActiveFilters,
-        currentPage,
-        totalPages,
-        pageSize,
         totalItems,
-        handlePageChange,
         handlePageSizeChange,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
     } = useCompaniesContext();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const observerRef = useRef<IntersectionObserver | null>(null);
+
+    // Intersection Observer for infinite scroll
+    const lastElementRef = useCallback((node: HTMLDivElement) => {
+        if (isLoading) return;
+
+        if (observerRef.current) observerRef.current.disconnect();
+
+        observerRef.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+            }
+        });
+
+        if (node) observerRef.current.observe(node);
+    }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    // Cleanup observer on unmount
+    useEffect(() => {
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, []);
 
     if (isLoading) {
         return <CompaniesLoadingState />;
@@ -50,8 +77,9 @@ function CompaniesPageContent() {
         <Center
             minH="100dvh"
             bgImage="url(bg.png)"
-            bgSize="cover"
-            bgPosition="center"
+            bgSize="contain"
+            bgPosition="top"
+            bgRepeat="no-repeat"
             pos="relative"
             zIndex={0}
             _before={{
@@ -60,7 +88,6 @@ function CompaniesPageContent() {
                 inset: 0,
                 bgColor: "rgba(255, 255, 255, 0.6)",
                 zIndex: -1,
-                filter: "blur(1px)",
                 backdropFilter: "blur(1px)",
             }}
         >
@@ -74,27 +101,51 @@ function CompaniesPageContent() {
 
                     {/* Main Content */}
                     <Box flex={1}>
-                        <VStack spacing={8} align="stretch">
+                        <VStack spacing={0} align="stretch">
+                            {/* Header */}
                             <CompaniesHeader />
 
-                            <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
-                                {companies.map((company, index) => (
-                                    <CompanyCard
-                                        key={company.id}
-                                        company={company}
-                                        index={index}
-                                    />
-                                ))}
-                            </SimpleGrid>
+                            {/* Main Content Area */}
+                            <Box pt={8}>
+                                <VStack spacing={8} align="stretch">
+                                    <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
+                                        {companies.map((company, index) => (
+                                            <div
+                                                key={`${company.id}-page-${company._pageNumber}`}
+                                                ref={index === companies.length - 3 ? lastElementRef : undefined}
+                                            >
+                                                <CompanyCard
+                                                    company={company}
+                                                    index={index}
+                                                />
+                                            </div>
+                                        ))}
+                                    </SimpleGrid>
 
-                            {companies.length === 0 && (
-                                <CompaniesEmptyState />
-                            )}
+                                    {companies.length === 0 && (
+                                        <CompaniesEmptyState />
+                                    )}
 
-                            {/* Pagination */}
-                            {companies.length > 0 && totalPages > 1 && (
-                                <CompaniesPagination />
-                            )}
+                                    {/* Loading indicator for infinite scroll */}
+                                    {isFetchingNextPage && (
+                                        <Center py={8}>
+                                            <VStack spacing={4}>
+                                                <Spinner size="lg" color="blue.500" />
+                                                <Text color="gray.600">Loading more companies...</Text>
+                                            </VStack>
+                                        </Center>
+                                    )}
+
+                                    {/* End of results indicator */}
+                                    {!hasNextPage && companies.length > 0 && (
+                                        <Center py={8}>
+                                            <Text color="gray.500" fontSize="sm">
+                                                You've reached the end of the results
+                                            </Text>
+                                        </Center>
+                                    )}
+                                </VStack>
+                            </Box>
                         </VStack>
                     </Box>
                 </HStack>

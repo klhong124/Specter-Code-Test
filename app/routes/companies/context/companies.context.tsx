@@ -20,12 +20,14 @@ interface CompaniesContextType {
     clearFilters: () => void;
     hasActiveFilters: boolean;
 
-    // Pagination
-    currentPage: number;
-    totalPages: number;
-    pageSize: number;
+    // Infinite scroll
+    fetchNextPage: () => void;
+    hasNextPage: boolean;
+    isFetchingNextPage: boolean;
+
+    // Basic info
     totalItems: number;
-    handlePageChange: (page: number) => void;
+    loadedPages: number;
     handlePageSizeChange: (pageSize: number) => void;
 }
 

@@ -20,20 +20,31 @@ import { FiExternalLink, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons
 import type { Company } from "../types/company.type";
 import { formatFundingAmount } from "../utils/company.helpers";
 
+interface CompanyWithPage extends Company {
+    _pageNumber: number;
+    _pageIndex: number;
+}
 
 interface CompanyCardProps {
-    company: Company;
+    company: CompanyWithPage;
     index: number;
 }
 
 export function CompanyCard({ company, index }: CompanyCardProps) {
-    // Animation variants following the rules
+    // Use page-based index for animation delay instead of global index
+    const animationIndex = company._pageIndex || 0;
+
+    // Animation variants
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
             y: 0,
-            transition: { delay: index * 0.1, duration: 0.3, ease: easeOut }
+            transition: {
+                delay: animationIndex * 0.05,
+                duration: 0.3,
+                ease: easeOut
+            }
         }
     };
 
@@ -50,14 +61,13 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
     };
 
     return (
-        <Box
-            as={motion.div}
-            variants={cardVariants}
+        <motion.div
             initial="hidden"
             animate="visible"
+            variants={cardVariants}
             whileHover="hover"
             whileTap="tap"
-            cursor="pointer"
+            style={{ cursor: 'pointer' }}
         >
             <Card
                 variant="outline"
@@ -148,6 +158,6 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                     </VStack>
                 </CardBody>
             </Card>
-        </Box>
+        </motion.div>
     );
 }

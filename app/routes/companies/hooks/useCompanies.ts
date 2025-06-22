@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useMemo, useState, useCallback } from "react";
 import type { Filters } from "../components/company.filters";
 import type { Company } from "../types/company.type";
 
@@ -16,6 +16,11 @@ interface FetchCompaniesParams {
     growthStage?: string[];
     customerFocus?: string[];
     fundingType?: string[];
+}
+
+interface CompanyWithPage extends Company {
+    _pageNumber: number;
+    _pageIndex: number; // Index within the page (0-19 for page size 20)
 }
 
 async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
@@ -75,28 +80,38 @@ async function fetchFilterOptions(): Promise<FilterOptions> {
 }
 
 export function useCompanies() {
-    const [filters, setFilters] = useState<Filters>({
+    const [filters, setFiltersState] = useState<Filters>({
         search: '',
         growthStage: [],
         customerFocus: [],
         fundingType: [],
     });
 
-    const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
 
-    // Fetch companies with server-side pagination and filtering
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['companies', filters, currentPage, pageSize],
-        queryFn: () => fetchCompanies({
-            page: currentPage,
+    // Fetch companies with infinite scroll
+    const {
+        data: infiniteData,
+        isLoading,
+        error,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        refetch
+    } = useInfiniteQuery({
+        queryKey: ['companies', filters, pageSize],
+        queryFn: ({ pageParam = 1 }) => fetchCompanies({
+            page: pageParam,
             limit: pageSize,
             search: filters.search || undefined,
             growthStage: filters.growthStage.length > 0 ? filters.growthStage : undefined,
             customerFocus: filters.customerFocus.length > 0 ? filters.customerFocus : undefined,
             fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
         }),
-        placeholderData: (previousData) => previousData, // Keep previous data while loading new data
+        getNextPageParam: (lastPage) => {
+            return lastPage.pagination.hasNextPage ? lastPage.pagination.nextPage : undefined;
+        },
+        initialPageParam: 1,
     });
 
     // Fetch filter options
@@ -115,22 +130,39 @@ export function useCompanies() {
         };
     }, [filterOptionsData]);
 
-    // Extract pagination info from API response
-    const pagination = data?.pagination;
-    const companies = data?.companies || [];
+    // Flatten all pages into a single array of companies with page tracking
+    const companies = useMemo(() => {
+        if (!infiniteData?.pages) return [];
+        return infiniteData.pages.flatMap((page, pageIndex) =>
+            page.companies.map((company, companyIndex) => ({
+                ...company,
+                _pageNumber: pageIndex + 1,
+                _pageIndex: companyIndex // Index within the page (0-19 for page size 20)
+            }))
+        );
+    }, [infiniteData]);
+
+    // Get pagination info from the first page
+    const pagination = infiniteData?.pages[0]?.pagination;
     const totalPages = pagination?.totalPages || 0;
     const totalItems = pagination?.totalCount || 0;
+    const loadedPages = infiniteData?.pages.length || 0;
 
-    const clearFilters = () => {
-        setFilters({
+    // Wrapper for setFilters that triggers refetch
+    const setFilters = useCallback((newFilters: Filters) => {
+        setFiltersState(newFilters);
+        // The infinite query will automatically refetch when the queryKey changes
+    }, []);
+
+    const clearFilters = useCallback(() => {
+        setFiltersState({
             search: '',
             growthStage: [],
             customerFocus: [],
             fundingType: [],
         });
-        // Reset to first page when clearing filters
-        setCurrentPage(1);
-    };
+        // The infinite query will automatically refetch when the queryKey changes
+    }, []);
 
     const hasActiveFilters = Boolean(
         filters.search ||
@@ -139,20 +171,13 @@ export function useCompanies() {
         filters.fundingType.length > 0
     );
 
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
     const handlePageSizeChange = (newPageSize: number) => {
         setPageSize(newPageSize);
-        // Reset to first page when changing page size
-        setCurrentPage(1);
+        // The infinite query will automatically refetch when the queryKey changes
     };
 
     return {
         companies,
-        filteredCompanies: companies, // For backward compatibility
-        paginatedCompanies: companies, // For backward compatibility
         isLoading,
         error,
         filters,
@@ -160,12 +185,13 @@ export function useCompanies() {
         filterOptions,
         clearFilters,
         hasActiveFilters,
-        // Pagination
-        currentPage,
-        totalPages,
-        pageSize,
+        // Infinite scroll
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        // Basic info
         totalItems,
-        handlePageChange,
+        loadedPages,
         handlePageSizeChange,
     };
 }
