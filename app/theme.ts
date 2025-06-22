@@ -29,6 +29,26 @@ const extension: Partial<ChakraTheme> = {
           },
         },
       },
+      "::-webkit-scrollbar": {
+        width: "4px",
+        height: "4px",
+      },
+      "::-webkit-scrollbar-track": {
+        background: "transparent",
+      },
+      "::-webkit-scrollbar-thumb": {
+        backgroundColor: "rgba(0,0,0,0.15)",
+        borderRadius: "2px",
+      },
+      ".chakra-ui-dark ::-webkit-scrollbar-thumb": {
+        backgroundColor: "rgba(255,255,255,0.15)",
+      },
+      "::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: "rgba(0,0,0,0.25)",
+      },
+      ".chakra-ui-dark ::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: "rgba(255,255,255,0.25)",
+      },
     },
   },
   fontSizes: {
