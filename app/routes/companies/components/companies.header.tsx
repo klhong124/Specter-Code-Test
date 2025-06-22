@@ -16,6 +16,7 @@ import { useCompaniesContext } from "@companies/context/companies.context";
 import { useAutoHidingHeader } from "@companies/hooks/useAutoHidingHeader";
 import { motion } from "framer-motion";
 import { CompaniesSorting } from "@companies/components/companies.sorting";
+import CountUp from "@ui/count-up";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
@@ -27,6 +28,7 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
         filters,
         removeFilter,
         clearFilters,
+        totalItems,
     } = useCompaniesContext();
     // const { isHidden } = useAutoHidingHeader();
 
@@ -67,9 +69,21 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         transition={{ duration: 0.2, ease: 'easeOut' } as any}
                         overflow="hidden"
                     >
-                        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                            Companies
-                        </Text>
+                        <HStack spacing={2} align="baseline">
+                            <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+                                Companies
+                            </Text>
+                            <Text fontSize="sm" color={subtleTextColor}>
+                                <CountUp
+                                    key={totalItems}
+                                    from={0}
+                                    to={totalItems}
+                                    separator=","
+                                    duration={0.1}
+                                    suffix=" results found"
+                                />
+                            </Text>
+                        </HStack>
                         {hasActiveFilters && (
                             <Text color={subtleTextColor} fontSize="sm">
                                 Filtered results

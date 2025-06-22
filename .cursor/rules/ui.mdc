@@ -116,7 +116,7 @@ Inspired by Apple's Liquid Glass design system, this pattern emphasizes light ma
 </Box>
 ```
 
-### ❌ Don’t
+### ❌ Don't
 
 - ❌ Overuse or stack glass layers
 - ❌ Apply on content-heavy backgrounds without dimming
@@ -129,20 +129,30 @@ Inspired by Apple's Liquid Glass design system, this pattern emphasizes light ma
 
 ### 9. Animation Guidelines
 
-- Use Framer Motion `motion` components
-- Combine with Chakra using `as={motion.div}`
+- Use Framer Motion `motion` components with Chakra UI's `as` prop
+- Combine with Chakra using `as={motion.div}`, `as={motion.button}`, etc.
 - Animate `opacity` and `transform` only
+- **Important**: Chakra props take precedence over Framer Motion props with the same name
 
 ---
 
-### 10. Motion Component Patterns
+### 10. Motion Component Patterns with `as` Prop
 
 ```tsx
+import { Box } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
+
+// ✅ Correct - Using as prop to combine Chakra UI with Framer Motion
 <Box
   as={motion.div}
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.3, ease: "easeOut" }}
+  height='40px'
+  width='40px'
+  bg='orange.400'
+  drag='x'
+  dragConstraints={{ left: -100, right: 100 }}
+  whileHover={{ scale: 1.1 }}
+  whileTap={{ scale: 0.9 }}
+  transition='0.5s linear'  // Use Chakra's transition prop
 >
   Content
 </Box>
@@ -150,55 +160,159 @@ Inspired by Apple's Liquid Glass design system, this pattern emphasizes light ma
 
 ---
 
-### 11. Transition Prop Conflicts
+### 11. Transition Prop Conflicts Resolution
 
-- Use wrapper components or `variants`
-- Avoid overriding Chakra's `transition` props with motion directly
+**⚠️ Critical**: Chakra UI props with the same name as Framer Motion props take precedence.
+
+```tsx
+// ✅ Works - Chakra transition prop
+<Box
+  as={motion.div}
+  transition='0.5s linear'  // Chakra UI transition
+  whileHover={{ scale: 1.1 }}
+>
+  Content
+</Box>
+
+// ❌ Doesn't work - Framer Motion transition conflicts with Chakra
+<Box
+  as={motion.div}
+  transition={{ duration: 0.5, ease: "linear" }}  // Conflicts with Chakra
+  whileHover={{ scale: 1.1 }}
+>
+  Content
+</Box>
+```
+
+**Solution**: Use Chakra UI's transition prop for CSS transitions, Framer Motion props for animations.
 
 ---
 
 ### 12. Animation Best Practices
 
-- ✅ Prefer `transform` and `opacity`
+- ✅ Use `as={motion.component}` pattern
+- ✅ Prefer `transform` and `opacity` for animations
 - ✅ Avoid animating layout properties (e.g., `height`)
+- ✅ Use Chakra's `transition` prop for CSS transitions
+- ✅ Use Framer Motion's `animate`, `whileHover`, `whileTap` for interactions
 - ✅ Centralize timing configs
 
 ---
 
-### 13. Interactive Animations
+### 13. Interactive Animations with `as` Prop
 
 ```tsx
 <Box
   as={motion.div}
-  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-  whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+  bg="blue.500"
+  color="white"
+  p={4}
+  borderRadius="md"
+  cursor="pointer"
+  whileHover={{
+    y: -4,
+    transition: { duration: 0.2 }
+  }}
+  whileTap={{
+    scale: 0.98,
+    transition: { duration: 0.1 }
+  }}
+  transition="all 0.3s ease-out"  // Chakra transition
 >
-  <Card cursor="pointer">Hoverable Card</Card>
+  Hoverable Card
 </Box>
 ```
 
 ---
 
-### 14. Form Components
+### 14. Variants with `as` Prop
+
+```tsx
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: "easeOut" as const }
+  }
+};
+
+<Box
+  as={motion.div}
+  variants={containerVariants}
+  initial="hidden"
+  animate="visible"
+>
+  {items.map((item) => (
+    <Box
+      key={item.id}
+      as={motion.div}
+      variants={itemVariants}
+      bg="gray.100"
+      p={3}
+      mb={2}
+    >
+      {item.content}
+    </Box>
+  ))}
+</Box>
+```
+
+---
+
+### 15. Color Animations with `as` Prop
+
+```tsx
+<Box
+  as={motion.div}
+  bg={isSelected ? "blue.500" : "gray.200"}
+  color={isSelected ? "white" : "gray.700"}
+  animate={{
+    backgroundColor: isSelected ? "var(--chakra-colors-blue-500)" : "var(--chakra-colors-gray-200)",
+    color: isSelected ? "var(--chakra-colors-white)" : "var(--chakra-colors-gray-700)"
+  }}
+  transition="all 0.3s ease-out"
+  p={4}
+  borderRadius="md"
+  cursor="pointer"
+>
+  Animated Button
+</Box>
+```
+
+---
+
+### 16. Form Components
 
 - Use `FormControl`, `FormLabel`, `Input`, `Textarea`
 - Use `FormErrorMessage` for validation
 
 ---
 
-### 15. Navigation and Links
+### 17. Navigation and Links
 
 - Use Chakra `Link` with `as={Link}` from React Router
 
 ---
 
-### 16. Dark Mode
+### 18. Dark Mode
 
 - Use `_dark` pseudo selector for theme adjustments
 
 ---
 
-### 17. Accessibility
+### 19. Accessibility
 
 - Use semantic HTML and ARIA attributes
 - Ensure strong contrast

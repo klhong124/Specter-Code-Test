@@ -9,9 +9,7 @@ import {
     FormLabel,
     Checkbox,
     CheckboxGroup,
-    Stack,
     Text,
-    Select,
     HStack,
     NumberInput,
     NumberInputField,
@@ -27,10 +25,7 @@ import {
     RangeSliderThumb,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { FiX } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import type { Filters } from "@companies/types/companies.filters.type";
 import { useCompaniesContext } from "@companies/context/companies.context";
 import { formatFundingAmount } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
@@ -175,7 +170,7 @@ function GrowthStageFilter() {
                     const isFirst = index === 0;
                     const isLast = index === GROWTH_STAGE_OPTIONS.length - 1;
 
-                    // Selected styles (soft)
+                    // Selected styles
                     const selectedBg = useColorModeValue(`${option.colorScheme}.50`, ``);
                     const selectedColor = useColorModeValue(`${option.colorScheme}.700`, `${option.colorScheme}.200`);
                     const selectedBottomBorderColor = useColorModeValue(`${option.colorScheme}.500`, `${option.colorScheme}.400`);
@@ -187,7 +182,6 @@ function GrowthStageFilter() {
 
                     return (
                         <Button
-                            as={motion.button}
                             key={option.value}
                             flex={1}
                             size="sm"
@@ -195,12 +189,10 @@ function GrowthStageFilter() {
                             borderWidth="1px"
                             borderBottomWidth="2px"
                             onClick={() => handleGrowthStageClick(option.value)}
-                            // Set colors directly, no animation on these properties
                             bg={isSelected ? selectedBg : unselectedBg}
                             color={isSelected ? selectedColor : unselectedColor}
                             borderColor={unselectedBorderColor}
                             borderBottomColor={isSelected ? selectedBottomBorderColor : unselectedBorderColor}
-                            // Base styles
                             display="flex"
                             flexDirection="column"
                             h="auto"
@@ -212,8 +204,7 @@ function GrowthStageFilter() {
                             borderBottomLeftRadius={isFirst ? 'md' : 0}
                             borderTopRightRadius={isLast ? 'md' : 0}
                             borderBottomRightRadius={isLast ? 'md' : 0}
-                            // Animation props - only transform and opacity are used
-                            transition={{ duration: 0.2, ease: 'easeOut' } as any}
+                            transition="0.2s ease-in-out"
                         >
                             <Text fontSize="xx-small" >{option.label}</Text>
                         </Button>

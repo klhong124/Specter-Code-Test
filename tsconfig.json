@@ -30,6 +30,9 @@
       ],
       "@companies/*": [
         "./app/routes/companies/*"
+      ],
+      "@ui/*": [
+        "./app/ui/*"
       ]
     },
     "esModuleInterop": true,
