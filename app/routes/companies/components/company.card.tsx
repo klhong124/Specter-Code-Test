@@ -16,6 +16,7 @@ import {
     Box,
     Image,
     Skeleton,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import { motion, easeOut } from "framer-motion";
 import { useState } from "react";
@@ -31,6 +32,9 @@ interface CompanyCardProps {
 export function CompanyCard({ company, index }: CompanyCardProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
+
+    const glassBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(26, 32, 44, 0.6)");
+    const glassBorder = useColorModeValue("rgba(255, 255, 255, 0.3)", "rgba(255, 255, 255, 0.1)");
 
     // Use current index for animation delay instead of page index
     // This ensures proper animation when sorting changes
@@ -95,7 +99,15 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
         >
             <Card
                 variant="outline"
-                _hover={{ shadow: "lg" }}
+                bg={glassBg}
+                backdropFilter="blur(12px)"
+                borderColor={glassBorder}
+                boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
+                borderRadius="xl"
+                _hover={{
+                    shadow: "lg",
+                    borderColor: useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.3)")
+                }}
                 transition="all 0.2s"
             >
                 <CardHeader pb={2}>

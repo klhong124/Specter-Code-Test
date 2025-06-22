@@ -96,113 +96,117 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
                 </HStack>
             </FormControl>
 
-            <Divider />
+            <Box overflowY="auto" maxH="60vh" pr={4}>
+                <VStack spacing={6} align="stretch">
+                    <Divider />
 
-            <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium">Rank</FormLabel>
-                <HStack spacing={2}>
-                    <NumberInput
-                        size="sm"
-                        value={filters.minRank}
-                        onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
-                        allowMouseWheel
-                    >
-                        <NumberInputField placeholder="Min" />
-                    </NumberInput>
-                    <NumberInput
-                        size="sm"
-                        value={filters.maxRank}
-                        onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
-                        allowMouseWheel
-                    >
-                        <NumberInputField placeholder="Max" />
-                    </NumberInput>
-                </HStack>
-            </FormControl>
+                    <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="medium">Rank</FormLabel>
+                        <HStack spacing={2}>
+                            <NumberInput
+                                size="sm"
+                                value={filters.minRank}
+                                onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
+                                allowMouseWheel
+                            >
+                                <NumberInputField placeholder="Min" />
+                            </NumberInput>
+                            <NumberInput
+                                size="sm"
+                                value={filters.maxRank}
+                                onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
+                                allowMouseWheel
+                            >
+                                <NumberInputField placeholder="Max" />
+                            </NumberInput>
+                        </HStack>
+                    </FormControl>
 
-            <Divider />
+                    <Divider />
 
-            <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium">Last Funding Amount (USD)</FormLabel>
-                <HStack spacing={2}>
-                    <NumberInput
-                        size="sm"
-                        value={filters.minFunding}
-                        onChange={(_, value) => setFilters({ ...filters, minFunding: value || undefined })}
-                        allowMouseWheel
-                    >
-                        <NumberInputField placeholder="Min" />
-                    </NumberInput>
-                    <NumberInput
-                        size="sm"
-                        value={filters.maxFunding}
-                        onChange={(_, value) => setFilters({ ...filters, maxFunding: value || undefined })}
-                        allowMouseWheel
-                    >
-                        <NumberInputField placeholder="Max" />
-                    </NumberInput>
-                </HStack>
-            </FormControl>
+                    <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="medium">Last Funding Amount (USD)</FormLabel>
+                        <HStack spacing={2}>
+                            <NumberInput
+                                size="sm"
+                                value={filters.minFunding}
+                                onChange={(_, value) => setFilters({ ...filters, minFunding: value || undefined })}
+                                allowMouseWheel
+                            >
+                                <NumberInputField placeholder="Min" />
+                            </NumberInput>
+                            <NumberInput
+                                size="sm"
+                                value={filters.maxFunding}
+                                onChange={(_, value) => setFilters({ ...filters, maxFunding: value || undefined })}
+                                allowMouseWheel
+                            >
+                                <NumberInputField placeholder="Max" />
+                            </NumberInput>
+                        </HStack>
+                    </FormControl>
 
-            <Divider />
+                    <Divider />
 
-            <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium">Growth Stage</FormLabel>
-                <CheckboxGroup
-                    value={filters.growthStage}
-                    onChange={(value) => setFilters({ ...filters, growthStage: value as string[] })}
-                >
-                    <Wrap spacing={2}>
-                        {filterOptions.growthStages.map((stage) => (
-                            <WrapItem key={stage}>
-                                <Checkbox value={stage} size="sm" colorScheme="blue">
-                                    <Text fontSize="sm">{stage}</Text>
-                                </Checkbox>
-                            </WrapItem>
-                        ))}
-                    </Wrap>
-                </CheckboxGroup>
-            </FormControl>
+                    <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="medium">Growth Stage</FormLabel>
+                        <CheckboxGroup
+                            value={filters.growthStage}
+                            onChange={(value) => setFilters({ ...filters, growthStage: value as string[] })}
+                        >
+                            <Wrap spacing={2}>
+                                {filterOptions.growthStages.map((stage) => (
+                                    <WrapItem key={stage}>
+                                        <Checkbox value={stage} size="sm" colorScheme="blue">
+                                            <Text fontSize="sm">{stage}</Text>
+                                        </Checkbox>
+                                    </WrapItem>
+                                ))}
+                            </Wrap>
+                        </CheckboxGroup>
+                    </FormControl>
 
-            <Divider />
+                    <Divider />
 
-            <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
-                <CheckboxGroup
-                    value={filters.customerFocus}
-                    onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
-                >
-                    <Wrap spacing={2}>
-                        {filterOptions.customerFocuses.map((focus) => (
-                            <WrapItem key={focus}>
-                                <Checkbox value={focus} size="sm" colorScheme="blue">
-                                    <Text fontSize="sm">{focus}</Text>
-                                </Checkbox>
-                            </WrapItem>
-                        ))}
-                    </Wrap>
-                </CheckboxGroup>
-            </FormControl>
+                    <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
+                        <CheckboxGroup
+                            value={filters.customerFocus}
+                            onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
+                        >
+                            <Wrap spacing={2}>
+                                {filterOptions.customerFocuses.map((focus) => (
+                                    <WrapItem key={focus}>
+                                        <Checkbox value={focus} size="sm" colorScheme="blue">
+                                            <Text fontSize="sm">{focus}</Text>
+                                        </Checkbox>
+                                    </WrapItem>
+                                ))}
+                            </Wrap>
+                        </CheckboxGroup>
+                    </FormControl>
 
-            <Divider />
+                    <Divider />
 
-            <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium">Funding Type</FormLabel>
-                <CheckboxGroup
-                    value={filters.fundingType}
-                    onChange={(value) => setFilters({ ...filters, fundingType: value as string[] })}
-                >
-                    <Wrap spacing={2}>
-                        {filterOptions.fundingTypes.map((type) => (
-                            <WrapItem key={type}>
-                                <Checkbox value={type} size="sm" colorScheme="blue">
-                                    <Text fontSize="sm">{type}</Text>
-                                </Checkbox>
-                            </WrapItem>
-                        ))}
-                    </Wrap>
-                </CheckboxGroup>
-            </FormControl>
+                    <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="medium">Funding Type</FormLabel>
+                        <CheckboxGroup
+                            value={filters.fundingType}
+                            onChange={(value) => setFilters({ ...filters, fundingType: value as string[] })}
+                        >
+                            <Wrap spacing={2}>
+                                {filterOptions.fundingTypes.map((type) => (
+                                    <WrapItem key={type}>
+                                        <Checkbox value={type} size="sm" colorScheme="blue">
+                                            <Text fontSize="sm">{type}</Text>
+                                        </Checkbox>
+                                    </WrapItem>
+                                ))}
+                            </Wrap>
+                        </CheckboxGroup>
+                    </FormControl>
+                </VStack>
+            </Box>
         </VStack>
     );
 }

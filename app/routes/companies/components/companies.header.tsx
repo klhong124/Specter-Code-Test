@@ -32,8 +32,8 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
         clearFilters,
     } = useCompaniesContext();
 
-    const bgColor = useColorModeValue("white", "gray.800");
-    const borderColor = useColorModeValue("gray.200", "gray.700");
+    const headerBg = useColorModeValue("white", "gray.800");
+    const headerBorder = useColorModeValue("gray.200", "gray.700");
 
     const loadedCount = companies.length;
     const totalCount = totalItems;
@@ -54,13 +54,14 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
     return (
         <Box
             position="sticky"
-            top={0}
+            top={4}
             zIndex={10}
-            bg={bgColor}
-            borderBottom="1px"
-            borderColor={borderColor}
-            backdropFilter="blur(10px)"
-            bgColor={`${bgColor}CC`}
+            bg={headerBg}
+            border="1px solid"
+            borderColor={headerBorder}
+            boxShadow="md"
+            borderRadius="xl"
+            mx={4}
             py={3}
             px={4}
         >

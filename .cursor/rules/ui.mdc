@@ -1,0 +1,229 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Chakra UI & Framer Motion Rules for Specter Frontend Test
+
+## Project Overview
+
+This is a React Router project using Chakra UI v2.10.7 with a custom theme and Framer Motion for animations. The project uses Bun as the runtime and includes TypeScript, React Query, and comprehensive animation support.
+
+---
+
+## Core Chakra UI Rules
+
+### 1. Theme Usage
+
+- **Always use the custom theme**: Import and use the theme from `app/theme.ts`
+- **Use semantic colours**: Prefer semantic colour tokens like `brand.500`, `gray.500`, `success`, `warning` over hardcoded hex values
+- **Custom colours available**: `brand`, `brandDark`, `success`, `warning`, plus standard Chakra colours
+
+---
+
+### 2. Component Import Rules
+
+```ts
+// ✅ Correct - Import from @chakra-ui/react
+import { Box, Button, Text, Heading } from "@chakra-ui/react";
+
+// ❌ Avoid - Don't import from individual packages
+import Box from "@chakra-ui/box";
+```
+
+---
+
+### 3. Layout Components
+
+- **Use Box for containers**: Primary layout component for divs
+- **Use Flex for flexbox layouts**
+- **Use Grid for CSS Grid**
+- **Use Center for centering**
+
+---
+
+### 4. Typography
+
+- **Use Heading for titles**: With appropriate `as` prop (`h1`, `h2`, etc.)
+- **Use Text for body text**: With semantic colour tokens
+- **Font family**: Inter is configured as the default font
+
+---
+
+### 5. Button Guidelines
+
+- **Default size**: Buttons default to `sm`
+- **Available variants**: `outline`, `dashed` (custom), plus Chakra standard
+- **Use with React Router**: `as={Link}` for navigation
+
+---
+
+### 6. Responsive Design
+
+- **Use responsive arrays**: `[base, md, lg]`
+- **Mobile-first**: Start styles for mobile, override up
+
+---
+
+### 7. Spacing and Sizing
+
+- **Use theme spacing**: `p={4}`, `gap={3}`, `m={2}`, etc.
+- **Use viewport units**: `100dvh`, `100vw` as needed
+
+---
+
+### 8. Styling Patterns
+
+- **Use style props**: Instead of `className` or inline CSS
+- **Use pseudo selectors**: `_hover`, `_focus`, `_dark`, etc.
+- **Use `sx`**: For complex custom styles
+
+---
+
+## 8.1 Liquid Glass UI Design Pattern (Updated)
+
+Inspired by Apple's Liquid Glass design system, this pattern emphasizes light manipulation, responsive translucency, and fluid feedback to create immersive interfaces.
+
+### ✅ Do
+
+- **Use dynamic, translucent backgrounds**:
+  - `bg="rgba(255, 255, 255, 0.1)"` or use alpha tokens
+  - Integrate with real-time content-aware tinting
+- **Apply backdrop blur**:
+  - `backdropFilter="blur(10px)"`, or Chakra shorthand `backdropBlur="md"`
+- **Add depth and realism**:
+  - `boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"`
+  - `border="1px solid rgba(255, 255, 255, 0.3)"`
+- **Mimic liquid motion** with responsive, organic interactions
+- **Differentiate variants**:
+  - `Regular`: versatile and adaptive
+  - `Clear`: maximally transparent for media-rich backgrounds
+- **Ensure accessibility**:
+  - Adjust for `reducedMotion`, `increasedContrast`, `reducedTransparency`
+- **Responsive layering**:
+  - Adapt shadows, blur, and brightness dynamically per context
+
+#### Example:
+```tsx
+<Box
+  bg="rgba(255, 255, 255, 0.1)"
+  backdropFilter="blur(10px)"
+  border="1px solid rgba(255, 255, 255, 0.3)"
+  borderRadius="xl"
+  boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
+>
+  {/* Liquid Glass content */}
+</Box>
+```
+
+### ❌ Don’t
+
+- ❌ Overuse or stack glass layers
+- ❌ Apply on content-heavy backgrounds without dimming
+- ❌ Skip blur, tint, or light shaping
+- ❌ Ignore contrast/legibility in different themes
+
+---
+
+## Framer Motion Integration
+
+### 9. Animation Guidelines
+
+- Use Framer Motion `motion` components
+- Combine with Chakra using `as={motion.div}`
+- Animate `opacity` and `transform` only
+
+---
+
+### 10. Motion Component Patterns
+
+```tsx
+<Box
+  as={motion.div}
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+>
+  Content
+</Box>
+```
+
+---
+
+### 11. Transition Prop Conflicts
+
+- Use wrapper components or `variants`
+- Avoid overriding Chakra's `transition` props with motion directly
+
+---
+
+### 12. Animation Best Practices
+
+- ✅ Prefer `transform` and `opacity`
+- ✅ Avoid animating layout properties (e.g., `height`)
+- ✅ Centralize timing configs
+
+---
+
+### 13. Interactive Animations
+
+```tsx
+<Box
+  as={motion.div}
+  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+  whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+>
+  <Card cursor="pointer">Hoverable Card</Card>
+</Box>
+```
+
+---
+
+### 14. Form Components
+
+- Use `FormControl`, `FormLabel`, `Input`, `Textarea`
+- Use `FormErrorMessage` for validation
+
+---
+
+### 15. Navigation and Links
+
+- Use Chakra `Link` with `as={Link}` from React Router
+
+---
+
+### 16. Dark Mode
+
+- Use `_dark` pseudo selector for theme adjustments
+
+---
+
+### 17. Accessibility
+
+- Use semantic HTML and ARIA attributes
+- Ensure strong contrast
+- Respect `prefers-reduced-motion`
+
+---
+
+## ✅ Common Patterns
+
+1. Use spacing and sizing tokens from the theme
+2. Use semantic colour tokens
+3. Build mobile-first and extend up
+4. Use reusable components
+5. Apply consistent animation timing
+
+---
+
+## 🚫 Avoid
+
+- ❌ Hardcoded hex colours
+- ❌ Using `className` with Chakra
+- ❌ Inline CSS instead of style props
+- ❌ Animating layout properties
+- ❌ Overstacking Liquid Glass components
+- ❌ Ignoring accessibility controls
+
+---
+

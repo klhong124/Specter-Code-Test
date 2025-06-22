@@ -73,7 +73,7 @@ function CompaniesPageContent() {
                 content: '""',
                 pos: "absolute",
                 inset: 0,
-                bgColor: "rgba(255, 255, 255, 0.6)",
+                bgColor: "rgba(255, 255, 255, 0.4)",
                 zIndex: -1,
                 backdropFilter: "blur(1px)",
             }}
