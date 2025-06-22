@@ -14,7 +14,6 @@ const extension: Partial<ChakraTheme> = {
       body: {
         bg: "gray.50",
         color: "gray.800",
-        transition: "background-color .2s ease-in-out, color .2s ease-in-out",
         _dark: {
           bg: "black",
           color: "whiteAlpha.900",

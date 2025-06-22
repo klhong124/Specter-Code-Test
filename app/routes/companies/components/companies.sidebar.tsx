@@ -39,7 +39,7 @@ export function CompaniesSidebar() {
             </Flex>
 
             <Box
-                w="300px"
+                w="350px"
                 flexShrink={0}
                 bg={glassBg}
                 backdropFilter="blur(12px)"

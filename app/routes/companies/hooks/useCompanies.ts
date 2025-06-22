@@ -5,11 +5,10 @@ import type { Company } from "../types/company.type";
 import {
     CUSTOMER_FOCUSES,
     FUNDING_TYPES,
-    GROWTH_STAGES,
+    GROWTH_STAGE_OPTIONS,
 } from "../utils/company.constant";
 
 interface FilterOptions {
-    growthStages: string[];
     customerFocuses: string[];
     fundingTypes: string[];
     minRank?: number;
@@ -127,7 +126,6 @@ export function useCompanies() {
 
     // Filter options are now from constants
     const filterOptions: FilterOptions = {
-        growthStages: GROWTH_STAGES,
         customerFocuses: CUSTOMER_FOCUSES,
         fundingTypes: FUNDING_TYPES,
     };

@@ -1,4 +1,10 @@
-export const GROWTH_STAGES = ['seed', 'early', 'growing', 'late', 'exit'];
+export const GROWTH_STAGE_OPTIONS = [
+    { value: 'seed', label: 'Seed', colorScheme: 'orange' },
+    { value: 'early', label: 'Early', colorScheme: 'purple' },
+    { value: 'growing', label: 'Growing', colorScheme: 'teal' },
+    { value: 'late', label: 'Late', colorScheme: 'blue' },
+    { value: 'exit', label: 'Exit', colorScheme: 'gray' },
+];
 
 export const CUSTOMER_FOCUSES = ['b2b', 'b2b_b2c', 'b2c', 'b2c_b2b'];
 
