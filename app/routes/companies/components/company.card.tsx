@@ -14,8 +14,11 @@ import {
     StatHelpText,
     SimpleGrid,
     Box,
+    Image,
+    Skeleton,
 } from "@chakra-ui/react";
 import { motion, easeOut } from "framer-motion";
+import { useState } from "react";
 import { FiExternalLink, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons/fi";
 import type { Company } from "../types/company.type";
 import { formatFundingAmount } from "../utils/company.helpers";
@@ -31,6 +34,9 @@ interface CompanyCardProps {
 }
 
 export function CompanyCard({ company, index }: CompanyCardProps) {
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
+
     // Use page-based index for animation delay instead of global index
     const animationIndex = company._pageIndex || 0;
 
@@ -60,6 +66,28 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
         }
     };
 
+    // Logo animation variants
+    const logoVariants = {
+        hidden: { opacity: 0, scale: 0.8 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: {
+                duration: 0.3,
+                ease: easeOut
+            }
+        }
+    };
+
+    const handleImageLoad = () => {
+        setImageLoaded(true);
+    };
+
+    const handleImageError = () => {
+        setImageError(true);
+        setImageLoaded(true); // Mark as loaded to hide skeleton
+    };
+
     return (
         <motion.div
             initial="hidden"
@@ -75,30 +103,100 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                 transition="all 0.2s"
             >
                 <CardHeader pb={2}>
-                    <VStack align="start" spacing={2}>
-                        <HStack justify="space-between" w="full">
-                            <Heading size="md" noOfLines={1} color="brand.600">
-                                {company.name}
-                            </Heading>
+                    <VStack align="start" spacing={3}>
+                        <HStack justify="space-between" w="full" align="start">
+                            <HStack spacing={3} align="center" flex={1}>
+                                <Box position="relative" boxSize="40px">
+                                    {/* Skeleton while loading */}
+                                    {!imageLoaded && (
+                                        <Skeleton
+                                            boxSize="40px"
+                                            borderRadius="md"
+                                            startColor="gray.200"
+                                            endColor="gray.300"
+                                        />
+                                    )}
+
+                                    {/* Logo image */}
+                                    {!imageError && (
+                                        <motion.div
+                                            initial="hidden"
+                                            animate={imageLoaded ? "visible" : "hidden"}
+                                            variants={logoVariants}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%'
+                                            }}
+                                        >
+                                            <Image
+                                                src={`https://app.tryspecter.com/logo?domain=${company.domain}`}
+                                                alt={`${company.name} logo`}
+                                                boxSize="40px"
+                                                borderRadius="md"
+                                                objectFit="cover"
+                                                onLoad={handleImageLoad}
+                                                onError={handleImageError}
+                                                bg="gray.100"
+                                            />
+                                        </motion.div>
+                                    )}
+
+                                    {/* Fallback placeholder */}
+                                    {imageError && (
+                                        <motion.div
+                                            initial="hidden"
+                                            animate="visible"
+                                            variants={logoVariants}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%'
+                                            }}
+                                        >
+                                            <Box
+                                                boxSize="40px"
+                                                borderRadius="md"
+                                                bg="gray.100"
+                                                display="flex"
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                fontSize="sm"
+                                                color="gray.500"
+                                                fontWeight="medium"
+                                            >
+                                                ?
+                                            </Box>
+                                        </motion.div>
+                                    )}
+                                </Box>
+                                <VStack align="start" spacing={1} flex={1}>
+                                    <Heading size="md" noOfLines={1} color="brand.600">
+                                        {company.name}
+                                    </Heading>
+                                    <Link
+                                        href={`https://${company.domain}`}
+                                        isExternal
+                                        color="blue.500"
+                                        fontSize="sm"
+                                        display="flex"
+                                        alignItems="center"
+                                        gap={1}
+                                        _hover={{ color: "blue.600" }}
+                                        transition="color 0.2s"
+                                    >
+                                        {company.domain}
+                                        <FiExternalLink size={12} />
+                                    </Link>
+                                </VStack>
+                            </HStack>
                             <Badge colorScheme="blue" variant="subtle">
                                 #{company.rank}
                             </Badge>
-                        </HStack>
-                        <HStack>
-                            <Link
-                                href={`https://${company.domain}`}
-                                isExternal
-                                color="blue.500"
-                                fontSize="sm"
-                                display="flex"
-                                alignItems="center"
-                                gap={1}
-                                _hover={{ color: "blue.600" }}
-                                transition="color 0.2s"
-                            >
-                                {company.domain}
-                                <FiExternalLink size={12} />
-                            </Link>
                         </HStack>
                     </VStack>
                 </CardHeader>
