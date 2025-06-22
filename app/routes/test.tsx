@@ -10,26 +10,12 @@ import {
   Tag,
   Text,
   UnorderedList,
-  useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 
 const Page = () => {
-  const bgGradient = useColorModeValue(
-    "linear(to-b, rgba(255, 255, 255, 0.6), white)",
-    "linear(to-b, rgba(0, 0, 0, 0.6), black)"
-  );
-  const containerBg = useColorModeValue("rgba(255, 255, 255, 0.8)", "rgba(26, 32, 44, 0.8)");
-  const containerBorder = useColorModeValue("gray.100", "gray.700");
-  const textColor = useColorModeValue("gray.500", "whiteAlpha.700");
-  const headingColor = useColorModeValue("gray.600", "whiteAlpha.800");
-  const boxBorderColor = useColorModeValue("gray.100", "gray.700");
-  const tagBgColor = useColorModeValue("gray.50", "gray.700");
-  const tagBorderColor = useColorModeValue("gray.100", "gray.600");
-  const logoFilter = useColorModeValue("none", "brightness(0) invert(1)");
-
   return (
     <Box
       bgImage="url(bg.png)"
@@ -41,9 +27,14 @@ const Page = () => {
         content: '""',
         pos: "absolute",
         inset: 0,
-        bgGradient: bgGradient,
+        bgGradient: "linear(to-b, rgba(255, 255, 255, 0.6), white)",
         top: -12,
         zIndex: -1,
+      }}
+      _dark={{
+        _before: {
+          bgGradient: "linear(to-b, rgba(0, 0, 0, 0.6), black)",
+        }
       }}
     >
       <Center>
@@ -56,7 +47,7 @@ const Page = () => {
           }}
           my={12}
         >
-          <Image src="/specter.svg" alt="Specter" h={8} filter={logoFilter} />
+          <Image src="/specter.svg" alt="Specter" h={8} filter="none" _dark={{ filter: "brightness(0) invert(1)" }} />
         </Button>
       </Center>
       <Container
@@ -65,23 +56,32 @@ const Page = () => {
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         maxW="600px"
         mb={24}
-        bgColor={containerBg}
+        bgColor="rgba(255, 255, 255, 0.8)"
         backdropFilter="blur(12px)"
         rounded="2xl"
         borderWidth={1}
-        borderColor={containerBorder}
+        borderColor="gray.100"
         p={10}
         shadow="xl"
+        _dark={{
+          bgColor: "rgba(26, 32, 44, 0.8)",
+          borderColor: "gray.700",
+        }}
       >
         <VStack align="start" spacing={5}>
           <Box>
             <Tag
               size="md"
               rounded="full"
-              bgColor={tagBgColor}
-              borderColor={tagBorderColor}
+              bgColor="gray.50"
+              borderColor="gray.100"
               borderWidth={1}
               mb={1}
+              _dark={{
+                bgColor: "gray.700",
+                borderColor: "gray.600",
+                color: "whiteAlpha.900",
+              }}
             >
               Frontend Test
             </Tag>
@@ -90,7 +90,7 @@ const Page = () => {
             </Heading>
           </Box>
 
-          <Text fontSize="sm" color={textColor}>
+          <Text fontSize="sm" variant="muted">
             Welcome! This test is designed to evaluate your ability to work with
             a modern full-stack setup and your approach to building clean,
             interactive interfaces. The project is already configured with React
@@ -99,19 +99,19 @@ const Page = () => {
             a local database.
           </Text>
 
-          <Text fontSize="sm" color={textColor}>
+          <Text fontSize="sm" variant="muted">
             Your task is to create a new route and page that lists companies
             retrieved from the database via an API endpoint that you will build
             using Prisma. You'll then add filtering and sorting functionality as
             described below.
           </Text>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
             <Heading size="sm" mb={4}>
               ✅ Step 1 – Create an Endpoint and Set Up the Page
             </Heading>
 
-            <UnorderedList fontSize="sm" color={textColor}>
+            <UnorderedList fontSize="sm" variant="muted">
               <ListItem>
                 Create a new API route (e.g. /api/companies) that uses Prisma to
                 fetch company data from the remote database.
@@ -127,17 +127,17 @@ const Page = () => {
             </UnorderedList>
           </Box>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
-            <Heading size="sm" color={headingColor} mb={4}>
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
+            <Heading size="sm" variant="subtle" mb={4}>
               🔍 Step 2 – Design an Intuitive Filter Experience
             </Heading>
-            <Text fontSize="sm" color={textColor} mb={4}>
+            <Text fontSize="sm" variant="muted" mb={4}>
               Our current filtering system creates too much friction for users. We need a more intuitive and user-friendly approach that makes filtering feel natural and effortless. Think about how users naturally search and filter in modern applications - they often start with a simple search and then refine their results.
             </Text>
-            <Text fontSize="sm" color={textColor} mb={4}>
+            <Text fontSize="sm" variant="muted" mb={4}>
               For this prototype, focus on creating a seamless filtering experience that feels natural to use. Consider implementing a unified search experience where users can:
             </Text>
-            <UnorderedList fontSize="sm" color={textColor}>
+            <UnorderedList fontSize="sm" variant="muted">
               <ListItem>
                 Start with a smart search that understands company names, domains, and other attributes
               </ListItem>
@@ -148,10 +148,10 @@ const Page = () => {
                 See their active filters clearly and be able to modify or remove them effortlessly
               </ListItem>
             </UnorderedList>
-            <Text fontSize="sm" color={textColor} mt={4} mb={4}>
+            <Text fontSize="sm" variant="muted" mt={4} mb={4}>
               The following filters should be available, but think creatively about how to make them accessible without overwhelming the user:
             </Text>
-            <UnorderedList fontSize="sm" color={textColor}>
+            <UnorderedList fontSize="sm" variant="muted">
               <ListItem>
                 Company name and domain search
               </ListItem>
@@ -171,26 +171,26 @@ const Page = () => {
                 Last funding type (Angel, Convertible Note, etc.)
               </ListItem>
             </UnorderedList>
-            <Text fontSize="sm" color={textColor} mt={4}>
+            <Text fontSize="sm" variant="muted" mt={4}>
               Remember: The goal is not to implement every possible filter combination, but to create an intuitive and delightful filtering experience that users will actually want to use.
             </Text>
           </Box>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
-            <Heading size="sm" color={headingColor} mb={4}>
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
+            <Heading size="sm" variant="subtle" mb={4}>
               ↕️ Step 3 – Sorting (Optional but encouraged)
             </Heading>
-            <Text fontSize="sm" color={textColor}>
+            <Text fontSize="sm" variant="muted">
               Add simple sorting, e.g. by name or rank, in ascending or
               descending order.
             </Text>
           </Box>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
-            <Heading size="sm" color={headingColor} mb={4}>
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
+            <Heading size="sm" variant="subtle" mb={4}>
               🎨 Be Creative
             </Heading>
-            <UnorderedList fontSize="sm" color={textColor}>
+            <UnorderedList fontSize="sm" variant="muted">
               <ListItem>
                 You're encouraged to design the page with care — aim for good UX
                 and visual clarity.
@@ -206,11 +206,11 @@ const Page = () => {
             </UnorderedList>
           </Box>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
-            <Heading size="sm" color={headingColor} mb={4}>
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
+            <Heading size="sm" variant="subtle" mb={4}>
               🧠 Final Notes
             </Heading>
-            <UnorderedList fontSize="sm" color={textColor}>
+            <UnorderedList fontSize="sm" variant="muted">
               <ListItem>
                 Comment your code or add notes to explain your decisions and
                 reasoning.
@@ -229,16 +229,16 @@ const Page = () => {
             </UnorderedList>
           </Box>
 
-          <Box p={8} borderWidth={1} borderColor={boxBorderColor} borderRadius="lg">
-            <Heading size="sm" color={headingColor} mb={4}>
+          <Box p={8} borderWidth={1} borderColor="gray.100" borderRadius="lg" _dark={{ borderColor: "gray.700" }}>
+            <Heading size="sm" variant="subtle" mb={4}>
               🔥 Hot Tip
             </Heading>
-            <Text fontSize="sm" color={textColor}>
+            <Text fontSize="sm" variant="muted">
               Use this url to get company logos:
               <br />
               <ChakraLink
                 href="https://app.tryspecter.com/logo?domain=google.com"
-                color="brand.500"
+                variant="brand"
                 isExternal
               >
                 https://app.tryspecter.com/logo?domain=google.com

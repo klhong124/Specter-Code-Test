@@ -23,12 +23,26 @@ import {
     RangeSliderTrack,
     RangeSliderFilledTrack,
     RangeSliderThumb,
-    useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useCompaniesContext } from "@companies/context/companies.context";
 import { formatFundingAmount } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
+
+// Color mapping for dark mode
+const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
+    if (!isSelected) return { bg: 'transparent', color: 'gray.500', borderBottom: 'gray.700' };
+
+    const colorMap: Record<string, { bg: string; color: string; borderBottom: string }> = {
+        orange: { bg: 'orange.800', color: 'orange.100', borderBottom: 'orange.300' },
+        purple: { bg: 'purple.800', color: 'purple.100', borderBottom: 'purple.300' },
+        teal: { bg: 'teal.800', color: 'teal.100', borderBottom: 'teal.300' },
+        blue: { bg: 'blue.800', color: 'blue.100', borderBottom: 'blue.300' },
+        gray: { bg: 'gray.600', color: 'gray.100', borderBottom: 'gray.300' },
+    };
+
+    return colorMap[colorScheme] || colorMap.blue;
+};
 
 export interface CompanyFiltersProps {
     // No props needed now
@@ -104,7 +118,6 @@ function RankFilter() {
 function FundingAmountFilter() {
     const { filters, setFilters } = useCompaniesContext();
     const [fundingRange, setFundingRange] = useState([0, 100000000]);
-    const thumbBg = useColorModeValue("brand.200", "brand.800");
 
     useEffect(() => {
         setFundingRange([
@@ -125,7 +138,7 @@ function FundingAmountFilter() {
         <FormControl>
             <VStack align="flex-start" mb={2}>
                 <FormLabel fontSize="sm" fontWeight="medium" m={0}>Last Funding Amount (USD)</FormLabel>
-                <Text fontSize="xs" color="gray.500" whiteSpace="nowrap">
+                <Text fontSize="xs" variant="muted" whiteSpace="nowrap">
                     {formatFundingAmount(String(fundingRange[0]))} - {fundingRange[1] === 100000000 ? `${formatFundingAmount(String(fundingRange[1]))}+` : formatFundingAmount(String(fundingRange[1]))}
                 </Text>
             </VStack>
@@ -144,8 +157,8 @@ function FundingAmountFilter() {
                 <RangeSliderTrack>
                     <RangeSliderFilledTrack />
                 </RangeSliderTrack>
-                <RangeSliderThumb index={0} bg={thumbBg} />
-                <RangeSliderThumb index={1} bg={thumbBg} />
+                <RangeSliderThumb index={0} bg="brand.400" _dark={{ bg: "brand.500" }} />
+                <RangeSliderThumb index={1} bg="brand.400" _dark={{ bg: "brand.500" }} />
             </RangeSlider>
         </FormControl>
     );
@@ -170,16 +183,6 @@ function GrowthStageFilter() {
                     const isFirst = index === 0;
                     const isLast = index === GROWTH_STAGE_OPTIONS.length - 1;
 
-                    // Selected styles
-                    const selectedBg = useColorModeValue(`${option.colorScheme}.50`, ``);
-                    const selectedColor = useColorModeValue(`${option.colorScheme}.700`, `${option.colorScheme}.200`);
-                    const selectedBottomBorderColor = useColorModeValue(`${option.colorScheme}.500`, `${option.colorScheme}.400`);
-
-                    // Unselected styles
-                    const unselectedBg = 'transparent';
-                    const unselectedColor = useColorModeValue('gray.400', 'gray.500');
-                    const unselectedBorderColor = useColorModeValue('gray.200', 'gray.700');
-
                     return (
                         <Button
                             key={option.value}
@@ -189,10 +192,10 @@ function GrowthStageFilter() {
                             borderWidth="1px"
                             borderBottomWidth="2px"
                             onClick={() => handleGrowthStageClick(option.value)}
-                            bg={isSelected ? selectedBg : unselectedBg}
-                            color={isSelected ? selectedColor : unselectedColor}
-                            borderColor={unselectedBorderColor}
-                            borderBottomColor={isSelected ? selectedBottomBorderColor : unselectedBorderColor}
+                            bg={isSelected ? `${option.colorScheme}.50` : 'transparent'}
+                            color={isSelected ? `${option.colorScheme}.700` : 'gray.400'}
+                            borderColor="gray.200"
+                            borderBottomColor={isSelected ? `${option.colorScheme}.500` : 'gray.200'}
                             display="flex"
                             flexDirection="column"
                             h="auto"
@@ -204,9 +207,15 @@ function GrowthStageFilter() {
                             borderBottomLeftRadius={isFirst ? 'md' : 0}
                             borderTopRightRadius={isLast ? 'md' : 0}
                             borderBottomRightRadius={isLast ? 'md' : 0}
-                            transition="0.2s ease-in-out"
+                            transition="0.2s linear"
+                            _dark={{
+                                bg: 'transparent',
+                                color: isSelected ? `${option.colorScheme}.300` : 'gray.700',
+                                borderColor: 'gray.700',
+                                borderBottomColor: isSelected ? `${option.colorScheme}.500` : 'gray.700',
+                            }}
                         >
-                            <Text fontSize="xx-small" >{option.label}</Text>
+                            <Text fontSize="xx-small" variant="inherit">{option.label}</Text>
                         </Button>
                     )
                 })}

@@ -16,7 +16,6 @@ import {
     Box,
     Image,
     Skeleton,
-    useColorModeValue,
 } from "@chakra-ui/react";
 import { motion, easeOut } from "framer-motion";
 import { useState } from "react";
@@ -32,13 +31,6 @@ interface CompanyCardProps {
 export function CompanyCard({ company, index }: CompanyCardProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
-
-    const glassBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(26, 32, 44, 0.6)");
-    const glassBorder = useColorModeValue("rgba(255, 255, 255, 0.3)", "rgba(255, 255, 255, 0.1)");
-    const textColor = useColorModeValue("gray.600", "whiteAlpha.800");
-    const subtleTextColor = useColorModeValue("gray.500", "whiteAlpha.700");
-    const headingColor = useColorModeValue("brand.600", "brand.300");
-    const linkColor = useColorModeValue("blue.500", "blue.300");
 
     // Use current index for animation delay instead of page index
     // This ensures proper animation when sorting changes
@@ -102,15 +94,10 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
             style={{ cursor: 'pointer' }}
         >
             <Card
-                variant="outline"
-                bg={glassBg}
-                backdropFilter="blur(12px)"
-                borderColor={glassBorder}
-                boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
+                className="glass"
                 borderRadius="xl"
                 _hover={{
                     shadow: "lg",
-                    borderColor: useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.3)")
                 }}
                 transition="all 0.2s"
             >
@@ -187,18 +174,17 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                                     )}
                                 </Box>
                                 <VStack align="start" spacing={1} flex={1}>
-                                    <Heading size="md" noOfLines={1} color={headingColor}>
+                                    <Heading size="md" noOfLines={1} color="brand.600" _dark={{ color: "brand.300" }}>
                                         {company.name}
                                     </Heading>
                                     <Link
                                         href={`https://${company.domain}`}
                                         isExternal
-                                        color={linkColor}
+                                        variant="external"
                                         fontSize="sm"
                                         display="flex"
                                         alignItems="center"
                                         gap={1}
-                                        _hover={{ color: useColorModeValue("blue.600", "blue.400") }}
                                         transition="color 0.2s"
                                     >
                                         {company.domain}
@@ -215,20 +201,20 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
 
                 <CardBody pt={0}>
                     <VStack align="start" spacing={4}>
-                        <Text fontSize="sm" color={textColor} noOfLines={3}>
+                        <Text fontSize="sm" variant="subtle" noOfLines={3}>
                             {company.description}
                         </Text>
 
                         <SimpleGrid columns={2} spacing={4} w="full">
                             {company.growth_stage && (
                                 <Stat size="sm">
-                                    <StatLabel fontSize="xs" color={subtleTextColor}>
+                                    <StatLabel fontSize="xs">
                                         <HStack spacing={1}>
                                             <FiTrendingUp size={12} />
                                             <Text>Stage</Text>
                                         </HStack>
                                     </StatLabel>
-                                    <StatNumber fontSize="sm" fontWeight="medium" color={headingColor}>
+                                    <StatNumber fontSize="sm" fontWeight="medium">
                                         {company.growth_stage}
                                     </StatNumber>
                                 </Stat>
@@ -236,13 +222,13 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
 
                             {company.customer_focus && (
                                 <Stat size="sm">
-                                    <StatLabel fontSize="xs" color={subtleTextColor}>
+                                    <StatLabel fontSize="xs">
                                         <HStack spacing={1}>
                                             <FiUsers size={12} />
                                             <Text>Focus</Text>
                                         </HStack>
                                     </StatLabel>
-                                    <StatNumber fontSize="sm" fontWeight="medium" color={headingColor}>
+                                    <StatNumber fontSize="sm" fontWeight="medium">
                                         {company.customer_focus}
                                     </StatNumber>
                                 </Stat>
@@ -251,16 +237,16 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
 
                         {company.last_funding_type && (
                             <Stat size="sm">
-                                <StatLabel fontSize="xs" color={subtleTextColor}>
+                                <StatLabel fontSize="xs">
                                     <HStack spacing={1}>
                                         <FiDollarSign size={12} />
                                         <Text>Last Funding</Text>
                                     </HStack>
                                 </StatLabel>
-                                <StatNumber fontSize="sm" fontWeight="medium" color={headingColor}>
+                                <StatNumber fontSize="sm" fontWeight="medium">
                                     {company.last_funding_type}
                                 </StatNumber>
-                                <StatHelpText fontSize="xs" color={subtleTextColor}>
+                                <StatHelpText fontSize="xs">
                                     {formatFundingAmount(company.last_funding_amount)}
                                 </StatHelpText>
                             </Stat>

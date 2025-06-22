@@ -11,13 +11,6 @@ const extension: Partial<ChakraTheme> = {
   styles: {
     global: {
       body: {
-        marginRight: "3px",
-        bg: "gray.50",
-        color: "gray.800",
-        _dark: {
-          bg: "black",
-          color: "whiteAlpha.900",
-        },
         a: {
           _focus: {
             boxShadow: "none",
@@ -47,6 +40,17 @@ const extension: Partial<ChakraTheme> = {
       },
       "[data-theme='dark'] ::-webkit-scrollbar-thumb:hover": {
         backgroundColor: "rgba(255, 255, 255, 0.2)",
+      },
+      ".glass": {
+        bg: "rgba(255, 255, 255, 0.5)",
+        backdropFilter: "blur(2px)",
+        borderWidth: "1px",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        _dark: {
+          bg: "rgba(26, 32, 44, 0.6)",
+          borderColor: "rgba(255, 255, 255, 0.1)",
+        },
       },
     },
   },
@@ -192,6 +196,155 @@ const extension: Partial<ChakraTheme> = {
         _focusVisible: {
           outline: "-webkit-focus-ring-color auto 1px",
           outlineOffset: "1px",
+        },
+      },
+      variants: {
+        external: {
+          color: "blue.500",
+          _dark: {
+            color: "blue.300",
+          },
+          _hover: {
+            color: "blue.600",
+            _dark: {
+              color: "blue.400",
+            },
+          },
+        },
+        brand: {
+          color: "brand.500",
+          _dark: {
+            color: "brand.300",
+          },
+          _hover: {
+            color: "brand.600",
+            _dark: {
+              color: "brand.400",
+            },
+          },
+        },
+      },
+    },
+    Text: {
+      baseStyle: {
+        color: "gray.800",
+        _dark: {
+          color: "whiteAlpha.900",
+        },
+      },
+      variants: {
+        subtle: {
+          color: "gray.600",
+          _dark: {
+            color: "whiteAlpha.700",
+          },
+        },
+        muted: {
+          color: "gray.500",
+          _dark: {
+            color: "whiteAlpha.700",
+          },
+        },
+        inherit: {
+          color: "inherit",
+          _dark: {
+            color: "inherit",
+          },
+        },
+      },
+    },
+    Heading: {
+      baseStyle: {
+        color: "gray.800",
+        _dark: {
+          color: "whiteAlpha.900",
+        },
+      },
+      variants: {
+        subtle: {
+          color: "gray.600",
+          _dark: {
+            color: "whiteAlpha.800",
+          },
+        },
+      },
+    },
+    Box: {
+      baseStyle: {
+        _dark: {
+          // Default dark mode styles for Box components
+        },
+      },
+    },
+    Card: {
+      baseStyle: {
+        _dark: {
+          // Default dark mode styles for Badge components
+        },
+      },
+    },
+    Badge: {
+      baseStyle: {
+        _dark: {
+          // Default dark mode styles for Badge components
+        },
+      },
+    },
+    Stat: {
+      baseStyle: {
+        _dark: {
+          // Default dark mode styles for Stat components
+        },
+      },
+    },
+    StatLabel: {
+      baseStyle: {
+        color: "gray.500",
+        _dark: {
+          color: "whiteAlpha.700",
+        },
+      },
+    },
+    StatNumber: {
+      baseStyle: {
+        color: "brand.600",
+        _dark: {
+          color: "brand.300",
+        },
+      },
+    },
+    StatHelpText: {
+      baseStyle: {
+        color: "gray.500",
+        _dark: {
+          color: "whiteAlpha.700",
+        },
+      },
+    },
+    UnorderedList: {
+      variants: {
+        muted: {
+          color: "gray.500",
+          _dark: {
+            color: "whiteAlpha.700",
+          },
+        },
+      },
+    },
+    ListItem: {
+      variants: {
+        muted: {
+          color: "gray.500",
+          _dark: {
+            color: "whiteAlpha.700",
+          },
+        },
+      },
+    },
+    Container: {
+      baseStyle: {
+        _dark: {
+          // Default dark mode styles for Container components
         },
       },
     },

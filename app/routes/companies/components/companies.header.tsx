@@ -5,7 +5,6 @@ import {
     VStack,
     Badge,
     Button,
-    useColorModeValue,
     Wrap,
     WrapItem,
     Tag,
@@ -13,7 +12,7 @@ import {
     TagCloseButton,
 } from "@chakra-ui/react";
 import { useCompaniesContext } from "@companies/context/companies.context";
-import { useAutoHidingHeader } from "@companies/hooks/useAutoHidingHeader";
+// import { useAutoHidingHeader } from "@companies/hooks/useAutoHidingHeader";
 import { motion } from "framer-motion";
 import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
@@ -32,37 +31,27 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
     } = useCompaniesContext();
     // const { isHidden } = useAutoHidingHeader();
 
-    const headerBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(28, 30, 33, 0.6)");
-    const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
-    const subtleTextColor = useColorModeValue("gray.600", "whiteAlpha.700");
-
     return (
         <Box
             as="header"
             position="sticky"
             top={0}
             zIndex={10}
-            bg={headerBg}
-            backdropFilter="blur(12px)"
+            bg="rgba(255, 255, 255, 0.2)"
+            backdropFilter="saturate(180%) blur(16px)"
             py={3}
-            px={4}
+            px={6}
             w="full"
-            // This creates the fade-out effect at the bottom
-            _after={{
-                content: '""',
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '40px',
-                background: 'linear-gradient(to top, transparent, var(--chakra-colors-chakra-body-bg))',
-                maskImage: 'linear-gradient(to top, black 0%, transparent 100%)',
-                pointerEvents: 'none',
+            borderBottomRadius="xl"
+            boxShadow="0 8px 32px rgba(0, 0, 0, 0.1), inset 0 -1px 0px rgba(255, 255, 255, 0.4)"
+            _dark={{
+                bg: "rgba(23, 25, 35, 0.5)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 -1px 0px rgba(255, 255, 255, 0.1)",
             }}
         >
             <VStack spacing={3} align="stretch">
                 {/* Main Header */}
-                <HStack justify="space-between" align="center">
+                <HStack justify="space-between" align="center" spacing={3}>
                     <Box
                         as={motion.div}
                         // animate={{ height: isHidden ? 0 : 'auto', opacity: isHidden ? 0 : 1 }}
@@ -70,10 +59,18 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         overflow="hidden"
                     >
                         <HStack spacing={2} align="baseline">
-                            <Text fontSize="2xl" fontWeight="bold" color={textColor}>
+                            <Text
+                                fontSize="2xl"
+                                fontWeight="bold"
+                                color="gray.800"
+                                _dark={{ color: "whiteAlpha.900" }}
+                            >
                                 Companies
                             </Text>
-                            <Text fontSize="sm" color={subtleTextColor}>
+                            <Text
+                                fontSize="sm"
+                                variant="subtle"
+                            >
                                 <CountUp
                                     key={totalItems}
                                     from={0}
@@ -85,7 +82,10 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                             </Text>
                         </HStack>
                         {hasActiveFilters && (
-                            <Text color={subtleTextColor} fontSize="sm">
+                            <Text
+                                variant="subtle"
+                                fontSize="sm"
+                            >
                                 Filtered results
                             </Text>
                         )}

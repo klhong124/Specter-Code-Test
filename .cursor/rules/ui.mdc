@@ -80,9 +80,9 @@ import Box from "@chakra-ui/box";
 
 ---
 
-## 8.1 Liquid Glass UI Design Pattern (Updated)
+## 8.1 frosted Glass UI Design Pattern
 
-Inspired by Apple's Liquid Glass design system, this pattern emphasizes light manipulation, responsive translucency, and fluid feedback to create immersive interfaces.
+Frosted Glass design system, this pattern emphasizes light manipulation, responsive translucency, and fluid feedback to create immersive interfaces.
 
 ### ✅ Do
 
@@ -94,7 +94,7 @@ Inspired by Apple's Liquid Glass design system, this pattern emphasizes light ma
 - **Add depth and realism**:
   - `boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"`
   - `border="1px solid rgba(255, 255, 255, 0.3)"`
-- **Mimic liquid motion** with responsive, organic interactions
+- **Mimic Frosted Glass motion** with responsive, organic interactions
 - **Differentiate variants**:
   - `Regular`: versatile and adaptive
   - `Clear`: maximally transparent for media-rich backgrounds
@@ -112,7 +112,6 @@ Inspired by Apple's Liquid Glass design system, this pattern emphasizes light ma
   borderRadius="xl"
   boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
 >
-  {/* Liquid Glass content */}
 </Box>
 ```
 
@@ -336,7 +335,7 @@ const itemVariants = {
 - ❌ Using `className` with Chakra
 - ❌ Inline CSS instead of style props
 - ❌ Animating layout properties
-- ❌ Overstacking Liquid Glass components
+- ❌ Overstacking Glass components
 - ❌ Ignoring accessibility controls
 
 ---

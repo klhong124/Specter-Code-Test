@@ -1,10 +1,10 @@
-import { Box, Button, Center, Heading, Image, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Center, Heading, Image, Text } from "@chakra-ui/react";
 import type { Route } from "./+types/home";
 import { HiArrowRight } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
@@ -12,8 +12,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const overlayBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(0, 0, 0, 0.6)");
-  const textColor = useColorModeValue("gray.500", "whiteAlpha.700");
   return (
     <Center
       minH="100dvh"
@@ -26,8 +24,13 @@ export default function Home() {
         content: '""',
         pos: "absolute",
         inset: 0,
-        bgColor: overlayBg,
+        bgColor: "rgba(255, 255, 255, 0.6)",
         zIndex: -1,
+      }}
+      _dark={{
+        _before: {
+          bgColor: "rgba(0, 0, 0, 0.7)",
+        }
       }}
     >
       <Box textAlign="center">
@@ -50,7 +53,7 @@ export default function Home() {
         >
           Hey there!
         </Heading>
-        <Text color={textColor} fontSize="sm" mb={4} letterSpacing="tight">
+        <Text variant="muted" fontSize="sm" mb={4} letterSpacing="tight">
           Welcome to the Specter frontend test.
         </Text>
         <Button

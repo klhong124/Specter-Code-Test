@@ -5,7 +5,6 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    useColorModeValue,
     Tooltip,
     Button,
     Text,
@@ -22,11 +21,6 @@ const SORTS: { value: Filters['sortBy']; label: string }[] = [
 export function CompaniesSorting() {
     const { filters, setFilters } = useCompaniesContext();
 
-    const iconColor = useColorModeValue("gray.600", "gray.300");
-    const hoverBg = useColorModeValue("gray.100", "gray.700");
-    const menuBg = useColorModeValue("white", "gray.700");
-    const menuBorderColor = useColorModeValue("gray.200", "gray.600");
-
     const toggleSortOrder = () => {
         setFilters({
             ...filters,
@@ -36,7 +30,7 @@ export function CompaniesSorting() {
 
     return (
         <HStack spacing={2}>
-            <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")} whiteSpace="nowrap">
+            <Text fontSize="sm" variant="subtle" whiteSpace="nowrap">
                 Sort by
             </Text>
             <Menu>
@@ -45,23 +39,37 @@ export function CompaniesSorting() {
                     size="sm"
                     variant="outline"
                     rightIcon={<FiChevronDown />}
-                    bg={useColorModeValue("white", "gray.700")}
-                    borderColor={menuBorderColor}
-                    _hover={{ bg: hoverBg }}
-                    _expanded={{ bg: hoverBg }}
+                    bg="white"
+                    borderColor="gray.200"
+                    _hover={{ bg: "gray.100", _dark: { bg: "gray.700" } }}
+                    _expanded={{ bg: "gray.100", _dark: { bg: "gray.700" } }}
+                    _dark={{
+                        bg: "gray.700",
+                        borderColor: "gray.600"
+                    }}
                 >
                     {filters.sortBy === 'rank' ? 'Rank' : 'Name'}
                 </MenuButton>
-                <MenuList bg={menuBg} borderColor={menuBorderColor} minW="100px">
+                <MenuList
+                    bg="white"
+                    borderColor="gray.200"
+                    minW="100px"
+                    _dark={{
+                        bg: "gray.700",
+                        borderColor: "gray.600"
+                    }}
+                >
                     <MenuItem
                         onClick={() => setFilters({ ...filters, sortBy: 'rank' })}
-                        bg={filters.sortBy === 'rank' ? useColorModeValue("blue.50", "blue.900") : "transparent"}
+                        bg={filters.sortBy === 'rank' ? "blue.50" : "transparent"}
+                        _dark={{ bg: filters.sortBy === 'rank' ? "blue.900" : "transparent" }}
                     >
                         Rank
                     </MenuItem>
                     <MenuItem
                         onClick={() => setFilters({ ...filters, sortBy: 'name' })}
-                        bg={filters.sortBy === 'name' ? useColorModeValue("blue.50", "blue.900") : "transparent"}
+                        bg={filters.sortBy === 'name' ? "blue.50" : "transparent"}
+                        _dark={{ bg: filters.sortBy === 'name' ? "blue.900" : "transparent" }}
                     >
                         Name
                     </MenuItem>
@@ -74,9 +82,10 @@ export function CompaniesSorting() {
                     icon={filters.sortOrder === 'asc' ? <FiTrendingUp /> : <FiTrendingDown />}
                     size="sm"
                     variant="ghost"
-                    color={iconColor}
-                    _hover={{ bg: hoverBg }}
+                    color="gray.600"
+                    _hover={{ bg: "gray.100", _dark: { bg: "gray.700" } }}
                     onClick={toggleSortOrder}
+                    _dark={{ color: "gray.300" }}
                 />
             </Tooltip>
         </HStack>
