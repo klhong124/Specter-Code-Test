@@ -6,7 +6,7 @@ import {
     DrawerContent,
     DrawerCloseButton,
 } from "@chakra-ui/react";
-import { CompanyFilters } from "./company.filters";
+import { CompanyFilters } from "./companies.filters";
 import { useCompaniesContext } from "../context/companies.context";
 
 interface CompaniesMobileDrawerProps {

@@ -1,4 +1,4 @@
-export const GROWTH_STAGES = ['early', 'exit', 'growing', 'late', 'seed'];
+export const GROWTH_STAGES = ['seed', 'early', 'growing', 'late', 'exit'];
 
 export const CUSTOMER_FOCUSES = ['b2b', 'b2b_b2c', 'b2c', 'b2c_b2b'];
 

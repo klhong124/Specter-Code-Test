@@ -13,17 +13,16 @@ import {
     Text,
     Select,
     HStack,
+    NumberInput,
+    NumberInputField,
+    Wrap,
+    WrapItem,
+    Tag,
+    TagLabel,
+    TagCloseButton,
 } from "@chakra-ui/react";
 import { FiX } from "react-icons/fi";
-
-export interface Filters {
-    search: string;
-    growthStage: string[];
-    customerFocus: string[];
-    fundingType: string[];
-    sortBy: 'name' | 'rank';
-    sortOrder: 'asc' | 'desc';
-}
+import type { Filters } from "../types/companies.filters.type";
 
 interface FilterOptions {
     growthStages: string[];
@@ -31,7 +30,7 @@ interface FilterOptions {
     fundingTypes: string[];
 }
 
-interface CompanyFiltersProps {
+export interface CompanyFiltersProps {
     filters: Filters;
     setFilters: (filters: Filters) => void;
     filterOptions: FilterOptions;
@@ -46,26 +45,19 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
             fundingType: [],
             sortBy: 'rank',
             sortOrder: 'asc',
+            minRank: undefined,
+            maxRank: undefined,
+            minFunding: undefined,
+            maxFunding: undefined,
         });
     };
 
-    const hasActiveFilters = filters.search || filters.growthStage.length > 0 || filters.customerFocus.length > 0 || filters.fundingType.length > 0;
+    const hasActiveFilters = filters.search || filters.growthStage.length > 0 || filters.customerFocus.length > 0 || filters.fundingType.length > 0 || filters.minRank !== undefined || filters.maxRank !== undefined || filters.minFunding !== undefined || filters.maxFunding !== undefined;
 
     return (
         <VStack spacing={6} align="stretch" h="full">
             <Box>
                 <Heading size="md" mb={4}>Filters</Heading>
-                {hasActiveFilters && (
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        leftIcon={<FiX />}
-                        onClick={clearFilters}
-                        mb={4}
-                    >
-                        Clear All
-                    </Button>
-                )}
             </Box>
 
             <FormControl>
@@ -107,18 +99,68 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
             <Divider />
 
             <FormControl>
+                <FormLabel fontSize="sm" fontWeight="medium">Rank</FormLabel>
+                <HStack spacing={2}>
+                    <NumberInput
+                        size="sm"
+                        value={filters.minRank}
+                        onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Min" />
+                    </NumberInput>
+                    <NumberInput
+                        size="sm"
+                        value={filters.maxRank}
+                        onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Max" />
+                    </NumberInput>
+                </HStack>
+            </FormControl>
+
+            <Divider />
+
+            <FormControl>
+                <FormLabel fontSize="sm" fontWeight="medium">Last Funding Amount (USD)</FormLabel>
+                <HStack spacing={2}>
+                    <NumberInput
+                        size="sm"
+                        value={filters.minFunding}
+                        onChange={(_, value) => setFilters({ ...filters, minFunding: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Min" />
+                    </NumberInput>
+                    <NumberInput
+                        size="sm"
+                        value={filters.maxFunding}
+                        onChange={(_, value) => setFilters({ ...filters, maxFunding: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Max" />
+                    </NumberInput>
+                </HStack>
+            </FormControl>
+
+            <Divider />
+
+            <FormControl>
                 <FormLabel fontSize="sm" fontWeight="medium">Growth Stage</FormLabel>
                 <CheckboxGroup
                     value={filters.growthStage}
                     onChange={(value) => setFilters({ ...filters, growthStage: value as string[] })}
                 >
-                    <Stack spacing={2}>
+                    <Wrap spacing={2}>
                         {filterOptions.growthStages.map((stage) => (
-                            <Checkbox key={stage} value={stage} size="sm">
-                                <Text fontSize="sm">{stage}</Text>
-                            </Checkbox>
+                            <WrapItem key={stage}>
+                                <Checkbox value={stage} size="sm" colorScheme="blue">
+                                    <Text fontSize="sm">{stage}</Text>
+                                </Checkbox>
+                            </WrapItem>
                         ))}
-                    </Stack>
+                    </Wrap>
                 </CheckboxGroup>
             </FormControl>
 
@@ -130,13 +172,15 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
                     value={filters.customerFocus}
                     onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
                 >
-                    <Stack spacing={2}>
+                    <Wrap spacing={2}>
                         {filterOptions.customerFocuses.map((focus) => (
-                            <Checkbox key={focus} value={focus} size="sm">
-                                <Text fontSize="sm">{focus}</Text>
-                            </Checkbox>
+                            <WrapItem key={focus}>
+                                <Checkbox value={focus} size="sm" colorScheme="blue">
+                                    <Text fontSize="sm">{focus}</Text>
+                                </Checkbox>
+                            </WrapItem>
                         ))}
-                    </Stack>
+                    </Wrap>
                 </CheckboxGroup>
             </FormControl>
 
@@ -148,13 +192,15 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
                     value={filters.fundingType}
                     onChange={(value) => setFilters({ ...filters, fundingType: value as string[] })}
                 >
-                    <Stack spacing={2}>
+                    <Wrap spacing={2}>
                         {filterOptions.fundingTypes.map((type) => (
-                            <Checkbox key={type} value={type} size="sm">
-                                <Text fontSize="sm">{type}</Text>
-                            </Checkbox>
+                            <WrapItem key={type}>
+                                <Checkbox value={type} size="sm" colorScheme="blue">
+                                    <Text fontSize="sm">{type}</Text>
+                                </Checkbox>
+                            </WrapItem>
                         ))}
-                    </Stack>
+                    </Wrap>
                 </CheckboxGroup>
             </FormControl>
         </VStack>

@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useCallback } from "react";
-import type { Filters } from "../components/company.filters";
+import type { Filters } from "../types/companies.filters.type";
 import type { Company } from "../types/company.type";
 import {
     CUSTOMER_FOCUSES,
@@ -12,6 +12,10 @@ interface FilterOptions {
     growthStages: string[];
     customerFocuses: string[];
     fundingTypes: string[];
+    minRank?: number;
+    maxRank?: number;
+    minFunding?: number;
+    maxFunding?: number;
 }
 
 interface FetchCompaniesParams {
@@ -23,6 +27,10 @@ interface FetchCompaniesParams {
     fundingType?: string[];
     sortBy?: 'name' | 'rank';
     sortOrder?: 'asc' | 'desc';
+    minRank?: number;
+    maxRank?: number;
+    minFunding?: number;
+    maxFunding?: number;
 }
 
 interface CompanyWithPage extends Company {
@@ -59,6 +67,10 @@ async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
     }
     if (params.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
+    if (params.minRank) searchParams.set('minRank', params.minRank.toString());
+    if (params.maxRank) searchParams.set('maxRank', params.maxRank.toString());
+    if (params.minFunding) searchParams.set('minFunding', params.minFunding.toString());
+    if (params.maxFunding) searchParams.set('maxFunding', params.maxFunding.toString());
 
     const response = await fetch(`/api/companies?${searchParams.toString()}`);
     if (!response.ok) {
@@ -75,6 +87,10 @@ export function useCompanies() {
         fundingType: [],
         sortBy: 'rank',
         sortOrder: 'asc',
+        minRank: undefined,
+        maxRank: undefined,
+        minFunding: undefined,
+        maxFunding: undefined,
     });
 
     const [pageSize, setPageSize] = useState(20);
@@ -98,6 +114,10 @@ export function useCompanies() {
             fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
             sortBy: filters.sortBy,
             sortOrder: filters.sortOrder,
+            minRank: filters.minRank,
+            maxRank: filters.maxRank,
+            minFunding: filters.minFunding,
+            maxFunding: filters.maxFunding,
         }),
         getNextPageParam: (lastPage) => {
             return lastPage.pagination.hasNextPage ? lastPage.pagination.nextPage : undefined;
@@ -137,15 +157,36 @@ export function useCompanies() {
             fundingType: [],
             sortBy: 'rank',
             sortOrder: 'asc',
+            minRank: undefined,
+            maxRank: undefined,
+            minFunding: undefined,
+            maxFunding: undefined,
         });
         // The infinite query will automatically refetch when the queryKey changes
     }, []);
+
+    const removeFilter = useCallback((filterKey: keyof Filters, valueToRemove?: any) => {
+        const newFilters = { ...filters };
+        const currentVal = newFilters[filterKey];
+
+        if (Array.isArray(currentVal)) {
+            (newFilters[filterKey] as any[]) = currentVal.filter(v => v !== valueToRemove);
+        } else {
+            (newFilters as any)[filterKey] = undefined;
+        }
+
+        setFilters(newFilters);
+    }, [filters, setFilters]);
 
     const hasActiveFilters = Boolean(
         filters.search ||
         filters.growthStage.length > 0 ||
         filters.customerFocus.length > 0 ||
-        filters.fundingType.length > 0
+        filters.fundingType.length > 0 ||
+        filters.minRank !== undefined ||
+        filters.maxRank !== undefined ||
+        filters.minFunding !== undefined ||
+        filters.maxFunding !== undefined
     );
 
     const handlePageSizeChange = (newPageSize: number) => {
@@ -161,6 +202,7 @@ export function useCompanies() {
         setFilters,
         filterOptions,
         clearFilters,
+        removeFilter,
         hasActiveFilters,
         // Infinite scroll
         fetchNextPage,

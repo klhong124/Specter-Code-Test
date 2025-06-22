@@ -12,6 +12,10 @@ export async function loader({ request }: { request: Request }): Promise<Respons
         const fundingType = url.searchParams.getAll('fundingType');
         const sortBy = url.searchParams.get('sortBy') || 'rank';
         const sortOrder = url.searchParams.get('sortOrder') || 'asc';
+        const minRankParam = url.searchParams.get('minRank');
+        const maxRankParam = url.searchParams.get('maxRank');
+        const minFundingParam = url.searchParams.get('minFunding');
+        const maxFundingParam = url.searchParams.get('maxFunding');
 
         // Validate pagination parameters
         const validPage = Math.max(1, page);
@@ -43,6 +47,29 @@ export async function loader({ request }: { request: Request }): Promise<Respons
 
         if (fundingType.length > 0) {
             where.last_funding_type = { in: fundingType };
+        }
+
+        if (minRankParam) {
+            const minRank = parseInt(minRankParam, 10);
+            if (!isNaN(minRank)) {
+                where.rank = { ...where.rank, gte: minRank };
+            }
+        }
+        if (maxRankParam) {
+            const maxRank = parseInt(maxRankParam, 10);
+            if (!isNaN(maxRank)) {
+                where.rank = { ...where.rank, lte: maxRank };
+            }
+        }
+        if (minFundingParam) {
+            try {
+                where.last_funding_amount = { ...where.last_funding_amount, gte: BigInt(minFundingParam) };
+            } catch (e) { /* ignore invalid bigint */ }
+        }
+        if (maxFundingParam) {
+            try {
+                where.last_funding_amount = { ...where.last_funding_amount, lte: BigInt(maxFundingParam) };
+            } catch (e) { /* ignore invalid bigint */ }
         }
 
         // Build orderBy clause for sorting

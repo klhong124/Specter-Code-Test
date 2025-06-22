@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Image } from "@chakra-ui/react";
 import { Link } from "react-router";
-import { CompanyFilters } from "./company.filters";
+import { CompanyFilters } from "./companies.filters";
 import { useCompaniesContext } from "../context/companies.context";
 import { HiArrowLeft } from "react-icons/hi";
 

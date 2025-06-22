@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
 import { useCompanies } from "../hooks/useCompanies";
-import type { Filters } from "../components/company.filters";
+import type { Filters } from "../types/companies.filters.type";
 
 interface CompaniesContextType {
     // Data
@@ -18,6 +18,7 @@ interface CompaniesContextType {
         fundingTypes: string[];
     };
     clearFilters: () => void;
+    removeFilter: (filterKey: keyof Filters, valueToRemove?: any) => void;
     hasActiveFilters: boolean;
 
     // Infinite scroll
