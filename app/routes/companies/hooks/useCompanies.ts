@@ -103,7 +103,6 @@ export function useCompanies() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-        refetch
     } = useInfiniteQuery({
         queryKey: ['companies', filters, pageSize],
         queryFn: ({ pageParam = 1 }) => fetchCompanies({
@@ -146,7 +145,6 @@ export function useCompanies() {
 
     // Get pagination info from the first page
     const pagination = infiniteData?.pages[0]?.pagination;
-    const totalPages = pagination?.totalPages || 0;
     const totalItems = pagination?.totalCount || 0;
     const loadedPages = infiniteData?.pages.length || 0;
 
@@ -182,8 +180,6 @@ export function useCompanies() {
 
     return {
         companies,
-        filteredCompanies: companies, // For backward compatibility
-        paginatedCompanies: companies, // For backward compatibility
         isLoading,
         error,
         filters,

@@ -10,13 +10,10 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
 import { CompanyCard } from './components/company.card';
 import { CompaniesHeader } from './components/companies.header';
 import { CompaniesSidebar } from './components/companies.sidebar';
-import { CompaniesMobileFilter } from './components/companies.mobile.filter';
 import { CompaniesEmptyState } from './components/companies.empty.state';
-import { CompaniesLoadingState } from './components/companies.loading.state';
 import { CompaniesErrorState } from './components/companies.error.state';
 import { CompaniesMobileDrawer } from './components/companies.mobile.drawer';
 import { CompaniesProvider, useCompaniesContext } from './context/companies.context';
@@ -26,13 +23,6 @@ function CompaniesPageContent() {
         companies,
         isLoading,
         error,
-        filters,
-        setFilters,
-        filterOptions,
-        clearFilters,
-        hasActiveFilters,
-        totalItems,
-        handlePageSizeChange,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
@@ -65,10 +55,6 @@ function CompaniesPageContent() {
         };
     }, []);
 
-    if (isLoading) {
-        return <CompaniesLoadingState />;
-    }
-
     if (error) {
         return <CompaniesErrorState />;
     }
@@ -96,14 +82,11 @@ function CompaniesPageContent() {
                     {/* Desktop Side Panel */}
                     <CompaniesSidebar />
 
-                    {/* Mobile Filter Button */}
-                    <CompaniesMobileFilter onOpen={onOpen} />
-
                     {/* Main Content */}
                     <Box flex={1}>
                         <VStack spacing={0} align="stretch">
                             {/* Header */}
-                            <CompaniesHeader />
+                            <CompaniesHeader onOpen={onOpen} />
 
                             {/* Main Content Area */}
                             <Box pt={8}>
@@ -111,7 +94,7 @@ function CompaniesPageContent() {
                                     <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
                                         {companies.map((company, index) => (
                                             <div
-                                                key={`${company.id}-page-${company._pageNumber}`}
+                                                key={company.id}
                                                 ref={index === companies.length - 3 ? lastElementRef : undefined}
                                             >
                                                 <CompanyCard
@@ -122,7 +105,7 @@ function CompaniesPageContent() {
                                         ))}
                                     </SimpleGrid>
 
-                                    {companies.length === 0 && (
+                                    {companies.length === 0 && !isLoading && (
                                         <CompaniesEmptyState />
                                     )}
 

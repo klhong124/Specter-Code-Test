@@ -6,12 +6,15 @@ import {
     Badge,
     Progress,
     Button,
-    useDisclosure,
     useColorModeValue,
 } from "@chakra-ui/react";
 import { useCompaniesContext } from "../context/companies.context";
 
-export function CompaniesHeader() {
+interface CompaniesHeaderProps {
+    onOpen: () => void;
+}
+
+export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
     const {
         companies,
         totalItems,
@@ -22,7 +25,6 @@ export function CompaniesHeader() {
         isFetchingNextPage,
     } = useCompaniesContext();
 
-    const { isOpen, onToggle } = useDisclosure();
     const bgColor = useColorModeValue("white", "gray.800");
     const borderColor = useColorModeValue("gray.200", "gray.700");
 
@@ -67,7 +69,7 @@ export function CompaniesHeader() {
 
                     <Button
                         variant="outline"
-                        onClick={onToggle}
+                        onClick={onOpen}
                         display={{ base: "flex", lg: "none" }}
                     >
                         Filters
