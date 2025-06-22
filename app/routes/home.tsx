@@ -1,4 +1,4 @@
-import { Box, Button, Center, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Center, Heading, Image, Text, useColorModeValue } from "@chakra-ui/react";
 import type { Route } from "./+types/home";
 import { HiArrowRight } from "react-icons/hi";
 import { motion } from "framer-motion";
@@ -12,6 +12,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const overlayBg = useColorModeValue("rgba(255, 255, 255, 0.6)", "rgba(0, 0, 0, 0.6)");
+  const textColor = useColorModeValue("gray.500", "whiteAlpha.700");
   return (
     <Center
       minH="100dvh"
@@ -24,7 +26,7 @@ export default function Home() {
         content: '""',
         pos: "absolute",
         inset: 0,
-        bgColor: "rgba(255, 255, 255, 0.6)",
+        bgColor: overlayBg,
         zIndex: -1,
       }}
     >
@@ -48,7 +50,7 @@ export default function Home() {
         >
           Hey there!
         </Heading>
-        <Text color="gray.500" fontSize="sm" mb={4} letterSpacing="tight">
+        <Text color={textColor} fontSize="sm" mb={4} letterSpacing="tight">
           Welcome to the Specter frontend test.
         </Text>
         <Button

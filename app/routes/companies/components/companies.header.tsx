@@ -34,6 +34,8 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
 
     const headerBg = useColorModeValue("white", "gray.800");
     const headerBorder = useColorModeValue("gray.200", "gray.700");
+    const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
+    const subtleTextColor = useColorModeValue("gray.600", "whiteAlpha.700");
 
     const loadedCount = companies.length;
     const totalCount = totalItems;
@@ -69,11 +71,11 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                 {/* Main Header */}
                 <HStack justify="space-between" align="center">
                     <Box>
-                        <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                        <Text fontSize="2xl" fontWeight="bold" color={textColor}>
                             Companies
                         </Text>
                         {hasActiveFilters && (
-                            <Text color="gray.600" fontSize="sm">
+                            <Text color={subtleTextColor} fontSize="sm">
                                 Filtered results
                             </Text>
                         )}
@@ -112,7 +114,7 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         </HStack>
 
                         <HStack spacing={2} align="center">
-                            <Text fontSize="xs" color="gray.600">
+                            <Text fontSize="xs" color={subtleTextColor}>
                                 {loadedCount} of {totalCount} companies loaded
                             </Text>
                             {isFetchingNextPage && (
@@ -126,10 +128,10 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                     {/* Right side - Progress bar */}
                     <VStack align="end" spacing={1} minW="200px">
                         <HStack spacing={2} align="center">
-                            <Text fontSize="xs" color="gray.600">
+                            <Text fontSize="xs" color={subtleTextColor}>
                                 Progress
                             </Text>
-                            <Text fontSize="xs" fontWeight="medium" color="gray.700">
+                            <Text fontSize="xs" fontWeight="medium" color={textColor}>
                                 {Math.round(progressPercentage)}%
                             </Text>
                         </HStack>

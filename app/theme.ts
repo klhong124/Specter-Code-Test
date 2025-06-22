@@ -12,10 +12,12 @@ const extension: Partial<ChakraTheme> = {
   styles: {
     global: {
       body: {
-        color: "text",
-        transitionProperty: "none",
+        bg: "gray.50",
+        color: "gray.800",
+        transition: "background-color .2s ease-in-out, color .2s ease-in-out",
         _dark: {
           bg: "black",
+          color: "whiteAlpha.900",
         },
         a: {
           _focus: {
@@ -193,6 +195,13 @@ const extension: Partial<ChakraTheme> = {
         outline: {
           shadow: "sm",
           bgColor: "white",
+          _dark: {
+            bgColor: "gray.800",
+            borderColor: "gray.600",
+            _hover: {
+              bg: "gray.700",
+            },
+          },
         },
         dashed: {
           borderWidth: 1,
@@ -220,6 +229,7 @@ const extension: Partial<ChakraTheme> = {
       },
     },
     Modal: {
+      parts: ["overlay", "dialog", "header", "body", "footer", "closeButton"],
       defaultProps: {
         motionPreset: "slideInBottom",
         closeButton: {
@@ -229,11 +239,17 @@ const extension: Partial<ChakraTheme> = {
       baseStyle: {
         overlay: {
           background: "rgba(255, 255, 255, 0.7)",
+          _dark: {
+            background: "rgba(0, 0, 0, 0.7)",
+          },
         },
         dialog: {
           overflow: "hidden",
           rounded: "xl",
           borderWidth: 1,
+          _dark: {
+            bg: "gray.800",
+          },
         },
         closeButton: {
           top: 1.5,
@@ -241,6 +257,9 @@ const extension: Partial<ChakraTheme> = {
           borderRadius: "full",
           _focus: {
             boxShadow: "none",
+          },
+          _dark: {
+            borderColor: "gray.700",
           },
         },
         body: {
@@ -252,12 +271,18 @@ const extension: Partial<ChakraTheme> = {
           borderBottomWidth: 1,
           borderColor: "gray.100",
           py: 3,
+          _dark: {
+            borderColor: "gray.700",
+          },
         },
         footer: {
           borderTopWidth: 1,
           bg: "gray.50",
           px: 5,
           py: 3,
+          _dark: {
+            bg: "gray.900",
+          },
         },
       },
     },
@@ -273,26 +298,41 @@ const extension: Partial<ChakraTheme> = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        _dark: {
+          bgColor: "gray.700",
+          borderColor: "gray.600",
+          color: "gray.400",
+        },
       },
     },
     Drawer: {
+      parts: ["overlay", "dialog", "header", "body", "footer", "closeButton"],
       sizes: {
         "2xl": { dialog: { maxW: "5xl" } },
       },
       baseStyle: {
         overlay: {
           background: "rgba(255, 255, 255, 0.7)",
+          _dark: {
+            background: "rgba(0, 0, 0, 0.7)",
+          },
         },
         dialog: {
           m: 2,
           rounded: "xl",
           overflow: "hidden",
           borderWidth: 1,
+          _dark: {
+            bg: "gray.800",
+          },
         },
         closeButton: {
           borderRadius: "full",
           _focus: {
             boxShadow: "none",
+          },
+          _dark: {
+            borderColor: "gray.700",
           },
         },
         header: {
@@ -301,12 +341,18 @@ const extension: Partial<ChakraTheme> = {
           borderBottomWidth: 1,
           borderColor: "gray.100",
           py: 3,
+          _dark: {
+            borderColor: "gray.700",
+          },
         },
         footer: {
           borderTopWidth: 1,
           bg: "gray.50",
           px: 5,
           py: 3,
+          _dark: {
+            bg: "gray.900",
+          },
         },
       },
     },
@@ -324,6 +370,14 @@ const extension: Partial<ChakraTheme> = {
               color: "gray.700",
             },
             bgGradient: "linear(to-b, white, gray.50)",
+            _dark: {
+              bg: "gray.800",
+              borderColor: "gray.600",
+              bgGradient: "none",
+              _hover: {
+                borderColor: "gray.500",
+              },
+            },
           },
         },
         unstyled: {
@@ -356,6 +410,9 @@ const extension: Partial<ChakraTheme> = {
               borderColor: "brand.500",
               boxShadow: "none",
             },
+            _dark: {
+              borderColor: "gray.700",
+            },
           },
         },
         outline: {
@@ -365,6 +422,13 @@ const extension: Partial<ChakraTheme> = {
             _focus: {
               boxShadow: "none !important",
               borderColor: "brand.500",
+            },
+            _dark: {
+              bgColor: "gray.800",
+              borderColor: "gray.600",
+              _hover: {
+                borderColor: "gray.500",
+              },
             },
           },
         },
@@ -395,6 +459,9 @@ const extension: Partial<ChakraTheme> = {
             borderColor: "gray.100",
             mb: "-1px",
             gap: 4,
+            _dark: {
+              borderColor: "gray.700",
+            },
           },
           tab: {
             borderBottom: "1px solid",
@@ -403,6 +470,13 @@ const extension: Partial<ChakraTheme> = {
             px: 0,
             fontWeight: "medium",
             color: "gray.500",
+            _dark: {
+              color: "gray.400",
+              _selected: {
+                color: "brand.300",
+                borderColor: "currentColor",
+              },
+            },
           },
         },
         "solid-rounded": {
@@ -415,6 +489,12 @@ const extension: Partial<ChakraTheme> = {
             _selected: {
               color: "brand.500",
               bgColor: "brand.50",
+            },
+            _dark: {
+              _selected: {
+                color: "brand.200",
+                bgColor: "brand.900",
+              },
             },
           },
         },
@@ -431,6 +511,18 @@ const extension: Partial<ChakraTheme> = {
       variants: {
         outline: {
           borderRadius: "lg",
+          bgColor: "white",
+          _focus: {
+            boxShadow: "none !important",
+            borderColor: "brand.500",
+          },
+          _dark: {
+            bgColor: "gray.800",
+            borderColor: "gray.600",
+            _hover: {
+              borderColor: "gray.500",
+            },
+          },
         },
       },
     },
@@ -471,6 +563,13 @@ const extension: Partial<ChakraTheme> = {
               boxShadow: "none !important",
               borderColor: "brand.500",
             },
+            _dark: {
+              bgColor: "gray.800",
+              borderColor: "gray.600",
+              _hover: {
+                bg: "gray.700",
+              },
+            },
           },
         },
         outline: {
@@ -481,11 +580,19 @@ const extension: Partial<ChakraTheme> = {
               boxShadow: "none !important",
               borderColor: "brand.500",
             },
+            _dark: {
+              bgColor: "gray.800",
+              borderColor: "gray.600",
+              _hover: {
+                borderColor: "gray.500",
+              },
+            },
           },
         },
       },
     },
     Tag: {
+      parts: ["container", "label", "closeButton"],
       baseStyle: {
         whiteSpace: "pre",
         _focus: {
@@ -504,6 +611,10 @@ const extension: Partial<ChakraTheme> = {
           container: {
             shadow: "none",
             borderWidth: 1,
+            _dark: {
+              color: "whiteAlpha.800",
+              borderColor: "gray.600",
+            },
           },
         },
       },
@@ -529,6 +640,9 @@ const extension: Partial<ChakraTheme> = {
         fontWeight: "semibold",
         mb: 1,
         color: "gray.400",
+        _dark: {
+          color: "gray.400",
+        },
       },
     },
     Skeleton: {
@@ -577,27 +691,44 @@ const extension: Partial<ChakraTheme> = {
         borderColor: "gray.200",
         color: "gray.900",
         fontSize: "xs",
+        _dark: {
+          bgColor: "gray.700",
+        },
       },
     },
     Alert: {
+      parts: ["container", "title", "description", "icon"],
       baseStyle: {
         container: {
           backgroundColor: "white !important",
           borderWidth: 1,
           borderColor: "gray.200",
           rounded: "md",
+          _dark: {
+            backgroundColor: "gray.800 !important",
+            borderColor: "gray.700",
+          },
         },
         title: {
           color: "gray.900",
           fontWeight: "semibold",
           fontSize: "sm",
+          _dark: {
+            color: "whiteAlpha.900",
+          },
         },
         description: {
           color: "gray.900",
           fontSize: "sm",
+          _dark: {
+            color: "whiteAlpha.800",
+          },
         },
         icon: {
           color: "gray.900",
+          _dark: {
+            color: "whiteAlpha.900",
+          },
         },
       },
     },

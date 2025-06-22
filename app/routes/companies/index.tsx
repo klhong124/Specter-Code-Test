@@ -8,6 +8,7 @@ import {
     useDisclosure,
     Spinner,
     Text,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useCallback } from "react";
 import { CompanyCard } from './components/company.card';
@@ -27,6 +28,9 @@ function CompaniesPageContent() {
         hasNextPage,
         isFetchingNextPage,
     } = useCompaniesContext();
+
+    const overlayBg = useColorModeValue("rgba(255, 255, 255, 0.4)", "rgba(0, 0, 0, 0.6)");
+    const pageBg = useColorModeValue("gray.50", "black");
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const observerRef = useRef<IntersectionObserver | null>(null);
@@ -62,6 +66,7 @@ function CompaniesPageContent() {
     return (
         <Box
             minH="100dvh"
+            bg={pageBg}
             bgImage="url(bg.png)"
             bgSize="contain"
             bgPosition="top"
@@ -73,7 +78,7 @@ function CompaniesPageContent() {
                 content: '""',
                 pos: "absolute",
                 inset: 0,
-                bgColor: "rgba(255, 255, 255, 0.4)",
+                bgColor: overlayBg,
                 zIndex: -1,
                 backdropFilter: "blur(1px)",
             }}
