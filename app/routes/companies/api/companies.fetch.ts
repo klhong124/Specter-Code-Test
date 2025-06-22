@@ -1,5 +1,4 @@
 import { prisma } from "@/utils/prisma.server";
-import type { Company } from "@companies/types/company.type";
 import type { CompanyQueryFilters } from "@companies/types/companies.filters.type";
 import { safeParseInt } from "@companies/utils/company.helpers";
 

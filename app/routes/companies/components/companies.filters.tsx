@@ -364,7 +364,7 @@ export function CompanyFilters({ }: CompanyFiltersProps) {
     const isMobile = useBreakpointValue({ base: true, lg: false });
 
     return (
-        <VStack spacing={6} align="stretch" h="full">
+        <VStack spacing={6} align="stretch" h="calc(100vh - 10rem)">
             <Box display={{ base: 'none', lg: 'block' }}>
                 <Heading size="md">Filters</Heading>
             </Box>
