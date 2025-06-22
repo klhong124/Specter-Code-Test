@@ -355,7 +355,7 @@ export function CompanyFilters({ }: CompanyFiltersProps) {
     const isMobile = useBreakpointValue({ base: true, lg: false });
 
     return (
-        <VStack spacing={6} align="stretch" h="calc(100vh - 10rem)">
+        <VStack spacing={6} align="stretch" flex={1} minH={0} display="flex" flexDirection="column" maxH="calc(100dvh - 10rem)">
             <Box display={{ base: 'none', lg: 'block' }}>
                 <Heading size="md">Filters</Heading>
             </Box>
@@ -364,7 +364,7 @@ export function CompanyFilters({ }: CompanyFiltersProps) {
                 <ActiveFiltersMobile />
             )}
 
-            <VStack align="stretch" spacing={6} overflowY="auto" mr={-3} pr={4} h="calc(100vh - 10rem)">
+            <VStack align="stretch" spacing={6} flex={1} overflowY="auto" mr={-5} pr={5} >
                 <SearchFilter />
                 <Divider />
                 <RankFilter />

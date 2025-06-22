@@ -1,5 +1,4 @@
-import type { ChakraTheme } from "@chakra-ui/react";
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, type ChakraTheme } from "@chakra-ui/react";
 
 // Generating a new colour pallette?
 // https://palette.saas-ui.dev/
@@ -12,6 +11,7 @@ const extension: Partial<ChakraTheme> = {
   styles: {
     global: {
       body: {
+        marginRight: "3px",
         bg: "gray.50",
         color: "gray.800",
         _dark: {
@@ -29,24 +29,24 @@ const extension: Partial<ChakraTheme> = {
         },
       },
       "::-webkit-scrollbar": {
-        width: "4px",
-        height: "4px",
+        width: "6px",
+        height: "6px",
       },
       "::-webkit-scrollbar-track": {
         background: "transparent",
       },
       "::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(0,0,0,0.15)",
-        borderRadius: "2px",
+        backgroundColor: "rgba(0,0,0,0.2)",
+        borderRadius: "4px",
       },
-      ".chakra-ui-dark ::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255,255,255,0.15)",
+      "[data-theme='dark'] ::-webkit-scrollbar-thumb": {
+        backgroundColor: "rgba(255, 255, 255, 0.15)",
       },
       "::-webkit-scrollbar-thumb:hover": {
         backgroundColor: "rgba(0,0,0,0.25)",
       },
-      ".chakra-ui-dark ::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "rgba(255,255,255,0.25)",
+      "[data-theme='dark'] ::-webkit-scrollbar-thumb:hover": {
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
       },
     },
   },

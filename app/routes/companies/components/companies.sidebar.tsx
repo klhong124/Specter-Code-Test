@@ -1,7 +1,6 @@
-import { Box, Button, Flex, Image, useColorModeValue, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, useColorModeValue, useColorMode, VStack } from "@chakra-ui/react";
 import { Link } from "react-router";
 import { CompanyFilters } from "./companies.filters";
-import { HiArrowLeft } from "react-icons/hi";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { memo } from "react";
 
@@ -10,7 +9,7 @@ const SpecterLogo = memo(function SpecterLogo() {
     const logoFilter = useColorModeValue("none", "brightness(0) invert(1)");
 
     return (
-        <Flex justify="space-between" align="center" mb={8}>
+        <Flex justify="space-between" align="center" my={8}>
             <Button
                 variant="ghost"
                 as={Link}
@@ -34,20 +33,14 @@ export function CompaniesSidebar() {
     const glassBorder = useColorModeValue("rgba(255, 255, 255, 0.3)", "rgba(255, 255, 255, 0.1)");
 
     return (
-        <Flex
-            display={{ base: "none", lg: "block" }}
-            flexDirection="column"
-            position="fixed"
-            left="2rem"
-            top="2rem"
+        <VStack
+            as="aside"
             w="350px"
-            h="calc(100vh - 4rem)"
-            zIndex={20}
+            display="block"
         >
             <SpecterLogo />
 
             <Box
-                flexShrink={0}
                 bg={glassBg}
                 backdropFilter="blur(12px)"
                 border="1px solid"
@@ -55,13 +48,13 @@ export function CompaniesSidebar() {
                 boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
                 borderRadius="xl"
                 p={6}
-                display="flex"
-                flexDirection="column"
                 flex={1}
                 minH={0}
+                display="flex"
+                flexDirection="column"
             >
                 <CompanyFilters />
             </Box>
-        </Flex>
+        </VStack>
     );
 }
