@@ -16,6 +16,8 @@ interface FetchCompaniesParams {
     growthStage?: string[];
     customerFocus?: string[];
     fundingType?: string[];
+    sortBy?: 'name' | 'rank';
+    sortOrder?: 'asc' | 'desc';
 }
 
 interface CompanyWithPage extends Company {
@@ -50,6 +52,8 @@ async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
     if (params.fundingType) {
         params.fundingType.forEach(type => searchParams.append('fundingType', type));
     }
+    if (params.sortBy) searchParams.set('sortBy', params.sortBy);
+    if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 
     const response = await fetch(`/api/companies?${searchParams.toString()}`);
     if (!response.ok) {
@@ -85,6 +89,8 @@ export function useCompanies() {
         growthStage: [],
         customerFocus: [],
         fundingType: [],
+        sortBy: 'rank',
+        sortOrder: 'asc',
     });
 
     const [pageSize, setPageSize] = useState(20);
@@ -107,6 +113,8 @@ export function useCompanies() {
             growthStage: filters.growthStage.length > 0 ? filters.growthStage : undefined,
             customerFocus: filters.customerFocus.length > 0 ? filters.customerFocus : undefined,
             fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
+            sortBy: filters.sortBy,
+            sortOrder: filters.sortOrder,
         }),
         getNextPageParam: (lastPage) => {
             return lastPage.pagination.hasNextPage ? lastPage.pagination.nextPage : undefined;
@@ -130,16 +138,10 @@ export function useCompanies() {
         };
     }, [filterOptionsData]);
 
-    // Flatten all pages into a single array of companies with page tracking
+    // Flatten all pages into a single array of companies
     const companies = useMemo(() => {
         if (!infiniteData?.pages) return [];
-        return infiniteData.pages.flatMap((page, pageIndex) =>
-            page.companies.map((company, companyIndex) => ({
-                ...company,
-                _pageNumber: pageIndex + 1,
-                _pageIndex: companyIndex // Index within the page (0-19 for page size 20)
-            }))
-        );
+        return infiniteData.pages.flatMap((page) => page.companies);
     }, [infiniteData]);
 
     // Get pagination info from the first page
@@ -160,6 +162,8 @@ export function useCompanies() {
             growthStage: [],
             customerFocus: [],
             fundingType: [],
+            sortBy: 'rank',
+            sortOrder: 'asc',
         });
         // The infinite query will automatically refetch when the queryKey changes
     }, []);
@@ -178,6 +182,8 @@ export function useCompanies() {
 
     return {
         companies,
+        filteredCompanies: companies, // For backward compatibility
+        paginatedCompanies: companies, // For backward compatibility
         isLoading,
         error,
         filters,

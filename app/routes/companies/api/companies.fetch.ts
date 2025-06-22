@@ -10,11 +10,17 @@ export async function loader({ request }: { request: Request }): Promise<Respons
         const growthStage = url.searchParams.getAll('growthStage');
         const customerFocus = url.searchParams.getAll('customerFocus');
         const fundingType = url.searchParams.getAll('fundingType');
+        const sortBy = url.searchParams.get('sortBy') || 'rank';
+        const sortOrder = url.searchParams.get('sortOrder') || 'asc';
 
         // Validate pagination parameters
         const validPage = Math.max(1, page);
         const validLimit = Math.min(Math.max(1, limit), 100); // Cap at 100 items per page
         const skip = (validPage - 1) * validLimit;
+
+        // Validate sorting parameters
+        const validSortBy = ['name', 'rank'].includes(sortBy) ? sortBy : 'rank';
+        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'asc';
 
         // Build where clause for filtering
         const where: any = {};
@@ -39,15 +45,21 @@ export async function loader({ request }: { request: Request }): Promise<Respons
             where.last_funding_type = { in: fundingType };
         }
 
+        // Build orderBy clause for sorting
+        const orderBy: any = {};
+        if (validSortBy === 'name') {
+            orderBy.name = validSortOrder;
+        } else {
+            orderBy.rank = validSortOrder;
+        }
+
         // Get total count for pagination metadata
         const totalCount = await prisma.company.count({ where });
 
         // Fetch paginated and filtered companies
         const companies = await prisma.company.findMany({
             where,
-            orderBy: {
-                rank: 'asc'
-            },
+            orderBy,
             select: {
                 id: true,
                 name: true,

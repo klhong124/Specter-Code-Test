@@ -11,6 +11,8 @@ import {
     CheckboxGroup,
     Stack,
     Text,
+    Select,
+    HStack,
 } from "@chakra-ui/react";
 import { FiX } from "react-icons/fi";
 
@@ -19,6 +21,8 @@ export interface Filters {
     growthStage: string[];
     customerFocus: string[];
     fundingType: string[];
+    sortBy: 'name' | 'rank';
+    sortOrder: 'asc' | 'desc';
 }
 
 interface FilterOptions {
@@ -40,6 +44,8 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
             growthStage: [],
             customerFocus: [],
             fundingType: [],
+            sortBy: 'rank',
+            sortOrder: 'asc',
         });
     };
 
@@ -70,6 +76,32 @@ export function CompanyFilters({ filters, setFilters, filterOptions }: CompanyFi
                     onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                     size="sm"
                 />
+            </FormControl>
+
+            <Divider />
+
+            <FormControl>
+                <FormLabel fontSize="sm" fontWeight="medium">Sort By</FormLabel>
+                <HStack spacing={3}>
+                    <Select
+                        value={filters.sortBy}
+                        onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as 'name' | 'rank' })}
+                        size="sm"
+                        flex={1}
+                    >
+                        <option value="rank">Rank</option>
+                        <option value="name">Name</option>
+                    </Select>
+                    <Select
+                        value={filters.sortOrder}
+                        onChange={(e) => setFilters({ ...filters, sortOrder: e.target.value as 'asc' | 'desc' })}
+                        size="sm"
+                        w="100px"
+                    >
+                        <option value="asc">↑</option>
+                        <option value="desc">↓</option>
+                    </Select>
+                </HStack>
             </FormControl>
 
             <Divider />

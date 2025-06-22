@@ -23,13 +23,8 @@ import { FiExternalLink, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons
 import type { Company } from "../types/company.type";
 import { formatFundingAmount } from "../utils/company.helpers";
 
-interface CompanyWithPage extends Company {
-    _pageNumber: number;
-    _pageIndex: number;
-}
-
 interface CompanyCardProps {
-    company: CompanyWithPage;
+    company: Company;
     index: number;
 }
 
@@ -37,8 +32,9 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
 
-    // Use page-based index for animation delay instead of global index
-    const animationIndex = company._pageIndex || 0;
+    // Use current index for animation delay instead of page index
+    // This ensures proper animation when sorting changes
+    const animationIndex = index % 20; // Use modulo to keep delays reasonable
 
     // Animation variants
     const cardVariants = {
