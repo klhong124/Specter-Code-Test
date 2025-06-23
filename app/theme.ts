@@ -43,11 +43,12 @@ const extension: Partial<ChakraTheme> = {
         backgroundColor: "rgba(255, 255, 255, 0.2)",
       },
       ".glass": {
-        bg: "rgba(255, 255, 255, 0.5)",
-        backdropFilter: "blur(2px)",
+        bg: "rgba(255, 255, 255, 0.7)",
+        backdropFilter: "blur(4px)",
         borderWidth: "1px",
-        borderColor: "rgba(255, 255, 255, 0.3)",
-        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        borderColor: "rgba(200, 200, 200, 0.1)",
+        borderRadius: "2xl",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
         _dark: {
           bg: "rgba(26, 32, 44, 0.6)",
           borderColor: "rgba(255, 255, 255, 0.1)",

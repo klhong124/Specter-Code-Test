@@ -17,6 +17,8 @@ import { CompaniesEmptyState } from '@companies/components/companies.empty.state
 import { CompaniesErrorState } from '@companies/components/companies.error.state';
 import { CompaniesMobileDrawer } from '@companies/components/companies.mobile.drawer';
 import { CompaniesProvider, useCompaniesContext } from '@companies/context/companies.context';
+import { GlowingCard } from "@/ui/glowing-card";
+import { ViewIcon } from "@chakra-ui/icons";
 
 function CompaniesPageContent() {
     const {
@@ -72,6 +74,7 @@ function CompaniesPageContent() {
             _before={{
                 content: '""',
                 pos: "absolute",
+                backdropFilter: "blur(1px)",
                 inset: 0,
                 bgColor: "rgba(255, 255, 255, 0.6)",
                 zIndex: -1,
@@ -133,11 +136,16 @@ function CompaniesPageContent() {
 
                                 {/* End of results indicator */}
                                 {!hasNextPage && companies.length > 0 && (
-                                    <Center py={8}>
-                                        <Text color="gray.500" fontSize="sm">
-                                            You've reached the end of the results
-                                        </Text>
-                                    </Center>
+                                    <GlowingCard className="glass">
+                                        <Center py={8}>
+                                            <VStack spacing={2}>
+                                                <ViewIcon color="gray.400" boxSize={6} />
+                                                <Text variant="muted" fontSize="sm">
+                                                    You've reached the end of the results
+                                                </Text>
+                                            </VStack>
+                                        </Center>
+                                    </GlowingCard>
                                 )}
                             </VStack>
                         </Box>

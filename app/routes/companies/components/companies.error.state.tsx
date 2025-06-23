@@ -1,12 +1,16 @@
-import { Container, Alert, AlertIcon } from "@chakra-ui/react";
+import { VStack, Box, Text } from "@chakra-ui/react";
+import { WarningTwoIcon } from "@chakra-ui/icons";
 
 export function CompaniesErrorState() {
     return (
-        <Container maxW="container.xl" py={8}>
-            <Alert status="error">
-                <AlertIcon />
-                Failed to load companies. Please try again later.
-            </Alert>
-        </Container>
+        <Box textAlign="center" py={12} className="glass">
+            <VStack spacing={4}>
+                <WarningTwoIcon color="gray.400" boxSize={6} />
+
+                <Text variant="muted" fontSize="sm">
+                    Failed to load companies. Please try again later.
+                </Text>
+            </VStack>
+        </Box>
     );
 }

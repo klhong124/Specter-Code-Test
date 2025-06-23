@@ -22,7 +22,7 @@ const SpecterLogo = memo(function SpecterLogo() {
             </Button>
             <IconButton
                 aria-label="Toggle dark mode"
-                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                icon={colorMode === "light" ? <SunIcon/> : <MoonIcon />}
                 onClick={toggleColorMode}
                 variant="ghost"
                 size="sm"

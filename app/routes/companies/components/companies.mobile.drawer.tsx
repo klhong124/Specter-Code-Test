@@ -15,7 +15,7 @@ interface CompaniesMobileDrawerProps {
 
 export function CompaniesMobileDrawer({ isOpen, onClose }: CompaniesMobileDrawerProps) {
     return (
-        <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="full">
+        <Drawer isOpen={isOpen} placement="left" onClose={onClose} >
             <DrawerOverlay />
             <DrawerContent>
                 <DrawerCloseButton />

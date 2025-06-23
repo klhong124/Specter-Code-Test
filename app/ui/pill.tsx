@@ -114,9 +114,12 @@ export function Pill({
                     px={2}
                     variant="subtle"
                     colorScheme={colorScheme}
+                    shadow="sm"
+                    onClick={() => onChange(value)}
+                    cursor="pointer"
                 >
                     <TagLabel fontSize="xs" pl={1}>{label}</TagLabel>
-                    <TagCloseButton fontSize="xs" onClick={() => onChange(value)} />
+                    <TagCloseButton fontSize="xs" />
                 </Tag>
             </motion.div>
         );

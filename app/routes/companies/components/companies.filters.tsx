@@ -15,10 +15,6 @@ import {
     NumberInputField,
     Wrap,
     WrapItem,
-    Tag,
-    TagLabel,
-    TagCloseButton,
-    useBreakpointValue,
     RangeSlider,
     RangeSliderTrack,
     RangeSliderFilledTrack,
@@ -46,10 +42,6 @@ const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
 
     return colorMap[colorScheme] || colorMap.blue;
 };
-
-export interface CompanyFiltersProps {
-    // No props needed now
-}
 
 // Search Filter Component
 function SearchFilter() {
@@ -141,7 +133,7 @@ function FundingAmountFilter() {
         <FormControl>
             <VStack align="flex-start" mb={2}>
                 <FormLabel fontSize="sm" fontWeight="medium" m={0}>Last Funding Amount (USD)</FormLabel>
-                <Text fontSize="xs" variant="muted" whiteSpace="nowrap">
+                <Text fontSize="xs" whiteSpace="nowrap">
                     {formatFundingAmount(String(fundingRange[0]))} - {fundingRange[1] === 100000000 ? `${formatFundingAmount(String(fundingRange[1]))}+` : formatFundingAmount(String(fundingRange[1]))}
                 </Text>
             </VStack>
@@ -281,7 +273,7 @@ function FundingTypeFilter() {
     );
 }
 
-export function CompanyFilters({ }: CompanyFiltersProps) {
+export function CompanyFilters() {
     const { clearFilters, hasActiveFilters } = useCompaniesContext();
 
     return (

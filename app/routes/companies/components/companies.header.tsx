@@ -8,6 +8,9 @@ import {
     Wrap,
     WrapItem,
     Flex,
+    useColorMode,
+    IconButton,
+    Spacer,
 } from "@chakra-ui/react";
 import { Pill } from "@/ui/pill";
 import { useCompaniesContext } from "@companies/context/companies.context";
@@ -17,12 +20,15 @@ import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
+import { MoonIcon, SunIcon, HamburgerIcon } from "@chakra-ui/icons";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
 }
 
 export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
+    const { colorMode, toggleColorMode } = useColorMode();
+
     const {
         hasActiveFilters,
         filters,
@@ -43,24 +49,20 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
             position="sticky"
             top={0}
             zIndex={10}
-            bg="rgba(255, 255, 255, 0.2)"
-            backdropFilter="saturate(180%) blur(16px)"
-            py={3}
+            py={4}
             px={6}
             mt={{ base: -8, lg: 0 }}
-            w="full"
-            gap={0}
+            ml="-2px"
+            w="calc(100% + 4px)"
             align="stretch"
-            borderRadius={scrollY > 0 ? "xl" : "2xl"}
-            boxShadow="0 8px 32px rgba(0, 0, 0, 0.1), inset 0 -1px 0px rgba(255, 255, 255, 0.4)"
-            _dark={{
-                bg: "rgba(23, 25, 35, 0.5)",
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 -1px 0px rgba(255, 255, 255, 0.1)",
-            }}
+            borderTopRadius={scrollY > 0 ? "none" : "2xl"}
+            borderBottomRadius="2xl"
+            backdropFilter="saturate(180%) blur(16px)"
+            className="glass"
+
         >
             {/* Main Header */}
-            <HStack align="center" spacing={3}>
-
+            <HStack align="center" spacing={2}>
                 <Flex
                     direction={{ base: "column", lg: "row" }}
                     align="baseline"
@@ -90,15 +92,24 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         />
                     </Text>
                 </Flex>
-                <Button
-                    variant="outline"
-                    px={4}
-                    onClick={onOpen}
-                    display={{ base: "flex", lg: "none" }}
-                >
-                    Filters
-                </Button>
+
                 <CompaniesSorting />
+                <IconButton
+                    aria-label="Toggle dark mode"
+                    icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+                    onClick={toggleColorMode}
+                    variant="ghost"
+                    display={{ base: "flex", lg: "none" }}
+                    size="md"
+                />
+                <IconButton
+                    aria-label="Toggle filters"
+                    icon={<HamburgerIcon />}
+                    onClick={onOpen}
+                    variant="ghost"
+                    display={{ base: "flex", lg: "none" }}
+                    size="md"
+                />
             </HStack>
 
             <AnimatePresence>
@@ -107,7 +118,7 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        style={{ overflow: 'hidden' }}
+                        style={{ overflow: 'visible' }}
                     >
                         <HStack
                             spacing={4}
