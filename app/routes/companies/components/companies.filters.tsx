@@ -27,6 +27,7 @@ import { useCompaniesContext } from "@companies/context/companies.context";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
 import { Pill } from "@/ui/pill";
+import { WarningIcon } from "@chakra-ui/icons";
 
 // Color mapping for dark mode
 const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
@@ -84,27 +85,42 @@ function SearchFilter() {
 // Rank Filter Component
 function RankFilter() {
     const { filters, setFilters } = useCompaniesContext();
+
+    const hasRankError = filters.minRank != null &&
+        filters.maxRank != null &&
+        filters.minRank > filters.maxRank;
+
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Rank</FormLabel>
-            <HStack spacing={2}>
-                <NumberInput
-                    size="sm"
-                    value={filters.minRank}
-                    onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
-                    allowMouseWheel
-                >
-                    <NumberInputField placeholder="Min" />
-                </NumberInput>
-                <NumberInput
-                    size="sm"
-                    value={filters.maxRank}
-                    onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
-                    allowMouseWheel
-                >
-                    <NumberInputField placeholder="Max" />
-                </NumberInput>
-            </HStack>
+            <VStack align="stretch" spacing={2}>
+                <HStack spacing={2}>
+                    <NumberInput
+                        size="sm"
+                        value={filters.minRank || ''}
+                        onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Min" />
+                    </NumberInput>
+                    <NumberInput
+                        size="sm"
+                        value={filters.maxRank || ''}
+                        onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
+                        allowMouseWheel
+                    >
+                        <NumberInputField placeholder="Max" />
+                    </NumberInput>
+                </HStack>
+                {hasRankError && (
+                    <HStack spacing={1} >
+                        <WarningIcon boxSize={3} color="red.500" _dark={{ color: "red.400" }} />
+                        <Text fontSize="xs" color="red.600" _dark={{ color: "red.300" }}>
+                            Min rank cannot be greater than max rank.
+                        </Text>
+                    </HStack>
+                )}
+            </VStack>
         </FormControl>
     );
 }

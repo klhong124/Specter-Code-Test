@@ -177,7 +177,7 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                                             <Pill
                                                 variant="removable"
                                                 value={String(filters.minRank)}
-                                                label={`Min Rank: ${filters.minRank}`}
+                                                label={`Min Rank: #${filters.minRank}`}
                                                 onChange={() => removeFilter('minRank')}
                                             />
                                         </WrapItem>
@@ -187,7 +187,7 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                                             <Pill
                                                 variant="removable"
                                                 value={String(filters.maxRank)}
-                                                label={`Max Rank: ${filters.maxRank}`}
+                                                label={`Max Rank: #${filters.maxRank}`}
                                                 onChange={() => removeFilter('maxRank')}
                                             />
                                         </WrapItem>
