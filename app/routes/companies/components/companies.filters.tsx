@@ -23,11 +23,14 @@ import {
     RangeSliderTrack,
     RangeSliderFilledTrack,
     RangeSliderThumb,
+    SimpleGrid,
 } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useCompaniesContext } from "@companies/context/companies.context";
 import { formatFundingAmount } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
+import { PillCheckbox } from "@ui/pill-checkbox";
 
 // Color mapping for dark mode
 const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
@@ -227,6 +230,11 @@ function GrowthStageFilter() {
 // Customer Focus Filter Component
 function CustomerFocusFilter() {
     const { filters, setFilters } = useCompaniesContext();
+
+    const formatCustomerFocus = (focus: string) => {
+        return focus.replace(/_/g, ' & ').toUpperCase();
+    };
+
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
@@ -234,15 +242,13 @@ function CustomerFocusFilter() {
                 value={filters.customerFocus}
                 onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
             >
-                <Wrap spacing={2}>
+                <SimpleGrid columns={2} w="200px" gap={2}>
                     {CUSTOMER_FOCUSES.map((focus) => (
-                        <WrapItem key={focus}>
-                            <Checkbox value={focus} size="sm" colorScheme="blue">
-                                <Text fontSize="sm">{focus}</Text>
-                            </Checkbox>
-                        </WrapItem>
+                        <Checkbox key={focus} value={focus} size="sm" colorScheme="blue" w="auto">
+                            <Text fontSize="sm">{formatCustomerFocus(focus)}</Text>
+                        </Checkbox>
                     ))}
-                </Wrap>
+                </SimpleGrid>
             </CheckboxGroup>
         </FormControl>
     );
@@ -251,127 +257,62 @@ function CustomerFocusFilter() {
 // Funding Type Filter Component
 function FundingTypeFilter() {
     const { filters, setFilters } = useCompaniesContext();
+
+    const handleFundingTypeChange = (clickedValue: string) => {
+        const newFundingTypes = filters.fundingType.includes(clickedValue)
+            ? filters.fundingType.filter((v) => v !== clickedValue)
+            : [...filters.fundingType, clickedValue];
+        setFilters({ ...filters, fundingType: newFundingTypes });
+    };
+
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Funding Type</FormLabel>
-            <CheckboxGroup
-                value={filters.fundingType}
-                onChange={(value) => setFilters({ ...filters, fundingType: value as string[] })}
-            >
-                <Wrap spacing={2}>
-                    {FUNDING_TYPES.map((type) => (
-                        <WrapItem key={type}>
-                            <Checkbox value={type} size="sm" colorScheme="blue">
-                                <Text fontSize="sm">{type}</Text>
-                            </Checkbox>
-                        </WrapItem>
-                    ))}
-                </Wrap>
-            </CheckboxGroup>
+            <Wrap spacing={2}>
+                {FUNDING_TYPES.map((type) => (
+                    <WrapItem key={type}>
+                        <PillCheckbox
+                            value={type}
+                            label={type}
+                            isSelected={filters.fundingType.includes(type)}
+                            onChange={handleFundingTypeChange}
+                        />
+                    </WrapItem>
+                ))}
+            </Wrap>
         </FormControl>
     );
 }
 
-// Active Filters Component (Mobile)
-function ActiveFiltersMobile() {
-    const { filters, removeFilter, clearFilters } = useCompaniesContext();
-    return (
-        <Box>
-            <HStack justify="space-between" my={2}>
-                <Text fontSize="sm" fontWeight="medium">Active Filters</Text>
-                <Button
-                    size="xs"
-                    variant="ghost"
-                    colorScheme="blue"
-                    onClick={clearFilters}
-                >
-                    Clear All
-                </Button>
-            </HStack>
-            <Wrap spacing={2}>
-                {filters.search && (
-                    <WrapItem>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>Search: {filters.search}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('search')} />
-                        </Tag>
-                    </WrapItem>
-                )}
-                {filters.growthStage.map((v: string) => (
-                    <WrapItem key={v}>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>{v}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('growthStage', v)} />
-                        </Tag>
-                    </WrapItem>
-                ))}
-                {filters.customerFocus.map((v: string) => (
-                    <WrapItem key={v}>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>{v}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('customerFocus', v)} />
-                        </Tag>
-                    </WrapItem>
-                ))}
-                {filters.fundingType.map((v: string) => (
-                    <WrapItem key={v}>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>{v}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('fundingType', v)} />
-                        </Tag>
-                    </WrapItem>
-                ))}
-                {filters.minRank && (
-                    <WrapItem>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>Min Rank: {filters.minRank}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('minRank')} />
-                        </Tag>
-                    </WrapItem>
-                )}
-                {filters.maxRank && (
-                    <WrapItem>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>Max Rank: {filters.maxRank}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('maxRank')} />
-                        </Tag>
-                    </WrapItem>
-                )}
-                {filters.minFunding && (
-                    <WrapItem>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>Min Funding: {filters.minFunding}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('minFunding')} />
-                        </Tag>
-                    </WrapItem>
-                )}
-                {filters.maxFunding && (
-                    <WrapItem>
-                        <Tag size="sm" variant="outline" colorScheme="blue">
-                            <TagLabel>Max Funding: {filters.maxFunding}</TagLabel>
-                            <TagCloseButton onClick={() => removeFilter('maxFunding')} />
-                        </Tag>
-                    </WrapItem>
-                )}
-            </Wrap>
-            <Divider my={4} />
-        </Box>
-    );
-}
-
 export function CompanyFilters({ }: CompanyFiltersProps) {
-    const { hasActiveFilters } = useCompaniesContext();
-    const isMobile = useBreakpointValue({ base: true, lg: false });
+    const { clearFilters, hasActiveFilters } = useCompaniesContext();
 
     return (
         <VStack spacing={6} align="stretch" flex={1} minH={0} display="flex" flexDirection="column" maxH="calc(100dvh - 10rem)">
-            <Box display={{ base: 'none', lg: 'block' }}>
-                <Heading size="md">Filters</Heading>
-            </Box>
+            <HStack justifyContent="space-between">
+                <Heading size="md" display={{ base: 'none', lg: 'block' }}>Filters</Heading>
+                <AnimatePresence>
 
-            {isMobile && hasActiveFilters && (
-                <ActiveFiltersMobile />
-            )}
+                    {hasActiveFilters && (
+                        <Button
+                            as={motion.button}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition="0.2s linear"
+                            size="xs"
+                            colorScheme="orange"
+                            _dark={{
+                                color: "orange.600",
+                            }}
+                            variant="ghost"
+                            onClick={clearFilters}
+                        >
+                            Clear All
+                        </Button>
+                    )}
+                </AnimatePresence>
+            </HStack>
 
             <VStack align="stretch" spacing={6} flex={1} overflowY="auto" mr={-5} pr={5} >
                 <SearchFilter />

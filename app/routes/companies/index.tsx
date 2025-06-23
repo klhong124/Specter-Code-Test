@@ -102,7 +102,7 @@ function CompaniesPageContent() {
                             <CompaniesHeader onOpen={onOpen} />
 
                             {/* Main Content Area */}
-                            <Box pt={8}>
+                            <Box minH="100dvh" pt={6}>
                                 <VStack spacing={8} align="stretch">
                                     <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
                                         {companies.map((company, index) => (

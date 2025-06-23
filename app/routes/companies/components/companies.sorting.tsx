@@ -16,6 +16,7 @@ import type { Filters } from "@companies/types/companies.filters.type";
 const SORTS: { value: Filters['sortBy']; label: string }[] = [
     { value: 'rank', label: 'Rank' },
     { value: 'name', label: 'Name' },
+    { value: 'last_funding_amount', label: 'Last Funding' },
 ];
 
 export function CompaniesSorting() {
@@ -30,9 +31,7 @@ export function CompaniesSorting() {
 
     return (
         <HStack spacing={2}>
-            <Text fontSize="sm" variant="subtle" whiteSpace="nowrap">
-                Sort by
-            </Text>
+
             <Menu>
                 <MenuButton
                     as={Button}
@@ -48,31 +47,27 @@ export function CompaniesSorting() {
                         borderColor: "gray.600"
                     }}
                 >
-                    {filters.sortBy === 'rank' ? 'Rank' : 'Name'}
+                    {SORTS.find(s => s.value === filters.sortBy)?.label}
                 </MenuButton>
                 <MenuList
                     bg="white"
                     borderColor="gray.200"
-                    minW="100px"
+                    minW="120px"
                     _dark={{
                         bg: "gray.700",
                         borderColor: "gray.600"
                     }}
                 >
-                    <MenuItem
-                        onClick={() => setFilters({ ...filters, sortBy: 'rank' })}
-                        bg={filters.sortBy === 'rank' ? "blue.50" : "transparent"}
-                        _dark={{ bg: filters.sortBy === 'rank' ? "blue.900" : "transparent" }}
-                    >
-                        Rank
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => setFilters({ ...filters, sortBy: 'name' })}
-                        bg={filters.sortBy === 'name' ? "blue.50" : "transparent"}
-                        _dark={{ bg: filters.sortBy === 'name' ? "blue.900" : "transparent" }}
-                    >
-                        Name
-                    </MenuItem>
+                    {SORTS.map(sort => (
+                        <MenuItem
+                            key={sort.value}
+                            onClick={() => setFilters({ ...filters, sortBy: sort.value })}
+                            bg={filters.sortBy === sort.value ? "blue.50" : "transparent"}
+                            _dark={{ bg: filters.sortBy === sort.value ? "blue.900" : "transparent" }}
+                        >
+                            {sort.label}
+                        </MenuItem>
+                    ))}
                 </MenuList>
             </Menu>
 

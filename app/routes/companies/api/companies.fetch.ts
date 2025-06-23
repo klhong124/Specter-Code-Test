@@ -41,6 +41,9 @@ const buildOrderByClause = (sortBy: string, sortOrder: 'asc' | 'desc') => {
         case 'name':
             orderBy.name = sortOrder;
             break;
+        case 'last_funding_amount':
+            orderBy.last_funding_amount = sortOrder;
+            break;
         case 'rank':
         default:
             orderBy.rank = sortOrder;
@@ -61,7 +64,7 @@ export async function loader({ request }: { request: Request }): Promise<Respons
 
         const sortBy = params.get('sortBy') || 'rank';
         const sortOrder = params.get('sortOrder') || 'asc';
-        const validSortBy = ['name', 'rank'].includes(sortBy) ? sortBy : 'rank';
+        const validSortBy = ['name', 'rank', 'last_funding_amount'].includes(sortBy) ? sortBy : 'rank';
         const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? (sortOrder as 'asc' | 'desc') : 'asc';
 
         const filters: CompanyQueryFilters = {

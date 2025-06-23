@@ -3,7 +3,7 @@ export interface Filters {
     growthStage: string[];
     customerFocus: string[];
     fundingType: string[];
-    sortBy: 'name' | 'rank';
+    sortBy: 'name' | 'rank' | 'last_funding_amount';
     sortOrder: 'asc' | 'desc';
     minRank?: number;
     maxRank?: number;

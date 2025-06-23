@@ -7,15 +7,15 @@ import {
     Button,
     Wrap,
     WrapItem,
-    Tag,
-    TagLabel,
-    TagCloseButton,
+    Flex,
 } from "@chakra-ui/react";
+import { PillCheckbox } from "@ui/pill-checkbox";
 import { useCompaniesContext } from "@companies/context/companies.context";
-// import { useAutoHidingHeader } from "@companies/hooks/useAutoHidingHeader";
-import { motion } from "framer-motion";
+import { useScroll } from "@/routes/companies/hooks/use-scroll";
+import { AnimatePresence, motion } from "framer-motion";
 import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
+import { formatFundingAmount } from "@companies/utils/company.helpers";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
@@ -29,10 +29,10 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
         clearFilters,
         totalItems,
     } = useCompaniesContext();
-    // const { isHidden } = useAutoHidingHeader();
+    const { scrollY } = useScroll();
 
     return (
-        <Box
+        <VStack
             as="header"
             position="sticky"
             top={0}
@@ -41,151 +41,193 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
             backdropFilter="saturate(180%) blur(16px)"
             py={3}
             px={6}
+            mt={{ base: -8, lg: 0 }}
             w="full"
-            borderBottomRadius="xl"
+            gap={0}
+            align="stretch"
+            borderRadius={scrollY > 0 ? "xl" : "2xl"}
             boxShadow="0 8px 32px rgba(0, 0, 0, 0.1), inset 0 -1px 0px rgba(255, 255, 255, 0.4)"
             _dark={{
                 bg: "rgba(23, 25, 35, 0.5)",
                 boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), inset 0 -1px 0px rgba(255, 255, 255, 0.1)",
             }}
         >
-            <VStack spacing={3} align="stretch">
-                {/* Main Header */}
-                <HStack justify="space-between" align="center" spacing={3}>
-                    <Box
-                        as={motion.div}
-                        // animate={{ height: isHidden ? 0 : 'auto', opacity: isHidden ? 0 : 1 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' } as any}
-                        overflow="hidden"
+            {/* Main Header */}
+            <HStack align="center" spacing={3}>
+
+                <Flex
+                    direction={{ base: "column", lg: "row" }}
+                    align="baseline"
+                    mr="auto"
+                    gap={{ base: 0, lg: 3 }}
+
+                >
+                    <Text
+                        fontSize="2xl"
+                        fontWeight="bold"
+                        color="gray.800"
+                        _dark={{ color: "whiteAlpha.900" }}
                     >
-                        <HStack spacing={2} align="baseline">
-                            <Text
-                                fontSize="2xl"
-                                fontWeight="bold"
-                                color="gray.800"
-                                _dark={{ color: "whiteAlpha.900" }}
-                            >
-                                Companies
-                            </Text>
-                            <Text
-                                fontSize="sm"
-                                variant="subtle"
-                            >
-                                <CountUp
-                                    key={totalItems}
-                                    from={0}
-                                    to={totalItems}
-                                    separator=","
-                                    duration={0.1}
-                                    suffix=" results found"
-                                />
-                            </Text>
-                        </HStack>
-                        {hasActiveFilters && (
-                            <Text
-                                variant="subtle"
-                                fontSize="sm"
-                            >
-                                Filtered results
-                            </Text>
-                        )}
-                    </Box>
+                        Companies
+                    </Text>
+                    <Text
+                        fontSize="sm"
+                        variant="subtle"
+                    >
+                        <CountUp
+                            key={totalItems}
+                            from={0}
+                            to={totalItems}
+                            separator=","
+                            duration={0.1}
+                            suffix=" results found"
+                        />
+                    </Text>
+                </Flex>
+                <Button
+                    variant="outline"
+                    px={4}
+                    onClick={onOpen}
+                    display={{ base: "flex", lg: "none" }}
+                >
+                    Filters
+                </Button>
+                <CompaniesSorting />
+            </HStack>
 
-                    <HStack spacing={4}>
-                        <CompaniesSorting />
-                        <Button
-                            variant="outline"
-                            onClick={onOpen}
-                            display={{ base: "flex", lg: "none" }}
-                        >
-                            Filters
-                        </Button>
-                    </HStack>
-                </HStack>
-
-                {/* Active Filters */}
+            <AnimatePresence>
                 {hasActiveFilters && (
-                    <Box pt={2}>
-                        <HStack spacing={4} align="center" justify="space-between">
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        style={{ overflow: 'hidden' }}
+                    >
+                        <HStack
+                            spacing={4}
+                            align="top"
+                            justify="space-between"
+                            pt={4}
+                        >
                             <Wrap spacing={2} flex={1}>
-                                {filters.search && (
-                                    <WrapItem>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>Search: {filters.search}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('search')} />
-                                        </Tag>
-                                    </WrapItem>
-                                )}
-                                {filters.growthStage.map((v: string) => (
-                                    <WrapItem key={v}>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>{v}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('growthStage', v)} />
-                                        </Tag>
-                                    </WrapItem>
-                                ))}
-                                {filters.customerFocus.map((v: string) => (
-                                    <WrapItem key={v}>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>{v}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('customerFocus', v)} />
-                                        </Tag>
-                                    </WrapItem>
-                                ))}
-                                {filters.fundingType.map((v: string) => (
-                                    <WrapItem key={v}>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>{v}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('fundingType', v)} />
-                                        </Tag>
-                                    </WrapItem>
-                                ))}
-                                {filters.minRank && (
-                                    <WrapItem>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>Min Rank: {filters.minRank}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('minRank')} />
-                                        </Tag>
-                                    </WrapItem>
-                                )}
-                                {filters.maxRank && (
-                                    <WrapItem>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>Max Rank: {filters.maxRank}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('maxRank')} />
-                                        </Tag>
-                                    </WrapItem>
-                                )}
-                                {filters.minFunding && (
-                                    <WrapItem>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>Min Funding: {filters.minFunding}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('minFunding')} />
-                                        </Tag>
-                                    </WrapItem>
-                                )}
-                                {filters.maxFunding && (
-                                    <WrapItem>
-                                        <Tag size="sm" variant="outline" colorScheme="blue">
-                                            <TagLabel>Max Funding: {filters.maxFunding}</TagLabel>
-                                            <TagCloseButton onClick={() => removeFilter('maxFunding')} />
-                                        </Tag>
-                                    </WrapItem>
-                                )}
+                                <AnimatePresence>
+                                    {filters.search && (
+                                        <WrapItem key="search-filter">
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={filters.search}
+                                                label={`Search: ${filters.search}`}
+                                                onChange={() => removeFilter('search')}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    )}
+                                    {filters.growthStage.map((v: string) => (
+                                        <WrapItem key={`growthStage-${v}`}>
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={v}
+                                                label={v}
+                                                onChange={() => removeFilter('growthStage', v)}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    ))}
+                                    {filters.customerFocus.map((v: string) => (
+                                        <WrapItem key={`customerFocus-${v}`}>
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={v}
+                                                label={v}
+                                                onChange={() => removeFilter('customerFocus', v)}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    ))}
+                                    {filters.fundingType.map((v: string) => (
+                                        <WrapItem key={`fundingType-${v}`}>
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={v}
+                                                label={v}
+                                                onChange={() => removeFilter('fundingType', v)}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    ))}
+                                    {filters.minRank != null && (
+                                        <WrapItem key="minRank-filter">
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={String(filters.minRank)}
+                                                label={`Min Rank: ${filters.minRank}`}
+                                                onChange={() => removeFilter('minRank')}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    )}
+                                    {filters.maxRank != null && (
+                                        <WrapItem key="maxRank-filter">
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={String(filters.maxRank)}
+                                                label={`Max Rank: ${filters.maxRank}`}
+                                                onChange={() => removeFilter('maxRank')}
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    )}
+                                    {filters.minFunding != null &&
+                                        filters.minFunding !== 0 && (
+                                            <WrapItem key="minFunding-filter">
+                                                <PillCheckbox
+                                                    variant="removable"
+                                                    value={String(filters.minFunding)}
+                                                    label={`Min Funding: ${formatFundingAmount(
+                                                        String(filters.minFunding)
+                                                    )}`}
+                                                    onChange={() =>
+                                                        removeFilter('minFunding')
+                                                    }
+                                                    isSelected={true}
+                                                />
+                                            </WrapItem>
+                                        )}
+                                    {filters.maxFunding != null && (
+                                        <WrapItem key="maxFunding-filter">
+                                            <PillCheckbox
+                                                variant="removable"
+                                                value={String(filters.maxFunding)}
+                                                label={`Max Funding: ${formatFundingAmount(
+                                                    String(filters.maxFunding)
+                                                )}`}
+                                                onChange={() =>
+                                                    removeFilter('maxFunding')
+                                                }
+                                                isSelected={true}
+                                            />
+                                        </WrapItem>
+                                    )}
+                                </AnimatePresence>
                             </Wrap>
 
-                            <Button
-                                size="xs"
-                                variant="ghost"
-                                colorScheme="blue"
-                                onClick={clearFilters}
-                            >
-                                Clear All
-                            </Button>
+                            {hasActiveFilters && (
+                                <Button
+                                    size="xs"
+                                    variant="ghost"
+                                    colorScheme="orange"
+                                    _dark={{
+                                        color: "orange.600",
+                                    }}
+                                    onClick={clearFilters}
+                                >
+                                    Clear All
+                                </Button>
+                            )}
                         </HStack>
-                    </Box>
+                    </motion.div>
                 )}
-            </VStack>
-        </Box>
+            </AnimatePresence>
+        </VStack>
     );
 }

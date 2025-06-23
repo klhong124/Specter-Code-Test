@@ -20,6 +20,7 @@ const extension: Partial<ChakraTheme> = {
             outlineOffset: "1px",
           },
         },
+        overflowY: "scroll",
       },
       "::-webkit-scrollbar": {
         width: "6px",

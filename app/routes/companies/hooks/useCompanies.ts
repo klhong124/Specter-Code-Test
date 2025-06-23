@@ -10,7 +10,7 @@ interface FetchCompaniesParams {
     growthStage?: string[];
     customerFocus?: string[];
     fundingType?: string[];
-    sortBy?: 'name' | 'rank';
+    sortBy?: 'name' | 'rank' | 'last_funding_amount';
     sortOrder?: 'asc' | 'desc';
     minRank?: number;
     maxRank?: number;
@@ -85,20 +85,28 @@ export function useCompanies() {
         isFetchingNextPage,
     } = useInfiniteQuery({
         queryKey: ['companies', filters, pageSize],
-        queryFn: ({ pageParam = 1 }) => fetchCompanies({
-            page: pageParam,
-            limit: pageSize,
-            search: filters.search || undefined,
-            growthStage: filters.growthStage.length > 0 ? filters.growthStage : undefined,
-            customerFocus: filters.customerFocus.length > 0 ? filters.customerFocus : undefined,
-            fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
-            sortBy: filters.sortBy,
-            sortOrder: filters.sortOrder,
-            minRank: filters.minRank,
-            maxRank: filters.maxRank,
-            minFunding: filters.minFunding,
-            maxFunding: filters.maxFunding,
-        }),
+        queryFn: ({ pageParam = 1 }) => {
+            const apiFilters: FetchCompaniesParams = {
+                page: pageParam,
+                limit: pageSize,
+                search: filters.search || undefined,
+                growthStage: filters.growthStage.length > 0 ? filters.growthStage : undefined,
+                customerFocus: filters.customerFocus.length > 0 ? filters.customerFocus : undefined,
+                fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
+                sortBy: filters.sortBy,
+                sortOrder: filters.sortOrder,
+                minRank: filters.minRank,
+                maxRank: filters.maxRank,
+                minFunding: filters.minFunding,
+                maxFunding: filters.maxFunding,
+            };
+
+            if (apiFilters.minFunding === 0) {
+                delete apiFilters.minFunding;
+            }
+
+            return fetchCompanies(apiFilters);
+        },
         getNextPageParam: (lastPage) => {
             return lastPage.pagination.hasNextPage ? lastPage.pagination.nextPage : undefined;
         },
@@ -151,16 +159,17 @@ export function useCompanies() {
         setFiltersState(newFilters);
     }, [filters, setFiltersState]);
 
-    const hasActiveFilters = Boolean(
-        filters.search ||
-        filters.growthStage.length > 0 ||
-        filters.customerFocus.length > 0 ||
-        filters.fundingType.length > 0 ||
-        filters.minRank !== undefined ||
-        filters.maxRank !== undefined ||
-        filters.minFunding !== undefined ||
-        filters.maxFunding !== undefined
-    );
+    const hasActiveFilters = useMemo(() => {
+        const activeFilters = { ...filters };
+        if (activeFilters.minFunding === 0) {
+            delete activeFilters.minFunding;
+        }
+
+        return Object.values(activeFilters).some(value => {
+            if (Array.isArray(value)) return value.length > 0;
+            return value !== undefined && value !== '' && value !== 'rank' && value !== 'asc';
+        });
+    }, [filters]);
 
     const handlePageSizeChange = (newPageSize: number) => {
         setPageSize(newPageSize);
