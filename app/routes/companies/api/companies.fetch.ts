@@ -59,7 +59,7 @@ export async function loader({ request }: { request: Request }): Promise<Respons
 
         // 1. Extract and Validate Parameters
         const page = Math.max(1, safeParseInt(params.get('page')) || 1);
-        const limit = Math.min(Math.max(1, safeParseInt(params.get('limit')) || 20), 100);
+        const limit = Math.min(Math.max(1, safeParseInt(params.get('limit')) || 10), 100);
         const skip = (page - 1) * limit;
 
         const sortBy = params.get('sortBy') || 'rank';

@@ -20,28 +20,28 @@ const extension: Partial<ChakraTheme> = {
             outlineOffset: "1px",
           },
         },
-        overflowY: "scroll",
       },
       "::-webkit-scrollbar": {
-        width: "6px",
-        height: "6px",
+        width: "4px",
+        height: "4px",
       },
       "::-webkit-scrollbar-track": {
         background: "transparent",
       },
       "::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: "rgb(201, 201, 201)",
         borderRadius: "4px",
       },
       "[data-theme='dark'] ::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255, 255, 255, 0.15)",
+        backgroundColor: "rgb(194, 194, 194)",
       },
       "::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "rgba(0,0,0,0.25)",
+        backgroundColor: "rgb(198, 198, 198)",
       },
       "[data-theme='dark'] ::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        backgroundColor: "rgb(198, 198, 198)",
       },
+
       ".glass": {
         bg: "rgba(255, 255, 255, 0.7)",
         backdropFilter: "blur(4px)",

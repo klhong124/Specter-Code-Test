@@ -14,105 +14,103 @@ import {
 } from "@chakra-ui/react";
 import { Pill } from "@/ui/pill";
 import { useCompaniesContext } from "@companies/context/companies.context";
-import { useScroll } from "@/routes/companies/hooks/use-scroll";
 import { AnimatePresence, motion } from "framer-motion";
 import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
 import { MoonIcon, SunIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { forwardRef } from "react";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
+    ref?: React.Ref<HTMLDivElement>;
 }
 
-export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
-    const { colorMode, toggleColorMode } = useColorMode();
+export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }>(
+    ({ onOpen }, ref) => {
+        const { colorMode, toggleColorMode } = useColorMode();
 
-    const {
-        hasActiveFilters,
-        filters,
-        removeFilter,
-        clearFilters,
-        totalItems,
-    } = useCompaniesContext();
-    const { scrollY } = useScroll();
+        const {
+            hasActiveFilters,
+            filters,
+            removeFilter,
+            clearFilters,
+            totalItems,
+        } = useCompaniesContext();
 
-    const getStageColorScheme = (stage: string) => {
-        const option = GROWTH_STAGE_OPTIONS.find(opt => opt.value === stage);
-        return option ? option.colorScheme : 'gray';
-    };
+        const getStageColorScheme = (stage: string) => {
+            const option = GROWTH_STAGE_OPTIONS.find(opt => opt.value === stage);
+            return option ? option.colorScheme : 'gray';
+        };
 
-    return (
-        <VStack
-            as="header"
-            position="sticky"
-            top={0}
-            zIndex={10}
-            py={4}
-            px={6}
-            mt={{ base: -8, lg: 0 }}
-            ml="-2px"
-            w="calc(100% + 4px)"
-            align="stretch"
-            borderTopRadius={scrollY > 0 ? "none" : "2xl"}
-            borderBottomRadius="2xl"
-            backdropFilter="saturate(180%) blur(16px)"
-            className="glass"
-
-        >
-            {/* Main Header */}
-            <HStack align="center" spacing={2}>
-                <Flex
-                    direction={{ base: "column", lg: "row" }}
-                    align="baseline"
-                    mr="auto"
-                    gap={{ base: 0, lg: 3 }}
-
-                >
-                    <Text
-                        fontSize="2xl"
-                        fontWeight="bold"
-                        color="gray.800"
-                        _dark={{ color: "whiteAlpha.900" }}
+        return (
+            <VStack
+                ref={ref}
+                as="header"
+                position="absolute"
+                top={0}
+                zIndex={10}
+                py={4}
+                px={6}
+                mt={{ base: -8, lg: 0 }}
+                ml="-2px"
+                w="calc(100% + 4px)"
+                align="stretch"
+                borderTopRadius="none"
+                backdropFilter="saturate(180%) blur(16px)"
+                className="glass"
+            >
+                {/* Main Header */}
+                <HStack align="center" spacing={2}>
+                    <Flex
+                        direction={{ base: "column", lg: "row" }}
+                        align="baseline"
+                        mr="auto"
+                        gap={{ base: 0, lg: 3 }}
                     >
-                        Companies
-                    </Text>
-                    <Text
-                        fontSize="sm"
-                        variant="subtle"
-                    >
-                        <CountUp
-                            key={totalItems}
-                            from={0}
-                            to={totalItems}
-                            separator=","
-                            duration={0.1}
-                            suffix=" results found"
-                        />
-                    </Text>
-                </Flex>
+                        <Text
+                            fontSize="2xl"
+                            fontWeight="bold"
+                            color="gray.800"
+                            _dark={{ color: "whiteAlpha.900" }}
+                        >
+                            Companies
+                        </Text>
+                        <Text
+                            fontSize="sm"
+                            variant="subtle"
+                        >
+                            <CountUp
+                                key={totalItems}
+                                from={0}
+                                to={totalItems}
+                                separator=","
+                                duration={0.1}
+                                suffix=" results found"
+                            />
+                        </Text>
+                    </Flex>
 
-                <CompaniesSorting />
-                <IconButton
-                    aria-label="Toggle dark mode"
-                    icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
-                    onClick={toggleColorMode}
-                    variant="ghost"
-                    display={{ base: "flex", lg: "none" }}
-                    size="md"
-                />
-                <IconButton
-                    aria-label="Toggle filters"
-                    icon={<HamburgerIcon />}
-                    onClick={onOpen}
-                    variant="ghost"
-                    display={{ base: "flex", lg: "none" }}
-                    size="md"
-                />
-            </HStack>
+                    <CompaniesSorting />
+                    <IconButton
+                        aria-label="Toggle dark mode"
+                        icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+                        onClick={toggleColorMode}
+                        variant="ghost"
+                        display={{ base: "flex", lg: "none" }}
+                        size="md"
+                    />
+                    <IconButton
+                        aria-label="Toggle filters"
+                        icon={<HamburgerIcon />}
+                        onClick={onOpen}
+                        variant="ghost"
+                        display={{ base: "flex", lg: "none" }}
+                        size="md"
+                    />
+                </HStack>
 
-            <AnimatePresence>
                 {hasActiveFilters && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
@@ -125,9 +123,10 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                             align="top"
                             justify="space-between"
                             pt={4}
+                            position="relative"
                         >
                             <Wrap spacing={2} flex={1}>
-                                <AnimatePresence>
+                                <AnimatePresence mode="popLayout">
                                     {filters.search && (
                                         <WrapItem key="search-filter">
                                             <Pill
@@ -240,7 +239,9 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                         </HStack>
                     </motion.div>
                 )}
-            </AnimatePresence>
-        </VStack>
-    );
-}
+            </VStack>
+        );
+    }
+);
+
+CompaniesHeader.displayName = "CompaniesHeader";

@@ -9,7 +9,7 @@ import {
     Spinner,
     Text,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { CompanyCard } from '@companies/components/company.card';
 import { CompaniesHeader } from '@companies/components/companies.header';
 import { CompaniesSidebar } from '@companies/components/companies.sidebar';
@@ -28,10 +28,32 @@ function CompaniesPageContent() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
+        filters,
+        hasActiveFilters,
     } = useCompaniesContext();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const observerRef = useRef<IntersectionObserver | null>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    // Measure header height when filters change
+    useEffect(() => {
+        if (headerRef.current) {
+            const resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    setHeaderHeight(entry.contentRect.height);
+                }
+            });
+            resizeObserver.observe(headerRef.current);
+            return () => resizeObserver.disconnect();
+        }
+    }, [hasActiveFilters, filters]);
+
+    // Scroll to top when companies change (filters changed)
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [filters]);
 
     // Intersection Observer for infinite scroll
     const lastElementRef = useCallback((node: HTMLDivElement) => {
@@ -98,13 +120,20 @@ function CompaniesPageContent() {
                     </Box>
 
                     {/* Main Section */}
-                    <VStack spacing={0} flex={1} py={8} align="stretch">
+                    <VStack spacing={0} flex={1} py={8} align="stretch" position="relative">
 
                         {/* Header */}
-                        <CompaniesHeader onOpen={onOpen} />
+                        <CompaniesHeader ref={headerRef} onOpen={onOpen} />
 
                         {/* Main Content Area */}
-                        <Box minH="100dvh" pt={6}>
+                        <Box
+                            pt={`${headerHeight + 32}px`}
+                            overflowY="scroll"
+                            overflowX="hidden"
+                            h={`calc(100dvh - 32px)`}
+                            mr={-8}
+                            pr={8}
+                        >
                             <VStack spacing={8} align="stretch">
                                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                                     {companies.map((company, index) => (

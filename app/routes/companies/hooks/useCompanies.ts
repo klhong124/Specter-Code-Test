@@ -73,7 +73,7 @@ export function useCompanies() {
         maxFunding: undefined,
     });
 
-    const [pageSize, setPageSize] = useState(20);
+    const [pageSize, setPageSize] = useState(10);
 
     // Fetch companies with infinite scroll
     const {
@@ -171,10 +171,7 @@ export function useCompanies() {
         });
     }, [filters]);
 
-    const handlePageSizeChange = (newPageSize: number) => {
-        setPageSize(newPageSize);
-        // The infinite query will automatically refetch when the queryKey changes
-    };
+
 
     return {
         companies,
@@ -192,6 +189,5 @@ export function useCompanies() {
         // Basic info
         totalItems,
         loadedPages,
-        handlePageSizeChange,
     };
 }

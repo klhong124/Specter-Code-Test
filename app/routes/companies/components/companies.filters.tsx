@@ -297,7 +297,6 @@ export function CompanyFilters() {
             <HStack justifyContent="space-between">
                 <Heading size="md" display={{ base: 'none', lg: 'block' }}>Filters</Heading>
                 <AnimatePresence>
-
                     {hasActiveFilters && (
                         <Button
                             as={motion.button}

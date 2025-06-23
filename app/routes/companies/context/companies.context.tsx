@@ -24,7 +24,6 @@ interface CompaniesContextType {
     // Basic info
     totalItems: number;
     loadedPages: number;
-    handlePageSizeChange: (pageSize: number) => void;
 }
 
 const CompaniesContext = createContext<CompaniesContextType | undefined>(undefined);
