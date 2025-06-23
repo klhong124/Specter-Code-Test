@@ -19,6 +19,11 @@ export const formatFundingAmount = (amount: string | null): string => {
     return `$${num}`;
 };
 
+export const formatFocusLabel = (focus: string): string => {
+    if (!focus) return '';
+    return focus.replace(/_/g, ' & ').toUpperCase();
+};
+
 export const safeParseInt = (str: string | null): number | undefined => {
     if (!str) return undefined;
     const num = parseInt(str, 10);

@@ -8,20 +8,18 @@ import {
     HStack,
     Badge,
     Link,
-    Stat,
-    StatLabel,
-    StatNumber,
-    StatHelpText,
-    SimpleGrid,
     Box,
     Image,
     Skeleton,
+    Wrap,
 } from "@chakra-ui/react";
+import { ExternalLinkIcon, ArrowUpIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { motion, easeOut } from "framer-motion";
 import { useState } from "react";
-import { FiExternalLink, FiTrendingUp, FiUsers, FiDollarSign } from "react-icons/fi";
 import type { Company } from "@companies/types/company.type";
-import { formatFundingAmount } from "@companies/utils/company.helpers";
+import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
+import { Pill } from "@/ui/pill";
+import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
 
 interface CompanyCardProps {
     company: Company;
@@ -82,6 +80,31 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
     const handleImageError = () => {
         setImageError(true);
         setImageLoaded(true); // Mark as loaded to hide skeleton
+    };
+
+    const getStageColorScheme = (stage?: string | null) => {
+        if (!stage) return 'gray';
+        const lowerCaseStage = stage.toLowerCase();
+
+        const option = GROWTH_STAGE_OPTIONS.find(opt => lowerCaseStage.includes(opt.value));
+        if (option) {
+            return option.colorScheme;
+        }
+
+        if (lowerCaseStage.includes('series')) {
+            const lateStageOption = GROWTH_STAGE_OPTIONS.find(opt => opt.value === 'late');
+            return lateStageOption ? lateStageOption.colorScheme : 'blue';
+        }
+
+        return 'gray';
+    };
+
+    const getFocusColorScheme = (focus?: string | null) => {
+        if (!focus) return 'gray';
+        if (focus === 'b2c') return 'purple';
+        if (focus === 'b2b') return 'orange';
+        if (focus === 'b2b_b2c') return 'teal';
+        return 'gray';
     };
 
     return (
@@ -188,7 +211,7 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                                         transition="color 0.2s"
                                     >
                                         {company.domain}
-                                        <FiExternalLink size={12} />
+                                        <ExternalLinkIcon mx="2px" />
                                     </Link>
                                 </VStack>
                             </HStack>
@@ -199,58 +222,46 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                     </VStack>
                 </CardHeader>
 
-                <CardBody pt={0}>
+                <CardBody pt={2}>
                     <VStack align="start" spacing={4}>
+                        <Wrap>
+                            {
+                                company.growth_stage && (
+                                    <Pill
+                                        value={company.growth_stage}
+                                        label={company.growth_stage}
+                                        colorScheme={getStageColorScheme(company.growth_stage)}
+                                    />
+                                )
+                            }
+                            {company.customer_focus && (
+                                <Pill
+                                    value={company.customer_focus}
+                                    label={formatFocusLabel(company.customer_focus)}
+                                    colorScheme={getFocusColorScheme(company.customer_focus)}
+                                />
+                            )}
+                        </Wrap>
+
                         <Text fontSize="sm" variant="subtle" noOfLines={3}>
                             {company.description}
                         </Text>
 
-                        <SimpleGrid columns={2} spacing={4} w="full">
-                            {company.growth_stage && (
-                                <Stat size="sm">
-                                    <StatLabel fontSize="xs">
-                                        <HStack spacing={1}>
-                                            <FiTrendingUp size={12} />
-                                            <Text>Stage</Text>
-                                        </HStack>
-                                    </StatLabel>
-                                    <StatNumber fontSize="sm" fontWeight="medium">
-                                        {company.growth_stage}
-                                    </StatNumber>
-                                </Stat>
+                        <VStack spacing={3} w="full" align="stretch">
+                            {/* Last Funding */}
+                            {company.last_funding_type && (
+                                <Wrap align="baseline" gap={2}>
+                                    <InfoOutlineIcon boxSize={4} alignSelf="center" />
+                                    <Text fontSize="sm">Last Funding - </Text>
+                                    <Text fontSize="xs" color="gray.500" mr="auto">
+                                        {formatFundingAmount(company.last_funding_amount)}
+                                    </Text>
+                                    <Badge colorScheme="brand" py={1} px={2}>
+                                        {company.last_funding_type}
+                                    </Badge>
+                                </Wrap>
                             )}
-
-                            {company.customer_focus && (
-                                <Stat size="sm">
-                                    <StatLabel fontSize="xs">
-                                        <HStack spacing={1}>
-                                            <FiUsers size={12} />
-                                            <Text>Focus</Text>
-                                        </HStack>
-                                    </StatLabel>
-                                    <StatNumber fontSize="sm" fontWeight="medium">
-                                        {company.customer_focus}
-                                    </StatNumber>
-                                </Stat>
-                            )}
-                        </SimpleGrid>
-
-                        {company.last_funding_type && (
-                            <Stat size="sm">
-                                <StatLabel fontSize="xs">
-                                    <HStack spacing={1}>
-                                        <FiDollarSign size={12} />
-                                        <Text>Last Funding</Text>
-                                    </HStack>
-                                </StatLabel>
-                                <StatNumber fontSize="sm" fontWeight="medium">
-                                    {company.last_funding_type}
-                                </StatNumber>
-                                <StatHelpText fontSize="xs">
-                                    {formatFundingAmount(company.last_funding_amount)}
-                                </StatHelpText>
-                            </Stat>
-                        )}
+                        </VStack>
                     </VStack>
                 </CardBody>
             </Card>

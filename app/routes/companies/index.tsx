@@ -77,11 +77,10 @@ function CompaniesPageContent() {
                 zIndex: -1,
             }}
             _dark={{
-              _before: {
-                bgColor: "rgba(0, 0, 0, 0.7)",
-              }
+                _before: {
+                    bgColor: "rgba(0, 0, 0, 0.7)",
+                }
             }}
-
         >
             <Container maxW="container.xl">
                 <HStack spacing={8} align="start">
@@ -95,55 +94,55 @@ function CompaniesPageContent() {
                         <CompaniesSidebar />
                     </Box>
 
-                    {/* Main Content */}
-                    <Box flex={1} py={8}>
-                        <VStack spacing={0} align="stretch">
-                            {/* Header */}
-                            <CompaniesHeader onOpen={onOpen} />
+                    {/* Main Section */}
+                    <VStack spacing={0} flex={1} py={8} align="stretch">
 
-                            {/* Main Content Area */}
-                            <Box minH="100dvh" pt={6}>
-                                <VStack spacing={8} align="stretch">
-                                    <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={6}>
-                                        {companies.map((company, index) => (
-                                            <div
-                                                key={company.id}
-                                                ref={index === companies.length - 3 ? lastElementRef : undefined}
-                                            >
-                                                <CompanyCard
-                                                    company={company}
-                                                    index={index}
-                                                />
-                                            </div>
-                                        ))}
-                                    </SimpleGrid>
+                        {/* Header */}
+                        <CompaniesHeader onOpen={onOpen} />
 
-                                    {companies.length === 0 && !isLoading && (
-                                        <CompaniesEmptyState />
-                                    )}
+                        {/* Main Content Area */}
+                        <Box minH="100dvh" pt={6}>
+                            <VStack spacing={8} align="stretch">
+                                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                                    {companies.map((company, index) => (
+                                        <div
+                                            key={company.id}
+                                            ref={index === companies.length - 3 ? lastElementRef : undefined}
+                                        >
+                                            <CompanyCard
+                                                company={company}
+                                                index={index}
+                                            />
+                                        </div>
+                                    ))}
+                                </SimpleGrid>
 
-                                    {/* Loading indicator for infinite scroll */}
-                                    {isFetchingNextPage && (
-                                        <Center py={8}>
-                                            <VStack spacing={4}>
-                                                <Spinner size="lg" color="blue.500" />
-                                                <Text color="gray.600">Loading more companies...</Text>
-                                            </VStack>
-                                        </Center>
-                                    )}
+                                {companies.length === 0 && !isLoading && (
+                                    <CompaniesEmptyState />
+                                )}
 
-                                    {/* End of results indicator */}
-                                    {!hasNextPage && companies.length > 0 && (
-                                        <Center py={8}>
-                                            <Text color="gray.500" fontSize="sm">
-                                                You've reached the end of the results
-                                            </Text>
-                                        </Center>
-                                    )}
-                                </VStack>
-                            </Box>
-                        </VStack>
-                    </Box>
+                                {/* Loading indicator for infinite scroll */}
+                                {isFetchingNextPage && (
+                                    <Center py={8}>
+                                        <VStack spacing={4}>
+                                            <Spinner size="lg" color="blue.500" />
+                                            <Text color="gray.600">Loading more companies...</Text>
+                                        </VStack>
+                                    </Center>
+                                )}
+
+                                {/* End of results indicator */}
+                                {!hasNextPage && companies.length > 0 && (
+                                    <Center py={8}>
+                                        <Text color="gray.500" fontSize="sm">
+                                            You've reached the end of the results
+                                        </Text>
+                                    </Center>
+                                )}
+                            </VStack>
+                        </Box>
+                    </VStack>
+
                 </HStack>
             </Container>
 

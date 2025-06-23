@@ -1,6 +1,5 @@
-import { Box, IconButton } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { FiFilter } from "react-icons/fi";
+import { Button } from "@chakra-ui/react";
+import { FunnelIcon } from "@chakra-ui/icons";
 
 interface CompaniesMobileFilterProps {
     onOpen: () => void;
@@ -8,18 +7,14 @@ interface CompaniesMobileFilterProps {
 
 export function CompaniesMobileFilter({ onOpen }: CompaniesMobileFilterProps) {
     return (
-        <Box display={{ base: "block", lg: "none" }} position="fixed" top={4} left={4} zIndex={10}>
-            <IconButton
-                as={motion.button}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Open filters"
-                icon={<FiFilter />}
-                onClick={onOpen}
-                colorScheme="brand"
-                size="lg"
-                shadow="lg"
-            />
-        </Box>
+        <Button
+            variant="outline"
+            px={4}
+            onClick={onOpen}
+            display={{ base: "flex", lg: "none" }}
+            leftIcon={<FunnelIcon />}
+        >
+            Filters
+        </Button>
     );
 }

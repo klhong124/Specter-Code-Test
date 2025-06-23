@@ -28,9 +28,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useCompaniesContext } from "@companies/context/companies.context";
-import { formatFundingAmount } from "@companies/utils/company.helpers";
+import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
-import { PillCheckbox } from "@ui/pill-checkbox";
+import { Pill } from "@/ui/pill";
 
 // Color mapping for dark mode
 const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
@@ -231,10 +231,6 @@ function GrowthStageFilter() {
 function CustomerFocusFilter() {
     const { filters, setFilters } = useCompaniesContext();
 
-    const formatCustomerFocus = (focus: string) => {
-        return focus.replace(/_/g, ' & ').toUpperCase();
-    };
-
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
@@ -245,7 +241,7 @@ function CustomerFocusFilter() {
                 <SimpleGrid columns={2} w="200px" gap={2}>
                     {CUSTOMER_FOCUSES.map((focus) => (
                         <Checkbox key={focus} value={focus} size="sm" colorScheme="blue" w="auto">
-                            <Text fontSize="sm">{formatCustomerFocus(focus)}</Text>
+                            <Text fontSize="sm">{formatFocusLabel(focus)}</Text>
                         </Checkbox>
                     ))}
                 </SimpleGrid>
@@ -271,7 +267,8 @@ function FundingTypeFilter() {
             <Wrap spacing={2}>
                 {FUNDING_TYPES.map((type) => (
                     <WrapItem key={type}>
-                        <PillCheckbox
+                        <Pill
+                            variant="checkbox"
                             value={type}
                             label={type}
                             isSelected={filters.fundingType.includes(type)}

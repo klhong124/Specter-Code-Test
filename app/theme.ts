@@ -866,6 +866,7 @@ const extension: Partial<ChakraTheme> = {
         fontSize: "xs",
         _dark: {
           bgColor: "gray.700",
+          color: "whiteAlpha.900",
         },
       },
     },

@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Image, useColorMode, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, useColorMode, VStack, Heading, Text, IconButton } from "@chakra-ui/react";
 import { Link } from "react-router";
 import { CompanyFilters } from "./companies.filters";
-import { FiMoon, FiSun } from "react-icons/fi";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { memo } from "react";
 
 const SpecterLogo = memo(function SpecterLogo() {
@@ -20,9 +20,13 @@ const SpecterLogo = memo(function SpecterLogo() {
             >
                 <Image src="/specter.svg" alt="Specter" h={8} filter="none" _dark={{ filter: "brightness(0) invert(1)" }} />
             </Button>
-            <Button onClick={toggleColorMode} variant="ghost" size="sm">
-                {colorMode === 'light' ? <FiMoon /> : <FiSun />}
-            </Button>
+            <IconButton
+                aria-label="Toggle dark mode"
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
+                variant="ghost"
+                size="sm"
+            />
         </Flex>
     );
 });

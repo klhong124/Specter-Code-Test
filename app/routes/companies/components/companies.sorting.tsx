@@ -7,10 +7,9 @@ import {
     MenuItem,
     Tooltip,
     Button,
-    Text,
 } from "@chakra-ui/react";
 import { useCompaniesContext } from "@companies/context/companies.context";
-import { FiTrendingUp, FiTrendingDown, FiChevronDown } from "react-icons/fi";
+import { ArrowUpIcon, ArrowDownIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import type { Filters } from "@companies/types/companies.filters.type";
 
 const SORTS: { value: Filters['sortBy']; label: string }[] = [
@@ -31,13 +30,12 @@ export function CompaniesSorting() {
 
     return (
         <HStack spacing={2}>
-
             <Menu>
                 <MenuButton
                     as={Button}
                     size="sm"
                     variant="outline"
-                    rightIcon={<FiChevronDown />}
+                    rightIcon={<ChevronDownIcon />}
                     bg="white"
                     borderColor="gray.200"
                     _hover={{ bg: "gray.100", _dark: { bg: "gray.700" } }}
@@ -74,7 +72,7 @@ export function CompaniesSorting() {
             <Tooltip label={`Sort ${filters.sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}>
                 <IconButton
                     aria-label={`Sort ${filters.sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
-                    icon={filters.sortOrder === 'asc' ? <FiTrendingUp /> : <FiTrendingDown />}
+                    icon={filters.sortOrder === 'asc' ? <ArrowUpIcon /> : <ArrowDownIcon />}
                     size="sm"
                     variant="ghost"
                     color="gray.600"

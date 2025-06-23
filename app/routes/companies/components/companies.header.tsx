@@ -9,13 +9,14 @@ import {
     WrapItem,
     Flex,
 } from "@chakra-ui/react";
-import { PillCheckbox } from "@ui/pill-checkbox";
+import { Pill } from "@/ui/pill";
 import { useCompaniesContext } from "@companies/context/companies.context";
 import { useScroll } from "@/routes/companies/hooks/use-scroll";
 import { AnimatePresence, motion } from "framer-motion";
 import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
-import { formatFundingAmount } from "@companies/utils/company.helpers";
+import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
+import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
@@ -30,6 +31,11 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
         totalItems,
     } = useCompaniesContext();
     const { scrollY } = useScroll();
+
+    const getStageColorScheme = (stage: string) => {
+        const option = GROWTH_STAGE_OPTIONS.find(opt => opt.value === stage);
+        return option ? option.colorScheme : 'gray';
+    };
 
     return (
         <VStack
@@ -113,74 +119,72 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                                 <AnimatePresence>
                                     {filters.search && (
                                         <WrapItem key="search-filter">
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={filters.search}
                                                 label={`Search: ${filters.search}`}
                                                 onChange={() => removeFilter('search')}
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     )}
-                                    {filters.growthStage.map((v: string) => (
-                                        <WrapItem key={`growthStage-${v}`}>
-                                            <PillCheckbox
-                                                variant="removable"
-                                                value={v}
-                                                label={v}
-                                                onChange={() => removeFilter('growthStage', v)}
-                                                isSelected={true}
-                                            />
-                                        </WrapItem>
-                                    ))}
+                                    {filters.growthStage.map((v: string) => {
+                                        const option = GROWTH_STAGE_OPTIONS.find(opt => opt.value === v);
+                                        return (
+                                            <WrapItem key={`growthStage-${v}`}>
+                                                <Pill
+                                                    variant="removable"
+                                                    value={v}
+                                                    label={option?.label ?? v}
+                                                    onChange={() => removeFilter('growthStage', v)}
+                                                    colorScheme={getStageColorScheme(v)}
+                                                />
+                                            </WrapItem>
+                                        )
+                                    })}
                                     {filters.customerFocus.map((v: string) => (
                                         <WrapItem key={`customerFocus-${v}`}>
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={v}
-                                                label={v}
+                                                label={formatFocusLabel(v)}
                                                 onChange={() => removeFilter('customerFocus', v)}
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     ))}
                                     {filters.fundingType.map((v: string) => (
                                         <WrapItem key={`fundingType-${v}`}>
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={v}
                                                 label={v}
                                                 onChange={() => removeFilter('fundingType', v)}
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     ))}
                                     {filters.minRank != null && (
                                         <WrapItem key="minRank-filter">
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={String(filters.minRank)}
                                                 label={`Min Rank: ${filters.minRank}`}
                                                 onChange={() => removeFilter('minRank')}
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     )}
                                     {filters.maxRank != null && (
                                         <WrapItem key="maxRank-filter">
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={String(filters.maxRank)}
                                                 label={`Max Rank: ${filters.maxRank}`}
                                                 onChange={() => removeFilter('maxRank')}
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     )}
                                     {filters.minFunding != null &&
                                         filters.minFunding !== 0 && (
                                             <WrapItem key="minFunding-filter">
-                                                <PillCheckbox
+                                                <Pill
                                                     variant="removable"
                                                     value={String(filters.minFunding)}
                                                     label={`Min Funding: ${formatFundingAmount(
@@ -189,13 +193,12 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                                                     onChange={() =>
                                                         removeFilter('minFunding')
                                                     }
-                                                    isSelected={true}
                                                 />
                                             </WrapItem>
                                         )}
                                     {filters.maxFunding != null && (
                                         <WrapItem key="maxFunding-filter">
-                                            <PillCheckbox
+                                            <Pill
                                                 variant="removable"
                                                 value={String(filters.maxFunding)}
                                                 label={`Max Funding: ${formatFundingAmount(
@@ -204,7 +207,6 @@ export function CompaniesHeader({ onOpen }: CompaniesHeaderProps) {
                                                 onChange={() =>
                                                     removeFilter('maxFunding')
                                                 }
-                                                isSelected={true}
                                             />
                                         </WrapItem>
                                     )}
