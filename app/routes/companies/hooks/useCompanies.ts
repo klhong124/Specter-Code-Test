@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import type { Company } from "@companies/types/company.type";
 import type { CompaniesQuery } from "@companies/types/company.type";
 import { generateURLSearchParams } from "../utils/company.helpers";
@@ -20,6 +21,8 @@ interface InitialData {
 
 export function useCompanies({ initialData, initialQuery }: { initialData: InitialData, initialQuery: CompaniesQuery }) {
     const [ ApiFetchEnabled, setApiFetchEnabled ] = useState(false);
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [query, setQuery] = useState<CompaniesQuery>({
         page: initialQuery?.page || 1,
@@ -34,6 +37,33 @@ export function useCompanies({ initialData, initialQuery }: { initialData: Initi
         minFunding: initialQuery?.minFunding,
         maxFunding: initialQuery?.maxFunding,
     });
+
+    // Update URL when query changes
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams();
+
+        // Add non-empty values to URL params
+        if (query.search) newSearchParams.set('search', query.search);
+        if (query.growthStage?.length) {
+            query.growthStage.forEach(stage => newSearchParams.append('growthStage', stage));
+        }
+        if (query.customerFocus?.length) {
+            query.customerFocus.forEach(focus => newSearchParams.append('customerFocus', focus));
+        }
+        if (query.fundingType?.length) {
+            query.fundingType.forEach(type => newSearchParams.append('fundingType', type));
+        }
+        if (query.sortBy && query.sortBy !== 'rank') newSearchParams.set('sortBy', query.sortBy);
+        if (query.sortOrder && query.sortOrder !== 'asc') newSearchParams.set('sortOrder', query.sortOrder);
+        if (query.minRank && query.minRank > 0) newSearchParams.set('minRank', query.minRank.toString());
+        if (query.maxRank && query.maxRank > 0) newSearchParams.set('maxRank', query.maxRank.toString());
+        if (query.minFunding && query.minFunding > 0) newSearchParams.set('minFunding', query.minFunding.toString());
+        if (query.maxFunding && query.maxFunding > 0) newSearchParams.set('maxFunding', query.maxFunding.toString());
+        if (query.page && query.page > 1) newSearchParams.set('page', query.page.toString());
+
+        // Update URL without triggering navigation
+        setSearchParams(newSearchParams, { replace: true });
+    }, [query, setSearchParams]);
 
     // Calculate hasActiveFilters before React Query
     const hasActiveQuery = useMemo(() => {
@@ -112,21 +142,24 @@ export function useCompanies({ initialData, initialQuery }: { initialData: Initi
     }, []);
 
     const clearQuery = useCallback(() => {
-        setQuery({
+        const clearedQuery: CompaniesQuery = {
             page: 1,
             search: '',
             growthStage: [],
             customerFocus: [],
             fundingType: [],
-            sortBy: 'rank',
-            sortOrder: 'asc',
+            sortBy: 'rank' as const,
+            sortOrder: 'asc' as const,
             minRank: undefined,
             maxRank: undefined,
             minFunding: undefined,
             maxFunding: undefined,
-        });
-        // The infinite query will automatically refetch when the queryKey changes
-    }, []);
+        };
+        setQuery(clearedQuery);
+
+        // Clear URL search parameters
+        setSearchParams(new URLSearchParams(), { replace: true });
+    }, [setSearchParams]);
 
     const removeQuery = useCallback((queryKey: keyof CompaniesQuery, valueToRemove?: any) => {
         const newQuery = { ...query };
@@ -139,7 +172,8 @@ export function useCompanies({ initialData, initialQuery }: { initialData: Initi
         }
 
         setQuery(newQuery);
-    }, [query, setQuery]);
+        // URL will be updated automatically by the useEffect
+    }, [query]);
 
     return {
         companies,
