@@ -43,27 +43,27 @@ This project implements a modern, responsive company listing interface built as 
 
 ### 1. Install Dependencies
 
-\`\`\`bash
+```bash
 pnpm install
 # or
 npm install
-\`\`\`
+```
 
 ### 2. Add `.env` File
 
-\`\`\`env
+```env
 DATABASE_URL="your-remote-prisma-db-url"
-\`\`\`
+```
 
 > For the code test, use the one provided in the challenge instructions.
 
 ### 3. Run Locally
 
-\`\`\`bash
+```bash
 pnpm dev
 # or
 npm run dev
-\`\`\`
+```
 
 ---
 
