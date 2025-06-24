@@ -11,7 +11,6 @@ import {
     Wrap,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { NUMBER_PRT_FETCH } from "@companies/utils/company.constant";
 import { useState } from "react";
 import type { Company } from "@companies/types/company.type";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
@@ -27,7 +26,6 @@ interface CompanyCardProps {
 export function CompanyCard({ company, index }: CompanyCardProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const animationIndex = index % NUMBER_PRT_FETCH;
     const getStageColorScheme = (stage?: string | null) => {
         if (!stage) return 'gray';
         const lowerCaseStage = stage.toLowerCase();
@@ -54,7 +52,7 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
     };
 
     return (
-        <GlowingCard className="glass" animationIndex={animationIndex}>
+        <GlowingCard className="glass" index={index}>
             <VStack
                 h="full"
                 p={6}

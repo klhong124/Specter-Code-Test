@@ -1,6 +1,6 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { memo, useCallback, useEffect, useRef, type PropsWithChildren } from "react";
-import { animate, AnimatePresence, m, LazyMotion, domAnimation } from "framer-motion";
+import { animate, AnimatePresence, m, LazyMotion, domAnimation, useInView } from "framer-motion";
 
 interface GlowingEffectProps {
     blur?: number;
@@ -12,7 +12,7 @@ interface GlowingEffectProps {
     disabled?: boolean;
     movementDuration?: number;
     borderWidth?: number;
-    animationIndex?: number;
+    index?: number;
 }
 
 const GlowingCard = memo(({
@@ -26,11 +26,12 @@ const GlowingCard = memo(({
     disabled = false,
     movementDuration = 1.5,
     borderWidth = 2,
-    animationIndex = 0,
+    index = 0,
 }: PropsWithChildren<GlowingEffectProps>) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const lastPosition = useRef({ x: 0, y: 0 });
     const animationFrameRef = useRef<number>(0);
+    const isInView = useInView(containerRef);
 
     const handleMove = useCallback(
         (e?: MouseEvent | { x: number; y: number }) => {
@@ -159,7 +160,7 @@ const GlowingCard = memo(({
             scale: 1,
             filter: "blur(0px)",
             transition: {
-                delay: animationIndex * 0.05,
+                delay: Math.sin((index % 10) * (Math.PI / 5)) * 0.1,
                 duration: 0.3,
                 ease: "easeOut" as const
             }
@@ -171,7 +172,7 @@ const GlowingCard = memo(({
             <Box
                 as={m.div}
                 initial="hidden"
-                animate="visible"
+                animate={isInView ? "visible" : "hidden"}
                 variants={cardVariants}
                 position="relative"
                 h="full" borderRadius="2xl"
