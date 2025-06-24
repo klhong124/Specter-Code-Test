@@ -25,7 +25,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useCompaniesContext } from "@companies/context/companies.context";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
-import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUSES, FUNDING_TYPES } from "@companies/utils/company.constant";
+import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUS_OPTIONS, FUNDING_TYPES } from "@companies/utils/company.constant";
 import { Pill } from "@/ui/pill";
 import { WarningIcon } from "@chakra-ui/icons";
 
@@ -247,9 +247,15 @@ function CustomerFocusFilter() {
                 onChange={(value) => setQuery({ ...query, customerFocus: value as string[] })}
             >
                 <SimpleGrid columns={2} w="200px" gap={2}>
-                    {CUSTOMER_FOCUSES.map((focus) => (
-                        <Checkbox key={focus} value={focus} size="sm" colorScheme="blue" w="auto">
-                            <Text fontSize="sm">{formatFocusLabel(focus)}</Text>
+                    {CUSTOMER_FOCUS_OPTIONS.map((option) => (
+                        <Checkbox
+                            key={option.value}
+                            value={option.value}
+                            size="sm"
+                            colorScheme={option.colorScheme}
+                            w="auto"
+                        >
+                            <Text fontSize="sm">{option.label}</Text>
                         </Checkbox>
                     ))}
                 </SimpleGrid>

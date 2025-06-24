@@ -4,7 +4,7 @@ import { useCompaniesContext } from "@companies/context/companies.context";
 import { motion } from "framer-motion";
 
 export function CompaniesEmptyState() {
-    const { clearFilters } = useCompaniesContext();
+    const { clearQuery } = useCompaniesContext();
 
     return (
         <Box textAlign="center" py={12} className="glass">
@@ -23,7 +23,7 @@ export function CompaniesEmptyState() {
                     size="sm"
                     colorScheme="orange"
                     variant="outline"
-                    onClick={clearFilters}
+                    onClick={clearQuery}
                 >
                     Clear Filter
                 </Button>

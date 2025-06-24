@@ -19,8 +19,9 @@ import { CompaniesSorting } from "@companies/components/companies.sorting";
 import CountUp from "@ui/count-up";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
-import { MoonIcon, SunIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon, HamburgerIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { forwardRef } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 
 interface CompaniesHeaderProps {
     onOpen: () => void;
@@ -30,6 +31,7 @@ interface CompaniesHeaderProps {
 export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }>(
     ({ onOpen }, ref) => {
         const { colorMode, toggleColorMode } = useColorMode();
+        const navigate = useNavigate();
 
         const {
             hasActiveQuery,
@@ -53,7 +55,6 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                 zIndex={10}
                 py={4}
                 px={6}
-                mt={{ base: -8, lg: 0 }}
                 ml="-2px"
                 w="calc(100% + 4px)"
                 align="stretch"
@@ -63,12 +64,21 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
             >
                 {/* Main Header */}
                 <HStack align="center" spacing={2}>
+                    <IconButton
+                        aria-label="Go back to home"
+                        icon={<ArrowBackIcon />}
+                        onClick={() => navigate('/')}
+                        variant="ghost"
+                        display={{ base: "block", lg: "none" }}
+                        size="md"
+                    />
                     <Flex
                         direction={{ base: "column", lg: "row" }}
                         align="baseline"
                         mr="auto"
                         gap={{ base: 0, lg: 3 }}
                     >
+
                         <Text
                             fontSize="2xl"
                             fontWeight="bold"

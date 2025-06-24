@@ -9,6 +9,13 @@ export const GROWTH_STAGE_OPTIONS = [
     { value: 'exit', label: 'Exit', colorScheme: 'gray' },
 ];
 
+export const CUSTOMER_FOCUS_OPTIONS = [
+    { value: 'b2b', label: 'B2B', colorScheme: 'orange' },
+    { value: 'b2c', label: 'B2C', colorScheme: 'purple' },
+    { value: 'b2b_b2c', label: 'B2B & B2C', colorScheme: 'teal' },
+    { value: 'b2c_b2b', label: 'B2C & B2B', colorScheme: 'cyan' },
+];
+
 export const CUSTOMER_FOCUSES = ['b2b', 'b2b_b2c', 'b2c', 'b2c_b2b'];
 
 export const FUNDING_TYPES = [

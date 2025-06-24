@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useCallback, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import type { Company } from "@companies/types/company.type";
 import type { CompaniesQuery } from "@companies/types/company.type";
 import { generateURLSearchParams } from "../utils/company.helpers";
@@ -21,7 +21,6 @@ interface InitialData {
 
 export function useCompanies({ initialData, initialQuery }: { initialData: InitialData, initialQuery: CompaniesQuery }) {
     const [ ApiFetchEnabled, setApiFetchEnabled ] = useState(false);
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [query, setQuery] = useState<CompaniesQuery>({

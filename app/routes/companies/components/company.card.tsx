@@ -15,7 +15,7 @@ import { useState } from "react";
 import type { Company } from "@companies/types/company.type";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { Pill } from "@/ui/pill";
-import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
+import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUS_OPTIONS } from "@companies/utils/company.constant";
 import { GlowingCard } from "@/ui/glowing-card";
 
 interface CompanyCardProps {
@@ -34,21 +34,17 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
         if (option) {
             return option.colorScheme;
         }
-
         if (lowerCaseStage.includes('series')) {
             const lateStageOption = GROWTH_STAGE_OPTIONS.find(opt => opt.value === 'late');
             return lateStageOption ? lateStageOption.colorScheme : 'blue';
         }
-
         return 'gray';
     };
 
     const getFocusColorScheme = (focus?: string | null) => {
         if (!focus) return 'gray';
-        if (focus === 'b2c') return 'purple';
-        if (focus === 'b2b') return 'orange';
-        if (focus === 'b2b_b2c') return 'teal';
-        return 'gray';
+        const option = CUSTOMER_FOCUS_OPTIONS.find(opt => opt.value === focus);
+        return option ? option.colorScheme : 'gray';
     };
 
     return (

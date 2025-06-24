@@ -64,11 +64,6 @@ function CompaniesPageContent() {
         }
     }, [hasActiveQuery, query]);
 
-    // Scroll to top when companies change (filters changed)
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [query]);
-
     // Intersection Observer for infinite scroll
     const lastElementRef = useCallback((node: HTMLDivElement) => {
         if (isLoading) return;
@@ -79,7 +74,7 @@ function CompaniesPageContent() {
             if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
                 fetchNextPage();
             }
-        });
+        }, { rootMargin: '200px' });
 
         if (node) observerRef.current.observe(node);
     }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
