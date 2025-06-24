@@ -20,7 +20,7 @@ import { CompaniesProvider, useCompaniesContext } from '@companies/context/compa
 import { GlowingCard } from "@/ui/glowing-card";
 import { ViewIcon } from "@chakra-ui/icons";
 import type { CompaniesApiResponse, CompaniesQuery } from "./types/company.type";
-import { loader } from "./utils/companies.server";
+import { loader } from "./utils/companies.loader";
 import { generateCompaniesMeta } from "./utils/companies.meta";
 
 // Re-export the loader function
@@ -145,8 +145,7 @@ function CompaniesPageContent() {
                             overflowY="scroll"
                             overflowX="hidden"
                             h={`calc(100dvh - 64px)`}
-                            mr={-8}
-                            pr={8}
+                            px={4}
                         >
                             <VStack spacing={8} align="stretch">
                                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>

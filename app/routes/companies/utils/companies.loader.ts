@@ -1,6 +1,6 @@
 import type { CompaniesApiResponse, CompaniesQuery } from "../types/company.type";
 import { safeParseInt } from "./company.helpers";
-import { fetchCompanies } from "../api/companies.fetch";
+import { fetchCompanies } from "../api/companies.server";
 
 export async function loader({ request }: { request: Request }) {
     try {

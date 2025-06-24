@@ -6,5 +6,5 @@ export default [
 
   // Companies
   route("companies", "routes/companies/index.tsx"),
-  route("api/companies", "routes/companies/api/companies.fetch.ts"),
+  route("api/companies", "routes/companies/api/index.ts"),
 ] satisfies RouteConfig;

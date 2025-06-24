@@ -25,6 +25,7 @@ const extension: Partial<ChakraTheme> = {
         width: "4px",
         height: "4px",
       },
+
       "::-webkit-scrollbar-track": {
         background: "transparent",
       },

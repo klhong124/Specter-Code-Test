@@ -1,6 +1,6 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { memo, useCallback, useEffect, useRef, type PropsWithChildren } from "react";
-import { animate, AnimatePresence, motion } from "framer-motion";
+import { animate, AnimatePresence, m, LazyMotion, domAnimation } from "framer-motion";
 
 interface GlowingEffectProps {
     blur?: number;
@@ -167,52 +167,54 @@ const GlowingCard = memo(({
     };
 
     return (
-        <Box
-            as={motion.div}
-            initial="hidden"
-            animate="visible"
-            variants={cardVariants}
-            position="relative"
-            h="full" borderRadius="2xl"
-            p={`${borderWidth}px`}
-            className={className}
-        >
+        <LazyMotion features={domAnimation} strict>
             <Box
-                ref={containerRef}
-                style={cssVars}
-                position="absolute"
-                inset="0"
-                borderRadius="inherit"
-                pointerEvents="none"
-                opacity={1}
-                transition="opacity 0.3s"
-                sx={{
-                    _after: {
-                        content: '""',
-                        borderRadius: "inherit",
-                        position: "absolute",
-                        inset: `calc(-1 * var(--glowingeffect-border-width))`,
-                        border: `var(--glowingeffect-border-width) solid transparent`,
-                        background: `var(--gradient)`,
-                        backgroundAttachment: "fixed",
-                        opacity: `var(--active)`,
-                        transition: "opacity 0.3s",
-                        maskClip: "padding-box, border-box",
-                        maskComposite: "intersect",
-                        maskImage: `linear-gradient(#0000,#0000), conic-gradient(from calc((var(--start) - var(--spread)) * 1deg), #00000000 0deg, #fff, #00000000 calc(var(--spread) * 2deg))`,
-                        filter: `blur(var(--blur))`,
-                    }
-                }}
-            />
-            <Box
+                as={m.div}
+                initial="hidden"
+                animate="visible"
+                variants={cardVariants}
                 position="relative"
-                h="full"
-                borderRadius="2xl"
-                overflow="hidden"
+                h="full" borderRadius="2xl"
+                p={`${borderWidth}px`}
+                className={className}
             >
-                {children}
+                <Box
+                    ref={containerRef}
+                    style={cssVars}
+                    position="absolute"
+                    inset="0"
+                    borderRadius="inherit"
+                    pointerEvents="none"
+                    opacity={1}
+                    transition="opacity 0.3s"
+                    sx={{
+                        _after: {
+                            content: '""',
+                            borderRadius: "inherit",
+                            position: "absolute",
+                            inset: `calc(-1 * var(--glowingeffect-border-width))`,
+                            border: `var(--glowingeffect-border-width) solid transparent`,
+                            background: `var(--gradient)`,
+                            backgroundAttachment: "fixed",
+                            opacity: `var(--active)`,
+                            transition: "opacity 0.3s",
+                            maskClip: "padding-box, border-box",
+                            maskComposite: "intersect",
+                            maskImage: `linear-gradient(#0000,#0000), conic-gradient(from calc((var(--start) - var(--spread)) * 1deg), #00000000 0deg, #fff, #00000000 calc(var(--spread) * 2deg))`,
+                            filter: `blur(var(--blur))`,
+                        }
+                    }}
+                />
+                <Box
+                    position="relative"
+                    h="full"
+                    borderRadius="2xl"
+                    overflow="hidden"
+                >
+                    {children}
+                </Box>
             </Box>
-        </Box>
+        </LazyMotion>
     );
 });
 

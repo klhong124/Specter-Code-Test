@@ -1,5 +1,4 @@
 import {
-    CardBody,
     Heading,
     Text,
     VStack,
@@ -10,10 +9,9 @@ import {
     Image,
     Skeleton,
     Wrap,
-    Spacer,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { motion, easeOut } from "framer-motion";
+import { NUMBER_PRT_FETCH } from "@companies/utils/company.constant";
 import { useState } from "react";
 import type { Company } from "@companies/types/company.type";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
@@ -29,7 +27,7 @@ interface CompanyCardProps {
 export function CompanyCard({ company, index }: CompanyCardProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const animationIndex = index % 20;
+    const animationIndex = index % NUMBER_PRT_FETCH;
     const getStageColorScheme = (stage?: string | null) => {
         if (!stage) return 'gray';
         const lowerCaseStage = stage.toLowerCase();
