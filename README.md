@@ -70,10 +70,7 @@ npm run dev
 ## 🧩 Tech Stack
 
 - **Frontend:** React, Chakra UI, React Router v7, React Query, Framer Motion
-- **Backend:** Next.js API Routes with Prisma ORM
-- **Database:** Remote PostgreSQL (Neon)
-- **Tooling:** TypeScript, ESLint, Prettier, Vite, GitHub Actions
-
+- **Backend:** API Routes with Prisma ORM
 ---
 
 ## 📸 Previews
@@ -101,8 +98,3 @@ npm run dev
 💼 [GitHub](https://github.com/klhong124)  
 📬 [LinkedIn](https://www.linkedin.com/in/ryankwandev)
 
----
-
-## 📜 License
-
-This project is for evaluation purposes only as part of a coding challenge. Please do not use or distribute without permission.
