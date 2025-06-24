@@ -32,10 +32,10 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
         const { colorMode, toggleColorMode } = useColorMode();
 
         const {
-            hasActiveFilters,
-            filters,
-            removeFilter,
-            clearFilters,
+            hasActiveQuery,
+            query,
+            removeQuery,
+            clearQuery,
             totalItems,
         } = useCompaniesContext();
 
@@ -111,7 +111,7 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                     />
                 </HStack>
 
-                {hasActiveFilters && (
+                {hasActiveQuery && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
@@ -127,17 +127,17 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                         >
                             <Wrap spacing={2} flex={1}>
                                 <AnimatePresence mode="popLayout">
-                                    {filters.search && (
+                                    {query.search && (
                                         <WrapItem key="search-filter">
                                             <Pill
                                                 variant="removable"
-                                                value={filters.search}
-                                                label={`Search: ${filters.search}`}
-                                                onChange={() => removeFilter('search')}
+                                                value={query.search}
+                                                label={`Search: ${query.search}`}
+                                                onChange={() => removeQuery('search')}
                                             />
                                         </WrapItem>
                                     )}
-                                    {filters.growthStage.map((v: string) => {
+                                    {query.growthStage.map((v: string) => {
                                         const option = GROWTH_STAGE_OPTIONS.find(opt => opt.value === v);
                                         return (
                                             <WrapItem key={`growthStage-${v}`}>
@@ -145,77 +145,77 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                                                     variant="removable"
                                                     value={v}
                                                     label={option?.label ?? v}
-                                                    onChange={() => removeFilter('growthStage', v)}
+                                                    onChange={() => removeQuery('growthStage', v)}
                                                     colorScheme={getStageColorScheme(v)}
                                                 />
                                             </WrapItem>
                                         )
                                     })}
-                                    {filters.customerFocus.map((v: string) => (
+                                    {query.customerFocus.map((v: string) => (
                                         <WrapItem key={`customerFocus-${v}`}>
                                             <Pill
                                                 variant="removable"
                                                 value={v}
                                                 label={formatFocusLabel(v)}
-                                                onChange={() => removeFilter('customerFocus', v)}
+                                                onChange={() => removeQuery('customerFocus', v)}
                                             />
                                         </WrapItem>
                                     ))}
-                                    {filters.fundingType.map((v: string) => (
+                                    {query.fundingType.map((v: string) => (
                                         <WrapItem key={`fundingType-${v}`}>
                                             <Pill
                                                 variant="removable"
                                                 value={v}
                                                 label={v}
-                                                onChange={() => removeFilter('fundingType', v)}
+                                                onChange={() => removeQuery('fundingType', v)}
                                             />
                                         </WrapItem>
                                     ))}
-                                    {filters.minRank != null && (
+                                    {query.minRank != null && (
                                         <WrapItem key="minRank-filter">
                                             <Pill
                                                 variant="removable"
-                                                value={String(filters.minRank)}
-                                                label={`Min Rank: #${filters.minRank}`}
-                                                onChange={() => removeFilter('minRank')}
+                                                value={String(query.minRank)}
+                                                label={`Min Rank: #${query.minRank}`}
+                                                onChange={() => removeQuery('minRank')}
                                             />
                                         </WrapItem>
                                     )}
-                                    {filters.maxRank != null && (
+                                    {query.maxRank != null && (
                                         <WrapItem key="maxRank-filter">
                                             <Pill
                                                 variant="removable"
-                                                value={String(filters.maxRank)}
-                                                label={`Max Rank: #${filters.maxRank}`}
-                                                onChange={() => removeFilter('maxRank')}
+                                                value={String(query.maxRank)}
+                                                label={`Max Rank: #${query.maxRank}`}
+                                                onChange={() => removeQuery('maxRank')}
                                             />
                                         </WrapItem>
                                     )}
-                                    {filters.minFunding != null &&
-                                        filters.minFunding !== 0 && (
+                                    {query.minFunding != null &&
+                                        query.minFunding !== 0 && (
                                             <WrapItem key="minFunding-filter">
                                                 <Pill
                                                     variant="removable"
-                                                    value={String(filters.minFunding)}
+                                                    value={String(query.minFunding)}
                                                     label={`Min Funding: ${formatFundingAmount(
-                                                        String(filters.minFunding)
+                                                        String(query.minFunding)
                                                     )}`}
                                                     onChange={() =>
-                                                        removeFilter('minFunding')
+                                                        removeQuery('minFunding')
                                                     }
                                                 />
                                             </WrapItem>
                                         )}
-                                    {filters.maxFunding != null && (
+                                    {query.maxFunding != null && (
                                         <WrapItem key="maxFunding-filter">
                                             <Pill
                                                 variant="removable"
-                                                value={String(filters.maxFunding)}
+                                                value={String(query.maxFunding)}
                                                 label={`Max Funding: ${formatFundingAmount(
-                                                    String(filters.maxFunding)
+                                                    String(query.maxFunding)
                                                 )}`}
                                                 onChange={() =>
-                                                    removeFilter('maxFunding')
+                                                    removeQuery('maxFunding')
                                                 }
                                             />
                                         </WrapItem>
@@ -223,7 +223,7 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                                 </AnimatePresence>
                             </Wrap>
 
-                            {hasActiveFilters && (
+                            {hasActiveQuery && (
                                 <Button
                                     size="xs"
                                     variant="ghost"
@@ -231,7 +231,7 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                                     _dark={{
                                         color: "orange.600",
                                     }}
-                                    onClick={clearFilters}
+                                    onClick={clearQuery}
                                 >
                                     Clear All
                                 </Button>

@@ -1,7 +1,8 @@
 import { createContext, useContext } from "react";
 import type { ReactNode } from "react";
 import { useCompanies } from "@companies/hooks/useCompanies";
-import type { Filters } from "@companies/types/companies.filters.type";
+import type { CompaniesApiResponse, CompaniesQuery } from "@companies/types/company.type";
+
 
 interface CompaniesContextType {
     // Data
@@ -9,12 +10,12 @@ interface CompaniesContextType {
     isLoading: boolean;
     error: any;
 
-    // Filters
-    filters: Filters;
-    setFilters: (filters: Filters) => void;
-    clearFilters: () => void;
-    removeFilter: (filterKey: keyof Filters, valueToRemove?: any) => void;
-    hasActiveFilters: boolean;
+    // Query
+    query: CompaniesQuery;
+    setQuery: (query: CompaniesQuery) => void;
+    clearQuery: () => void;
+    removeQuery: (queryKey: keyof CompaniesQuery, valueToRemove?: any) => void;
+    hasActiveQuery: boolean;
 
     // Infinite scroll
     fetchNextPage: () => void;
@@ -30,10 +31,12 @@ const CompaniesContext = createContext<CompaniesContextType | undefined>(undefin
 
 interface CompaniesProviderProps {
     children: ReactNode;
+    initialData: CompaniesApiResponse;
+    initialQuery: CompaniesQuery;
 }
 
-export function CompaniesProvider({ children }: CompaniesProviderProps) {
-    const companiesData = useCompanies();
+export function CompaniesProvider({ children, initialData, initialQuery }: CompaniesProviderProps) {
+    const companiesData = useCompanies({ initialData, initialQuery });
 
     return (
         <CompaniesContext.Provider value={companiesData}>

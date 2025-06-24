@@ -1,24 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useCallback } from "react";
-import type { Filters } from "@companies/types/companies.filters.type";
 import type { Company } from "@companies/types/company.type";
+import type { CompaniesQuery } from "@companies/types/company.type";
+import { generateURLSearchParams } from "../utils/company.helpers";
 
-interface FetchCompaniesParams {
-    page?: number;
-    limit?: number;
-    search?: string;
-    growthStage?: string[];
-    customerFocus?: string[];
-    fundingType?: string[];
-    sortBy?: 'name' | 'rank' | 'last_funding_amount';
-    sortOrder?: 'asc' | 'desc';
-    minRank?: number;
-    maxRank?: number;
-    minFunding?: number;
-    maxFunding?: number;
-}
-
-async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
+interface InitialData {
     companies: Company[];
     pagination: {
         page: number;
@@ -30,108 +16,104 @@ async function fetchCompanies(params: FetchCompaniesParams = {}): Promise<{
         nextPage: number | null;
         previousPage: number | null;
     };
-}> {
-    const searchParams = new URLSearchParams();
-
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.search) searchParams.set('search', params.search);
-    if (params.growthStage) {
-        params.growthStage.forEach(stage => searchParams.append('growthStage', stage));
-    }
-    if (params.customerFocus) {
-        params.customerFocus.forEach(focus => searchParams.append('customerFocus', focus));
-    }
-    if (params.fundingType) {
-        params.fundingType.forEach(type => searchParams.append('fundingType', type));
-    }
-    if (params.sortBy) searchParams.set('sortBy', params.sortBy);
-    if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
-    if (params.minRank) searchParams.set('minRank', params.minRank.toString());
-    if (params.maxRank) searchParams.set('maxRank', params.maxRank.toString());
-    if (params.minFunding) searchParams.set('minFunding', params.minFunding.toString());
-    if (params.maxFunding) searchParams.set('maxFunding', params.maxFunding.toString());
-
-    const response = await fetch(`/api/companies?${searchParams.toString()}`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch companies');
-    }
-    return response.json();
 }
 
-export function useCompanies() {
-    const [filters, setFilters] = useState<Filters>({
-        search: '',
-        growthStage: [],
-        customerFocus: [],
-        fundingType: [],
-        sortBy: 'rank',
-        sortOrder: 'asc',
-        minRank: undefined,
-        maxRank: undefined,
-        minFunding: undefined,
-        maxFunding: undefined,
+export function useCompanies({ initialData, initialQuery }: { initialData: InitialData, initialQuery: CompaniesQuery }) {
+    const [ ApiFetchEnabled, setApiFetchEnabled ] = useState(false);
+
+    const [query, setQuery] = useState<CompaniesQuery>({
+        page: initialQuery?.page || 1,
+        search: initialQuery?.search,
+        growthStage: initialQuery?.growthStage,
+        customerFocus: initialQuery?.customerFocus,
+        fundingType: initialQuery?.fundingType,
+        sortBy: initialQuery?.sortBy,
+        sortOrder: initialQuery?.sortOrder || 'asc',
+        minRank: initialQuery?.minRank,
+        maxRank: initialQuery?.maxRank,
+        minFunding: initialQuery?.minFunding,
+        maxFunding: initialQuery?.maxFunding,
     });
 
-    const [pageSize, setPageSize] = useState(10);
+    // Calculate hasActiveFilters before React Query
+    const hasActiveQuery = useMemo(() => {
+        // check if the query has any filters values that are not undefined, empty, or 0
+        const { sortBy, sortOrder, page, ...filters } = query;
+        return Object.values(filters).some(value => {
+            if (Array.isArray(value)) return value.length > 0;
+            return value !== undefined && value !== '' && value !== 0;
+        });
+    }, [query]);
 
     // Fetch companies with infinite scroll
     const {
-        data: infiniteData,
+        data,
         isLoading,
         error,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['companies', filters, pageSize],
-        queryFn: ({ pageParam = 1 }) => {
-            const apiFilters: FetchCompaniesParams = {
-                page: pageParam,
-                limit: pageSize,
-                search: filters.search || undefined,
-                growthStage: filters.growthStage.length > 0 ? filters.growthStage : undefined,
-                customerFocus: filters.customerFocus.length > 0 ? filters.customerFocus : undefined,
-                fundingType: filters.fundingType.length > 0 ? filters.fundingType : undefined,
-                sortBy: filters.sortBy,
-                sortOrder: filters.sortOrder,
-                minRank: filters.minRank,
-                maxRank: filters.maxRank,
-                minFunding: filters.minFunding,
-                maxFunding: filters.maxFunding,
-            };
+        queryKey: ['companies', query],
+        queryFn: async ({ pageParam = 1 }) => {
+            // Create a clean copy of the query for this API call
+            const apiQuery = { ...query };
 
-            if (apiFilters.minFunding === 0) {
-                delete apiFilters.minFunding;
+            // Reset minFunding, minRank, maxRank, maxFunding if it's 0
+            if (apiQuery.minFunding === 0) {
+                delete apiQuery.minFunding;
             }
+            if (apiQuery.minRank === 0) {
+                delete apiQuery.minRank;
+            }
+            if (apiQuery.maxRank === 0) {
+                delete apiQuery.maxRank;
+            }
+            if (apiQuery.maxFunding === 0) {
+                delete apiQuery.maxFunding;
+            }
+            apiQuery.page = pageParam;
 
-            return fetchCompanies(apiFilters);
+            const response = await fetch(`/api/companies?${generateURLSearchParams(apiQuery)}`);
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch companies');
+            }
+            return response.json();
         },
         getNextPageParam: (lastPage) => {
             return lastPage.pagination.hasNextPage ? lastPage.pagination.nextPage : undefined;
         },
         initialPageParam: 1,
+        initialData: {
+            pages: [initialData],
+            pageParams: [1],
+        },
+        enabled: ApiFetchEnabled,
     });
+
 
     // Flatten all pages into a single array of companies
     const companies = useMemo(() => {
-        if (!infiniteData?.pages) return [];
-        return infiniteData.pages.flatMap((page) => page.companies);
-    }, [infiniteData]);
+        if (!data?.pages) return [];
+        return data.pages.flatMap((page) => page.companies);
+    }, [data]);
 
     // Get pagination info from the first page
-    const pagination = infiniteData?.pages[0]?.pagination;
+    const pagination = data?.pages[0]?.pagination;
     const totalItems = pagination?.totalCount || 0;
-    const loadedPages = infiniteData?.pages.length || 0;
+    const loadedPages = data?.pages.length || 0;
 
     // Wrapper for setFilters that triggers refetch
-    const setFiltersState = useCallback((newFilters: Filters) => {
-        setFilters(newFilters);
+    const setQueryWrapper = useCallback((newQuery: CompaniesQuery) => {
+        setApiFetchEnabled(true);
+        setQuery(newQuery);
         // The infinite query will automatically refetch when the queryKey changes
     }, []);
 
-    const clearFilters = useCallback(() => {
-        setFilters({
+    const clearQuery = useCallback(() => {
+        setQuery({
+            page: 1,
             search: '',
             growthStage: [],
             customerFocus: [],
@@ -146,42 +128,28 @@ export function useCompanies() {
         // The infinite query will automatically refetch when the queryKey changes
     }, []);
 
-    const removeFilter = useCallback((filterKey: keyof Filters, valueToRemove?: any) => {
-        const newFilters = { ...filters };
-        const currentVal = newFilters[filterKey];
+    const removeQuery = useCallback((queryKey: keyof CompaniesQuery, valueToRemove?: any) => {
+        const newQuery = { ...query };
+        const currentVal = newQuery[queryKey];
 
         if (Array.isArray(currentVal)) {
-            (newFilters[filterKey] as any[]) = currentVal.filter(v => v !== valueToRemove);
+            (newQuery[queryKey] as any[]) = currentVal.filter(v => v !== valueToRemove);
         } else {
-            (newFilters as any)[filterKey] = undefined;
+            (newQuery as any)[queryKey] = undefined;
         }
 
-        setFiltersState(newFilters);
-    }, [filters, setFiltersState]);
-
-    const hasActiveFilters = useMemo(() => {
-        const activeFilters = { ...filters };
-        if (activeFilters.minFunding === 0) {
-            delete activeFilters.minFunding;
-        }
-
-        return Object.values(activeFilters).some(value => {
-            if (Array.isArray(value)) return value.length > 0;
-            return value !== undefined && value !== '' && value !== 'rank' && value !== 'asc';
-        });
-    }, [filters]);
-
-
+        setQuery(newQuery);
+    }, [query, setQuery]);
 
     return {
         companies,
         isLoading,
         error,
-        filters,
-        setFilters,
-        clearFilters,
-        removeFilter,
-        hasActiveFilters,
+        query,
+        setQuery:setQueryWrapper,
+        clearQuery,
+        removeQuery,
+        hasActiveQuery,
         // Infinite scroll
         fetchNextPage,
         hasNextPage,

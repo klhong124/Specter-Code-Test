@@ -46,27 +46,27 @@ const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
 
 // Search Filter Component
 function SearchFilter() {
-    const { filters, setFilters } = useCompaniesContext();
-    const [inputValue, setInputValue] = useState(filters.search);
+    const { query, setQuery } = useCompaniesContext();
+    const [inputValue, setInputValue] = useState(query.search);
 
     useEffect(() => {
         const handler = setTimeout(() => {
-            if (inputValue !== filters.search) {
-                setFilters({ ...filters, search: inputValue });
+            if (inputValue !== query.search) {
+                setQuery({ ...query, search: inputValue });
             }
         }, 500); // Debounce delay
 
         return () => {
             clearTimeout(handler);
         };
-    }, [inputValue, filters, setFilters]);
+    }, [inputValue, query, setQuery]);
 
-    // Sync local state if filters are cleared externally
+    // Sync local state if query are cleared externally
     useEffect(() => {
-        if (filters.search !== inputValue) {
-            setInputValue(filters.search);
+        if (query.search !== inputValue) {
+            setInputValue(query.search);
         }
-    }, [filters.search]);
+    }, [query.search]);
 
 
     return (
@@ -84,11 +84,11 @@ function SearchFilter() {
 
 // Rank Filter Component
 function RankFilter() {
-    const { filters, setFilters } = useCompaniesContext();
+    const { query, setQuery } = useCompaniesContext();
 
-    const hasRankError = filters.minRank != null &&
-        filters.maxRank != null &&
-        filters.minRank > filters.maxRank;
+    const hasRankError = query.minRank != null &&
+        query.maxRank != null &&
+        query.minRank > query.maxRank;
 
     return (
         <FormControl>
@@ -97,16 +97,16 @@ function RankFilter() {
                 <HStack spacing={2}>
                     <NumberInput
                         size="sm"
-                        value={filters.minRank || ''}
-                        onChange={(_, value) => setFilters({ ...filters, minRank: value || undefined })}
+                        value={query.minRank || ''}
+                        onChange={(_, value) => setQuery({ ...query, minRank: value || undefined })}
                         allowMouseWheel
                     >
                         <NumberInputField placeholder="Min" />
                     </NumberInput>
                     <NumberInput
                         size="sm"
-                        value={filters.maxRank || ''}
-                        onChange={(_, value) => setFilters({ ...filters, maxRank: value || undefined })}
+                        value={query.maxRank || ''}
+                        onChange={(_, value) => setQuery({ ...query, maxRank: value || undefined })}
                         allowMouseWheel
                     >
                         <NumberInputField placeholder="Max" />
@@ -127,19 +127,19 @@ function RankFilter() {
 
 // Funding Amount Filter Component
 function FundingAmountFilter() {
-    const { filters, setFilters } = useCompaniesContext();
+    const { query, setQuery } = useCompaniesContext();
     const [fundingRange, setFundingRange] = useState([0, 100000000]);
 
     useEffect(() => {
         setFundingRange([
-            filters.minFunding || 0,
-            filters.maxFunding || 100000000,
+            query.minFunding || 0,
+            query.maxFunding || 100000000,
         ]);
-    }, [filters.minFunding, filters.maxFunding]);
+    }, [query.minFunding, query.maxFunding]);
 
     const handleFundingChangeEnd = (val: number[]) => {
-        setFilters({
-            ...filters,
+        setQuery({
+            ...query,
             minFunding: val[0],
             maxFunding: val[1] === 100000000 ? undefined : val[1],
         });
@@ -177,12 +177,12 @@ function FundingAmountFilter() {
 
 // Growth Stage Filter Component
 function GrowthStageFilter() {
-    const { filters, setFilters } = useCompaniesContext();
+    const { query, setQuery } = useCompaniesContext();
     const handleGrowthStageClick = (clickedValue: string) => {
-        const newGrowthStage = filters.growthStage.includes(clickedValue)
-            ? filters.growthStage.filter((v) => v !== clickedValue)
-            : [...filters.growthStage, clickedValue];
-        setFilters({ ...filters, growthStage: newGrowthStage });
+        const newGrowthStage = query.growthStage.includes(clickedValue)
+            ? query.growthStage.filter((v) => v !== clickedValue)
+            : [...query.growthStage, clickedValue];
+        setQuery({ ...query, growthStage: newGrowthStage });
     };
 
     return (
@@ -190,7 +190,7 @@ function GrowthStageFilter() {
             <FormLabel fontSize="sm" fontWeight="medium">Growth Stage</FormLabel>
             <HStack spacing={0} w="full">
                 {GROWTH_STAGE_OPTIONS.map((option, index) => {
-                    const isSelected = filters.growthStage.includes(option.value);
+                    const isSelected = query.growthStage.includes(option.value);
                     const isFirst = index === 0;
                     const isLast = index === GROWTH_STAGE_OPTIONS.length - 1;
 
@@ -237,14 +237,14 @@ function GrowthStageFilter() {
 
 // Customer Focus Filter Component
 function CustomerFocusFilter() {
-    const { filters, setFilters } = useCompaniesContext();
+    const { query, setQuery } = useCompaniesContext();
 
     return (
         <FormControl>
             <FormLabel fontSize="sm" fontWeight="medium">Customer Focus</FormLabel>
             <CheckboxGroup
-                value={filters.customerFocus}
-                onChange={(value) => setFilters({ ...filters, customerFocus: value as string[] })}
+                value={query.customerFocus}
+                onChange={(value) => setQuery({ ...query, customerFocus: value as string[] })}
             >
                 <SimpleGrid columns={2} w="200px" gap={2}>
                     {CUSTOMER_FOCUSES.map((focus) => (
@@ -260,13 +260,13 @@ function CustomerFocusFilter() {
 
 // Funding Type Filter Component
 function FundingTypeFilter() {
-    const { filters, setFilters } = useCompaniesContext();
+    const { query, setQuery } = useCompaniesContext();
 
     const handleFundingTypeChange = (clickedValue: string) => {
-        const newFundingTypes = filters.fundingType.includes(clickedValue)
-            ? filters.fundingType.filter((v) => v !== clickedValue)
-            : [...filters.fundingType, clickedValue];
-        setFilters({ ...filters, fundingType: newFundingTypes });
+        const newFundingTypes = query.fundingType.includes(clickedValue)
+            ? query.fundingType.filter((v) => v !== clickedValue)
+            : [...query.fundingType, clickedValue];
+        setQuery({ ...query, fundingType: newFundingTypes });
     };
 
     return (
@@ -279,7 +279,7 @@ function FundingTypeFilter() {
                             variant="checkbox"
                             value={type}
                             label={type}
-                            isSelected={filters.fundingType.includes(type)}
+                            isSelected={query.fundingType.includes(type)}
                             onChange={handleFundingTypeChange}
                         />
                     </WrapItem>
@@ -290,14 +290,14 @@ function FundingTypeFilter() {
 }
 
 export function CompanyFilters() {
-    const { clearFilters, hasActiveFilters } = useCompaniesContext();
+    const { clearQuery, hasActiveQuery } = useCompaniesContext();
 
     return (
         <VStack spacing={6} align="stretch" flex={1} minH={0} display="flex" flexDirection="column" maxH="calc(100dvh - 10rem)">
             <HStack justifyContent="space-between">
                 <Heading size="md" display={{ base: 'none', lg: 'block' }}>Filters</Heading>
                 <AnimatePresence>
-                    {hasActiveFilters && (
+                    {hasActiveQuery && (
                         <Button
                             as={motion.button}
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -310,7 +310,7 @@ export function CompanyFilters() {
                                 color: "orange.600",
                             }}
                             variant="ghost"
-                            onClick={clearFilters}
+                            onClick={clearQuery}
                         >
                             Clear All
                         </Button>

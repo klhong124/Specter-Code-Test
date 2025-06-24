@@ -1,3 +1,6 @@
+// Number of companies to fetch per page, aka limit
+export const NUMBER_PRT_FETCH = 20;
+
 export const GROWTH_STAGE_OPTIONS = [
     { value: 'seed', label: 'Seed', colorScheme: 'orange' },
     { value: 'early', label: 'Early', colorScheme: 'purple' },

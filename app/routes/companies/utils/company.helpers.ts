@@ -29,3 +29,26 @@ export const safeParseInt = (str: string | null): number | undefined => {
     const num = parseInt(str, 10);
     return isNaN(num) ? undefined : num;
 };
+
+import type { CompaniesQuery } from "@companies/types/company.type";
+export const generateURLSearchParams = (query: CompaniesQuery): string => {
+    const searchParams = new URLSearchParams();
+    if (query.page) searchParams.set('page', query.page.toString());
+    if (query.search) searchParams.set('search', query.search);
+    if (query.growthStage) {
+        query.growthStage.forEach((stage: string) => searchParams.append('growthStage', stage));
+    }
+    if (query.customerFocus) {
+        query.customerFocus.forEach((focus: string) => searchParams.append('customerFocus', focus));
+    }
+    if (query.fundingType) {
+        query.fundingType.forEach((type: string) => searchParams.append('fundingType', type));
+    }
+    if (query.sortBy) searchParams.set('sortBy', query.sortBy);
+    if (query.sortOrder) searchParams.set('sortOrder', query.sortOrder);
+    if (query.minRank) searchParams.set('minRank', query.minRank.toString());
+    if (query.maxRank) searchParams.set('maxRank', query.maxRank.toString());
+    if (query.minFunding) searchParams.set('minFunding', query.minFunding.toString());
+    if (query.maxFunding) searchParams.set('maxFunding', query.maxFunding.toString());
+    return searchParams.toString()
+};

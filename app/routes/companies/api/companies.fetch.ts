@@ -1,36 +1,37 @@
 import { prisma } from "@/utils/prisma.server";
-import type { CompanyQueryFilters } from "@companies/types/companies.filters.type";
+import type { CompaniesQuery, CompaniesApiResponse } from "@companies/types/company.type";
 import { safeParseInt } from "@companies/utils/company.helpers";
+import { NUMBER_PRT_FETCH } from "@companies/utils/company.constant";
 
-const buildWhereClause = (filters: CompanyQueryFilters) => {
+const buildWhereClause = (query: CompaniesQuery) => {
     const where: any = {};
-    if (filters.search) {
+    if (query.search) {
         where.OR = [
-            { name: { contains: filters.search, mode: 'insensitive' } },
-            { domain: { contains: filters.search, mode: 'insensitive' } },
-            { description: { contains: filters.search, mode: 'insensitive' } },
+            { name: { contains: query.search, mode: 'insensitive' } },
+            { domain: { contains: query.search, mode: 'insensitive' } },
+            { description: { contains: query.search, mode: 'insensitive' } },
         ];
     }
-    if (filters.growthStage && filters.growthStage.length > 0) {
-        where.growth_stage = { in: filters.growthStage };
+    if (query.growthStage && query.growthStage.length > 0) {
+        where.growth_stage = { in: query.growthStage };
     }
-    if (filters.customerFocus && filters.customerFocus.length > 0) {
-        where.customer_focus = { in: filters.customerFocus };
+    if (query.customerFocus && query.customerFocus.length > 0) {
+        where.customer_focus = { in: query.customerFocus };
     }
-    if (filters.fundingType && filters.fundingType.length > 0) {
-        where.last_funding_type = { in: filters.fundingType };
+    if (query.fundingType && query.fundingType.length > 0) {
+        where.last_funding_type = { in: query.fundingType };
     }
-    if (filters.minRank !== undefined) {
-        where.rank = { ...where.rank, gte: filters.minRank };
+    if (query.minRank !== undefined) {
+        where.rank = { ...where.rank, gte: query.minRank };
     }
-    if (filters.maxRank !== undefined) {
-        where.rank = { ...where.rank, lte: filters.maxRank };
+    if (query.maxRank !== undefined) {
+        where.rank = { ...where.rank, lte: query.maxRank };
     }
-    if (filters.minFunding !== undefined) {
-        where.last_funding_amount = { ...where.last_funding_amount, gte: filters.minFunding };
+    if (query.minFunding !== undefined) {
+        where.last_funding_amount = { ...where.last_funding_amount, gte: query.minFunding };
     }
-    if (filters.maxFunding !== undefined) {
-        where.last_funding_amount = { ...where.last_funding_amount, lte: filters.maxFunding };
+    if (query.maxFunding !== undefined) {
+        where.last_funding_amount = { ...where.last_funding_amount, lte: query.maxFunding };
     }
     return where;
 };
@@ -52,37 +53,23 @@ const buildOrderByClause = (sortBy: string, sortOrder: 'asc' | 'desc') => {
     return orderBy;
 };
 
-export async function loader({ request }: { request: Request }): Promise<Response> {
+export async function fetchCompanies(query: CompaniesQuery): Promise<CompaniesApiResponse> {
     try {
-        const url = new URL(request.url);
-        const params = url.searchParams;
-
-        // 1. Extract and Validate Parameters
-        const page = Math.max(1, safeParseInt(params.get('page')) || 1);
-        const limit = Math.min(Math.max(1, safeParseInt(params.get('limit')) || 10), 100);
+        // Extract and validate parameters
+        const page = Math.max(1, query.page || 1);
+        const limit = NUMBER_PRT_FETCH;
         const skip = (page - 1) * limit;
 
-        const sortBy = params.get('sortBy') || 'rank';
-        const sortOrder = params.get('sortOrder') || 'asc';
+        const sortBy = query.sortBy || 'rank';
+        const sortOrder = query.sortOrder || 'asc';
         const validSortBy = ['name', 'rank', 'last_funding_amount'].includes(sortBy) ? sortBy : 'rank';
-        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? (sortOrder as 'asc' | 'desc') : 'asc';
+        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'asc';
 
-        const filters: CompanyQueryFilters = {
-            search: params.get('search') || undefined,
-            growthStage: params.getAll('growthStage'),
-            customerFocus: params.getAll('customerFocus'),
-            fundingType: params.getAll('fundingType'),
-            minRank: safeParseInt(params.get('minRank')),
-            maxRank: safeParseInt(params.get('maxRank')),
-            minFunding: safeParseInt(params.get('minFunding')),
-            maxFunding: safeParseInt(params.get('maxFunding')),
-        };
+        // Build Prisma clauses
+        const where = buildWhereClause(query);
+        const orderBy = buildOrderByClause(validSortBy, validSortOrder as 'asc' | 'desc');
 
-        // 2. Build Prisma Clauses
-        const where = buildWhereClause(filters);
-        const orderBy = buildOrderByClause(validSortBy, validSortOrder);
-
-        // 3. Fetch Data Concurrently
+        // Fetch data concurrently
         const [totalCount, companies] = await prisma.$transaction([
             prisma.company.count({ where }),
             prisma.company.findMany({
@@ -98,11 +85,14 @@ export async function loader({ request }: { request: Request }): Promise<Respons
             }),
         ]);
 
-        // 4. Serialize and Prepare Response
-        const serializedCompanies = companies.map(c => ({ ...c, last_funding_amount: c.last_funding_amount?.toString() ?? null }));
+        // Serialize and prepare response
+        const serializedCompanies = companies.map(c => ({
+            ...c,
+            last_funding_amount: c.last_funding_amount?.toString() ?? null
+        }));
         const totalPages = Math.ceil(totalCount / limit);
 
-        const response = {
+        return {
             companies: serializedCompanies,
             pagination: {
                 page,
@@ -115,13 +105,45 @@ export async function loader({ request }: { request: Request }): Promise<Respons
                 previousPage: page > 1 ? page - 1 : null,
             },
         };
+    } catch (error) {
+        console.error('Error fetching companies:', error);
+        throw new Error('Failed to fetch companies');
+    }
+}
+export async function loader({ request }: { request: Request }): Promise<Response> {
+    try {
+        const url = new URL(request.url);
+        const params = url.searchParams;
+
+        // Extract and validate parameters
+        const page = Math.max(1, safeParseInt(params.get('page')) || 1);
+        const sortBy = params.get('sortBy') || 'rank';
+        const sortOrder = params.get('sortOrder') || 'asc';
+        const validSortBy = ['name', 'rank', 'last_funding_amount'].includes(sortBy) ? sortBy : 'rank';
+        const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'asc';
+
+        const query: CompaniesQuery = {
+            page,
+            search: params.get('search') || undefined,
+            growthStage: params.getAll('growthStage'),
+            customerFocus: params.getAll('customerFocus'),
+            fundingType: params.getAll('fundingType'),
+            sortBy: validSortBy as 'name' | 'rank' | 'last_funding_amount',
+            sortOrder: validSortOrder as 'asc' | 'desc',
+            minRank: safeParseInt(params.get('minRank')),
+            maxRank: safeParseInt(params.get('maxRank')),
+            minFunding: safeParseInt(params.get('minFunding')),
+            maxFunding: safeParseInt(params.get('maxFunding')),
+        };
+
+        const response = await fetchCompanies(query);
 
         return new Response(JSON.stringify(response), {
             headers: { 'Content-Type': 'application/json' },
         });
 
     } catch (error) {
-        console.error('Error fetching companies:', error);
+        console.error('Error in loader:', error);
         return new Response(JSON.stringify({ error: 'Failed to fetch companies' }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
