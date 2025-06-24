@@ -8,14 +8,13 @@ export async function loader({ request }: { request: Request }) {
         const params = url.searchParams;
 
         // Extract and validate parameters
-        const page = Math.max(1, safeParseInt(params.get('page')) || 1);
         const sortBy = params.get('sortBy') || 'rank';
         const sortOrder = params.get('sortOrder') || 'asc';
         const validSortBy = ['name', 'rank', 'last_funding_amount'].includes(sortBy) ? sortBy : 'rank';
         const validSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'asc';
 
         const initialQuery: CompaniesQuery = {
-            page,
+            page: Math.max(1, safeParseInt(params.get('page')) || 1),
             search: params.get('search') || undefined,
             growthStage: params.getAll('growthStage'),
             customerFocus: params.getAll('customerFocus'),

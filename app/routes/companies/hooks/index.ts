@@ -1,1 +1,2 @@
-export { useCompanies } from './useCompanies';
+export { useInfiniteScroll } from './useInfiniteScroll';
+export { useHeaderHeight } from './useHeaderHeight';

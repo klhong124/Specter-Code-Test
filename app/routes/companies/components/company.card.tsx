@@ -133,7 +133,7 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                             />
                         )}
                     </Wrap>
-                    <Text fontSize="sm" variant="subtle" noOfLines={3}>
+                    <Text fontSize="sm" variant="subtle" noOfLines={3} my={2}>
                         {company.description}
                     </Text>
 

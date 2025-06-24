@@ -29,21 +29,6 @@ import { GROWTH_STAGE_OPTIONS, CUSTOMER_FOCUS_OPTIONS, FUNDING_TYPES } from "@co
 import { Pill } from "@/ui/pill";
 import { WarningIcon } from "@chakra-ui/icons";
 
-// Color mapping for dark mode
-const getDarkModeColors = (colorScheme: string, isSelected: boolean) => {
-    if (!isSelected) return { bg: 'transparent', color: 'gray.500', borderBottom: 'gray.700' };
-
-    const colorMap: Record<string, { bg: string; color: string; borderBottom: string }> = {
-        orange: { bg: 'orange.800', color: 'orange.100', borderBottom: 'orange.300' },
-        purple: { bg: 'purple.800', color: 'purple.100', borderBottom: 'purple.300' },
-        teal: { bg: 'teal.800', color: 'teal.100', borderBottom: 'teal.300' },
-        blue: { bg: 'blue.800', color: 'blue.100', borderBottom: 'blue.300' },
-        gray: { bg: 'gray.600', color: 'gray.100', borderBottom: 'gray.300' },
-    };
-
-    return colorMap[colorScheme] || colorMap.blue;
-};
-
 // Search Filter Component
 function SearchFilter() {
     const { query, setQuery } = useCompaniesContext();

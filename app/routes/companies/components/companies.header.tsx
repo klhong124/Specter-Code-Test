@@ -1,16 +1,13 @@
 import {
-    Box,
     Text,
     HStack,
     VStack,
-    Badge,
     Button,
     Wrap,
     WrapItem,
     Flex,
     useColorMode,
     IconButton,
-    Spacer,
 } from "@chakra-ui/react";
 import { Pill } from "@/ui/pill";
 import { useCompaniesContext } from "@companies/context/companies.context";
@@ -21,12 +18,7 @@ import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.
 import { GROWTH_STAGE_OPTIONS } from "@companies/utils/company.constant";
 import { MoonIcon, SunIcon, HamburgerIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { forwardRef } from "react";
-import { useNavigate, useSearchParams } from "react-router";
-
-interface CompaniesHeaderProps {
-    onOpen: () => void;
-    ref?: React.Ref<HTMLDivElement>;
-}
+import { useNavigate } from "react-router";
 
 export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }>(
     ({ onOpen }, ref) => {

@@ -1,6 +1,6 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { memo, useCallback, useEffect, useRef, type PropsWithChildren } from "react";
-import { animate, AnimatePresence, m, LazyMotion, domAnimation, useInView } from "framer-motion";
+import { animate, m, LazyMotion, domAnimation, useInView } from "framer-motion";
 
 interface GlowingEffectProps {
     blur?: number;

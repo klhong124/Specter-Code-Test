@@ -21,7 +21,7 @@ interface InitialData {
 
 export function useCompanies({ initialData, initialQuery }: { initialData: InitialData, initialQuery: CompaniesQuery }) {
     const [ ApiFetchEnabled, setApiFetchEnabled ] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [_, setSearchParams] = useSearchParams();
 
     const [query, setQuery] = useState<CompaniesQuery>({
         page: initialQuery?.page || 1,

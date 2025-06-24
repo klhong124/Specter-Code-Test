@@ -19,17 +19,26 @@ export const formatFundingAmount = (amount: string | null): string => {
     return `$${num}`;
 };
 
+/**
+ * Formats a focus string to a human-readable label
+ */
 export const formatFocusLabel = (focus: string): string => {
     if (!focus) return '';
     return focus.replace(/_/g, ' & ').toUpperCase();
 };
 
+/**
+ * Safely parses an integer from a string
+ */
 export const safeParseInt = (str: string | null): number | undefined => {
     if (!str) return undefined;
     const num = parseInt(str, 10);
     return isNaN(num) ? undefined : num;
 };
 
+/**
+ * Generates URL search params from a CompaniesQuery object
+ */
 import type { CompaniesQuery } from "@companies/types/company.type";
 export const generateURLSearchParams = (query: CompaniesQuery): string => {
     const searchParams = new URLSearchParams();
