@@ -8,6 +8,7 @@ import {
     Box,
     Image,
     Wrap,
+    Skeleton,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import type { Company } from "@companies/types/company.type";
@@ -65,18 +66,7 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                                     objectFit="cover"
                                     bg="gray.100"
                                     fallback={
-                                        <Box
-                                            boxSize="40px"
-                                            borderRadius="md"
-                                            bg="gray.100"
-                                            display="flex"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            fontSize="sm"
-                                            color="gray.500"
-                                        >
-                                            ?
-                                        </Box>
+                                        <Skeleton boxSize="40px" borderRadius="md" />
                                     }
                                 />
                             </Box>
