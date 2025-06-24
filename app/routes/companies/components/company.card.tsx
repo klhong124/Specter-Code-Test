@@ -7,11 +7,9 @@ import {
     Link,
     Box,
     Image,
-    Skeleton,
     Wrap,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { useState } from "react";
 import type { Company } from "@companies/types/company.type";
 import { formatFundingAmount, formatFocusLabel } from "@companies/utils/company.helpers";
 import { Pill } from "@/ui/pill";
@@ -24,8 +22,7 @@ interface CompanyCardProps {
 }
 
 export function CompanyCard({ company, index }: CompanyCardProps) {
-    const [imageLoaded, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
+
     const getStageColorScheme = (stage?: string | null) => {
         if (!stage) return 'gray';
         const lowerCaseStage = stage.toLowerCase();
@@ -60,36 +57,28 @@ export function CompanyCard({ company, index }: CompanyCardProps) {
                     <HStack justify="space-between" w="full" align="start">
                         <HStack spacing={3} align="center" flex={1}>
                             <Box position="relative" boxSize="40px">
-                                {!imageLoaded && (
-                                    <Skeleton boxSize="40px" borderRadius="md" />
-                                )}
-                                {!imageError && (
-                                    <Image
-                                        src={`https://app.tryspecter.com/logo?domain=${company.domain}`}
-                                        alt={`${company.name} logo`}
-                                        boxSize="40px"
-                                        borderRadius="md"
-                                        objectFit="cover"
-                                        onLoad={() => setImageLoaded(true)}
-                                        onError={() => setImageError(true)}
-                                        bg="gray.100"
-                                        display={imageLoaded ? 'block' : 'none'}
-                                    />
-                                )}
-                                {imageError && (
-                                    <Box
-                                        boxSize="40px"
-                                        borderRadius="md"
-                                        bg="gray.100"
-                                        display="flex"
-                                        alignItems="center"
-                                        justifyContent="center"
-                                        fontSize="sm"
-                                        color="gray.500"
-                                    >
-                                        ?
-                                    </Box>
-                                )}
+                                <Image
+                                    src={`https://app.tryspecter.com/logo?domain=${company.domain}`}
+                                    alt={`${company.name} logo`}
+                                    boxSize="40px"
+                                    borderRadius="md"
+                                    objectFit="cover"
+                                    bg="gray.100"
+                                    fallback={
+                                        <Box
+                                            boxSize="40px"
+                                            borderRadius="md"
+                                            bg="gray.100"
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="center"
+                                            fontSize="sm"
+                                            color="gray.500"
+                                        >
+                                            ?
+                                        </Box>
+                                    }
+                                />
                             </Box>
                             <VStack align="start" spacing={1} flex={1}>
                                 <Heading size="md" noOfLines={1} color="brand.600" _dark={{ color: "brand.300" }}>
