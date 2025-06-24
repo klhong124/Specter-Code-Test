@@ -4,7 +4,7 @@ import { HiArrowRight } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
@@ -27,6 +27,11 @@ export default function Home() {
         bgColor: "rgba(255, 255, 255, 0.6)",
         zIndex: -1,
       }}
+      _dark={{
+        _before: {
+          bgColor: "rgba(0, 0, 0, 0.7)",
+        }
+      }}
     >
       <Box textAlign="center">
         <Image src="/specter-icon.svg" alt="Specter" w={12} mx="auto" mb={4} />
@@ -48,7 +53,7 @@ export default function Home() {
         >
           Hey there!
         </Heading>
-        <Text color="gray.500" fontSize="sm" mb={4} letterSpacing="tight">
+        <Text variant="muted" fontSize="sm" mb={4} letterSpacing="tight">
           Welcome to the Specter frontend test.
         </Text>
         <Button
@@ -58,6 +63,15 @@ export default function Home() {
           to="/test"
         >
           Get Started
+        </Button>
+        <Button
+          variant="outline"
+          rightIcon={<HiArrowRight />}
+          as={Link}
+          to="/companies"
+          ml={2}
+        >
+          View Companies
         </Button>
       </Box>
     </Center>
