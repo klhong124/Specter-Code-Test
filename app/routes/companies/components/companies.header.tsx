@@ -63,7 +63,7 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                 className="glass"
             >
                 {/* Main Header */}
-                <HStack align="center" spacing={2}>
+                <Wrap align="center" spacing={2}>
                     <IconButton
                         aria-label="Go back to home"
                         icon={<ArrowBackIcon />}
@@ -101,25 +101,27 @@ export const CompaniesHeader = forwardRef<HTMLDivElement, { onOpen: () => void }
                             />
                         </Text>
                     </Flex>
+                    <HStack spacing={2} ml="auto">
+                        <CompaniesSorting />
+                        <IconButton
+                            aria-label="Toggle dark mode"
+                            icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+                            onClick={toggleColorMode}
+                            variant="ghost"
+                            display={{ base: "flex", lg: "none" }}
+                            size="md"
+                        />
+                        <IconButton
+                            aria-label="Toggle filters"
+                            icon={<HamburgerIcon />}
+                            onClick={onOpen}
+                            variant="ghost"
+                            display={{ base: "flex", lg: "none" }}
+                            size="md"
+                        />
+                    </HStack>
 
-                    <CompaniesSorting />
-                    <IconButton
-                        aria-label="Toggle dark mode"
-                        icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
-                        onClick={toggleColorMode}
-                        variant="ghost"
-                        display={{ base: "flex", lg: "none" }}
-                        size="md"
-                    />
-                    <IconButton
-                        aria-label="Toggle filters"
-                        icon={<HamburgerIcon />}
-                        onClick={onOpen}
-                        variant="ghost"
-                        display={{ base: "flex", lg: "none" }}
-                        size="md"
-                    />
-                </HStack>
+                </Wrap>
 
                 {hasActiveQuery && (
                     <motion.div
