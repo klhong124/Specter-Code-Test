@@ -129,17 +129,17 @@ function CompaniesPageContent() {
                     </Box>
 
                     {/* Main Section */}
-                    <VStack spacing={0} flex={1} py={8} align="stretch" position="relative">
+                    <VStack spacing={0} flex={1} align="stretch" position="relative">
 
                         {/* Header */}
                         <CompaniesHeader ref={headerRef} onOpen={onOpen} />
 
                         {/* Main Content Area */}
                         <Box
-                            pt={`${headerHeight + 32}px`}
+                            pt={`${headerHeight + 64}px`}
                             overflowY="scroll"
                             overflowX="hidden"
-                            h={`calc(100dvh - 64px)`}
+                            h="100dvh"
                             px={4}
                         >
                             <VStack spacing={8} align="stretch">
